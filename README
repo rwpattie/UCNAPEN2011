@@ -1,0 +1,10 @@
+	UCNA-PENELOPE2011
+        Robert W. Pattie Jr.
+	Nov 22,2012
+
+        This repository contains the source code for a simulation of the UCNA experiment using the PENELOPE 2011 
+        Monte Carlo package.  The source code for PENELOPE is not included sinc it is a control problem and I 
+        sign a form saying I wouldn't distribute it.  So get it from Oak Ridge National Lab.  Once that is done
+        link and compile the code found here with the penelope.f, pengeom.f, penvared.f, timer.f oh just look in 
+        the Makefile.
+       
