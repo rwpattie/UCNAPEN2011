@@ -1,0 +1,52 @@
+TITLE  Simple accelerator head and water phantom (step 1)
+       .
+       This example calculates the dose distribution in a water
+       phantom from a simple electron accelerator model. The
+       calculation is performed by running PENMAIN twice. A first
+       run, with the input file 'accel1.in', generates a psf named
+       'pm_psf_impdet_01.dat' at a plane beyond the bottom of the
+       accelerator head. A second run of PENMAIN, with the input
+       file 'accel2.in', reads initial particle states from that psf
+       and produces the dose distribution in the water phantom.
+       .
+       >>>>>>>> Source definition.
+SKPAR  1        [Primary particles: 1=electron, 2=photon, 3=positron]
+SENERG 6e6              [Initial energy (monoenergetic sources only)]
+SPOSIT 0.0 0.0 -20.0                      [Coordinates of the source]
+SCONE  0 0 0                            [Conical beam; angles in deg]
+       .
+       >>>>>>>> Material data and simulation parameters.
+MFNAME mats/W.mat                     [Material file, up to 20 chars]
+MSIMPA 1e5 1e4 1e5 0.1 0.1 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/W.mat                     [Material file, up to 20 chars]
+MSIMPA 1e5 1e4 1e5 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/Air.mat                   [Material file, up to 20 chars]
+MSIMPA 1e5 1e4 1e5 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/H2O.mat                   [Material file, up to 20 chars]
+MSIMPA 1e5 1e4 1e5 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+       .
+       >>>>>>>> Geometry definition file.
+GEOMFN geos/accel.geo                 [Geometry file, up to 20 chars]
+DSMAX  1 2e-2                    [KB, maximum step length in body KB]
+       .
+       >>>>>>>> Interaction forcing.
+IFORCE 1 1 4  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
+IFORCE 1 1 5  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
+       .
+       >>>>>>>> Emerging particles. Energy and angular distributions.
+NBE    1e4 6e6 100                    [Energy window and no. of bins]
+NBANGL 45 24               [No. of bins for the angles THETA and PHI]
+       .
+       >>>>>>>> Impact detectors (up to 25 different detectors).
+IMPDET 1e4 6e6 100 1 0           [E-window, no. of bins, IPSF, IDCUT]
+IDBODY 3                 [Active body; one line for each active body]
+       .
+       >>>>>>>> Job properties
+RESUME dump1.dmp               [Resume from this dump file, 20 chars]
+DUMPTO dump1.dmp                  [Generate this dump file, 20 chars]
+DUMPP  60                                    [Dumping period, in sec]
+       .
+NSIMSH 2e9                      [Desired number of simulated showers]
+TIME   2e1                         [Allotted simulation time, in sec]
+       .
+END                                  [Ends the reading of input data]
