@@ -9,4 +9,7 @@ src/pmcomms.f
 src/penmain.f
 src/penelope_old/*
 src/.*~
+mats/*
+data/*
+.*~
 *.o
