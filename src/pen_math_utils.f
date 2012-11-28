@@ -292,8 +292,6 @@ C
       NDIG=10-IT
       RETURN
       END
-
-
 C  *********************************************************************
 C                       SUBROUTINE SOURCE
 C  *********************************************************************
@@ -424,3 +422,237 @@ C  ----  Initial direction ...
       IPOL=0
       RETURN
       END
+C **********************************************************************
+C                      SUBROUTINE DOSEBOX
+C **********************************************************************
+      SUBROUTINE DOSEBOX(DEP)
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      INCLUDE 'pmcomms.f'
+      
+      IF(LDOSEM) THEN  ! The particle is inside the dose box.
+        IF((X.GT.DXL(1).AND.X.LT.DXU(1)).AND.
+     1     (Y.GT.DXL(2).AND.Y.LT.DXU(2)).AND.
+     1     (Z.GT.DXL(3).AND.Z.LT.DXU(3))) THEN
+          I1=INT(1.0D0+(X-DXL(1))*RBDOSE(1))
+          I2=INT(1.0D0+(Y-DXL(2))*RBDOSE(2))
+          I3=INT(1.0D0+(Z-DXL(3))*RBDOSE(3))
+          DOSP=DEP*RHOI(MAT)
+          IF(N.NE.LDOSE(I1,I2,I3)) THEN
+            DOSE(I1,I2,I3)=DOSE(I1,I2,I3)+DOSEP(I1,I2,I3)
+            DOSE2(I1,I2,I3)=DOSE2(I1,I2,I3)+DOSEP(I1,I2,I3)**2
+            DOSEP(I1,I2,I3)=DOSP
+            LDOSE(I1,I2,I3)=N
+          ELSE
+            DOSEP(I1,I2,I3)=DOSEP(I1,I2,I3)+DOSP
+          ENDIF
+C
+          IF(N.NE.LDDOSE(I3)) THEN
+            DDOSE(I3)=DDOSE(I3)+DDOSEP(I3)
+            DDOSE2(I3)=DDOSE2(I3)+DDOSEP(I3)**2
+            DDOSEP(I3)=DOSP
+            LDDOSE(I3)=N
+          ELSE
+            DDOSEP(I3)=DDOSEP(I3)+DOSP
+          ENDIF
+        ENDIF
+      ENDIF
+      
+      RETURN
+      END
+C *********************************************************************
+C              SUBROUTINE IMPACT_DETECTOR2
+C *********************************************************************
+      SUBROUTINE IMPACT_DETECTOR2(IBODYL)
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      INCLUDE 'pmcomms.f'
+C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+C  ----  Impact detectors.
+      IF(IBODYL.GT.NBODY)RETURN
+      IDET=KDET(IBODY)
+      IF(IDET.NE.0) THEN
+        IF(KDET(IBODYL).NE.IDET.AND.KKDI(IDET,KPAR).EQ.1) THEN
+C
+          IF(IPSF(IDET).EQ.1) THEN
+            NSHJ=INT(SHN-RLAST)
+            CALL WRPSF(IPSFO,NSHJ,0)
+            RWRITE=RWRITE+1.0D0
+            RLAST=SHN
+          ENDIF
+C
+          DEDI(IDET)=DEDI(IDET)+E*WGHT
+          IF(LDILOG(IDET)) THEN
+            IE=INT(1.0D0+(LOG(E)-EDILL(IDET))*RBDIEL(IDET))
+          ELSE
+            IE=INT(1.0D0+(E-EDIL(IDET))*RBDIE(IDET))
+          ENDIF
+          IF(IE.GT.0.AND.IE.LE.NDICH(IDET)) THEN
+            IF(N.NE.LDIT(IDET,IE)) THEN
+              DIT(IDET,IE)=DIT(IDET,IE)+DITP(IDET,IE)
+              DIT2(IDET,IE)=DIT2(IDET,IE)+DITP(IDET,IE)**2
+              DITP(IDET,IE)=WGHT
+              LDIT(IDET,IE)=N
+            ELSE
+              DITP(IDET,IE)=DITP(IDET,IE)+WGHT
+            ENDIF
+            IF(N.NE.LDIP(IDET,IE,KPAR)) THEN
+              DIP(IDET,IE,KPAR)=DIP(IDET,IE,KPAR)+DIPP(IDET,IE,KPAR)
+              DIP2(IDET,IE,KPAR)=
+     1            DIP2(IDET,IE,KPAR)+DIPP(IDET,IE,KPAR)**2
+              DIPP(IDET,IE,KPAR)=WGHT
+              LDIP(IDET,IE,KPAR)=N
+            ELSE
+              DIPP(IDET,IE,KPAR)=DIPP(IDET,IE,KPAR)+WGHT
+            ENDIF
+          ENDIF
+!           IF(IDCUT(IDET).EQ.0) THEN
+!             DEBO(IBODY)=DEBO(IBODY)+E*WGHT
+!             IEXIT=3
+!             GO TO 104
+!           ENDIF
+        ENDIF
+      ENDIF
+      
+      RETURN
+      END
+C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<      
+C **********************************************************************
+C        SUBROUTINE ENERGYFLUENCE
+C **********************************************************************
+      SUBROUTINE ENERGYFLUENCE(DSEF,IBODYL)
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      INCLUDE 'pmcomms.f'
+C  ----  Energy distribution of fluence.
+      IF(IBODYL.GT.NBODY)RETURN
+      IDET=KDET(IBODYL)
+      IF(IDET.NE.0) THEN
+        IF(IDCUT(IDET).EQ.2) THEN
+          IF(KKDI(IDET,KPAR).EQ.1) THEN
+            IF(LDILOG(IDET)) THEN
+              IE=INT(1.0D0+(LOG(E)-EDILL(IDET))*RBDIEL(IDET))
+            ELSE
+              IE=INT(1.0D0+(E-EDIL(IDET))*RBDIE(IDET))
+            ENDIF
+            IF(IE.GT.0.AND.IE.LE.NDICH(IDET)) THEN
+              IF(N.NE.LFST(IDET,IE)) THEN
+                FST(IDET,IE)=FST(IDET,IE)+FSTP(IDET,IE)
+                FST2(IDET,IE)=FST2(IDET,IE)+FSTP(IDET,IE)**2
+                FSTP(IDET,IE)=WGHT*DSEF
+                LFST(IDET,IE)=N
+              ELSE
+                FSTP(IDET,IE)=FSTP(IDET,IE)+WGHT*DSEF
+              ENDIF
+              IF(N.NE.LFSP(IDET,IE,KPAR)) THEN
+                FSP(IDET,IE,KPAR)=FSP(IDET,IE,KPAR)+FSPP(IDET,IE,KPAR)
+                FSP2(IDET,IE,KPAR)=
+     1              FSP2(IDET,IE,KPAR)+FSPP(IDET,IE,KPAR)**2
+                FSPP(IDET,IE,KPAR)=WGHT*DSEF
+                LFSP(IDET,IE,KPAR)=N
+              ELSE
+                FSPP(IDET,IE,KPAR)=FSPP(IDET,IE,KPAR)+WGHT*DSEF
+              ENDIF
+            ENDIF
+          ENDIF
+        ENDIF
+      ENDIF
+      
+      
+      RETURN
+      END
+C **********************************************************************
+      SUBROUTINE COLLECTEMERGE
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      
+C  ****  Energy distribution of emerging particles.
+        K=1.0D0+(E-EMIN)*RBSE
+        IF(K.GT.0.AND.K.LE.NBE) THEN
+          IF(N.NE.LPDE(KPAR,IEXIT,K)) THEN
+            PDE(KPAR,IEXIT,K)=PDE(KPAR,IEXIT,K)+PDEP(KPAR,IEXIT,K)
+            PDE2(KPAR,IEXIT,K)=
+     1        PDE2(KPAR,IEXIT,K)+PDEP(KPAR,IEXIT,K)**2
+            PDEP(KPAR,IEXIT,K)=WGHT
+            LPDE(KPAR,IEXIT,K)=N
+          ELSE
+            PDEP(KPAR,IEXIT,K)=PDEP(KPAR,IEXIT,K)+WGHT
+          ENDIF
+        ENDIF
+C  ****  Angular distribution of emerging particles.
+        THETA=ACOS(W)
+        KTH=1.0D0+THETA*RA2DE*RBSTH
+        IF(ABS(U).GT.1.0D-16) THEN  ! Azimuthal bin number corrected.
+           PHI=ATAN2(V,U)
+        ELSE IF(ABS(V).GT.1.0D-16) THEN
+           PHI=ATAN2(V,U)
+        ELSE
+           PHI=0.0D0
+        ENDIF
+        IF(PHI.LT.0.0D0) PHI=TWOPI+PHI
+        KPH=1.0D0+PHI*RA2DE*RBSPH
+        IF(N.NE.LPDA(KPAR,KTH,KPH)) THEN
+          PDA(KPAR,KTH,KPH)=PDA(KPAR,KTH,KPH)+PDAP(KPAR,KTH,KPH)
+          PDA2(KPAR,KTH,KPH)=PDA2(KPAR,KTH,KPH)+PDAP(KPAR,KTH,KPH)**2
+          PDAP(KPAR,KTH,KPH)=WGHT
+          LPDA(KPAR,KTH,KPH)=N
+        ELSE
+          PDAP(KPAR,KTH,KPH)=PDAP(KPAR,KTH,KPH)+WGHT
+        ENDIF
+        
+      RETURN
+      END
+C **********************************************************************
+C        SUBROUTINE TALLYSPECTRA
+C **********************************************************************
+      SUBROUTINE TALLYSPECTRA
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      
+      IF(NDEDEF.GT.0) THEN
+        DO KD=1,NDEDEF
+          DEDE(KD)=0.0D0
+        ENDDO
+        DO KB=1,NBODY
+          IDET=KBDE(KB)
+          IF(IDET.NE.0) THEN
+            DEDE(IDET)=DEDE(IDET)+DEBO(KB)
+          ENDIF
+        ENDDO
+C
+        DO KD=1,NDEDEF
+          TDED(KD)=TDED(KD)+DEDE(KD)
+          TDED2(KD)=TDED2(KD)+DEDE(KD)**2
+          IF(DEDE(KD).GT.1.0D-5) THEN
+            IF(LDELOG(KD)) THEN
+              KE=1.0D0+(LOG(DEDE(KD))-EDELL(KD))*RBDEEL(KD)
+            ELSE
+              KE=1.0D0+(DEDE(KD)-EDEL(KD))*RBDEE(KD)
+            ENDIF
+            IF(KE.GT.0.AND.KE.LE.NDECH(KD)) THEN
+              DET(KD,KE)=DET(KD,KE)+1.0D0
+            ENDIF
+          ENDIF
+        ENDDO
+      ENDIF
+      DO KB=1,NBODY
+        TDEBO(KB)=TDEBO(KB)+DEBO(KB)
+        TDEBO2(KB)=TDEBO2(KB)+DEBO(KB)**2
+      ENDDO
+C  --  Average energies 'collected' by impact detectors.
+      IF(NDIDEF.GT.0) THEN
+        DO KD=1,NDIDEF
+          TDID(KD)=TDID(KD)+DEDI(KD)
+          TDID2(KD)=TDID2(KD)+DEDI(KD)**2
+        ENDDO
+      ENDIF
+C  --  Final state counters.
+      DO I=1,3
+        PRIM(I)=PRIM(I)+DPRIM(I)
+        PRIM2(I)=PRIM2(I)+DPRIM(I)**2
+        DO K=1,3
+          SEC(K,I)=SEC(K,I)+DSEC(K,I)
+          SEC2(K,I)=SEC2(K,I)+DSEC(K,I)**2
+        ENDDO
+      ENDDO
+      
+      RETURN
+      END
+      

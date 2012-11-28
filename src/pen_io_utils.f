@@ -151,7 +151,7 @@ C  ------------------------  Print simulation results.
 C
 C     IEXIT: 1=upbound, 2=downbound, 3=absorbed.
 C
-      OPEN(27,FILE='penmain-res.dat')
+      OPEN(27,FILE='data/penmain-res.dat')
       WRITE(27,3000)
  3000 FORMAT(//3X,35('*')/3X,'**   Program PENMAIN. Results.   **',
      1  /3X,35('*'))
@@ -327,7 +327,7 @@ C
 C  ************  Energy spectrum of the source.
 C
       IF(LSPEC) THEN
-        OPEN(9,FILE='psource.dat')
+        OPEN(9,FILE='data/psource.dat')
         WRITE(9,9000)
  9000 FORMAT(
      1  1X,'#  Results from PENMAIN. ',
@@ -373,7 +373,7 @@ C
 C  ************  Energy distributions of emerging particles.
 C
 C  ****  Upbound electrons.
-      OPEN(9,FILE='energy-el-up.dat')
+      OPEN(9,FILE='data/energy-el-up.dat')
       WRITE(9,9110)
  9110 FORMAT(
      1  1X,'#  Results from PENMAIN.',
@@ -391,7 +391,7 @@ C  ****  Upbound electrons.
       ENDDO
       CLOSE(9)
 C  ****  Downbound electrons.
-      OPEN(9,FILE='energy-el-down.dat')
+      OPEN(9,FILE='data/energy-el-down.dat')
       WRITE(9,9120)
  9120 FORMAT(
      1  1X,'#  Results from PENMAIN.',
@@ -409,7 +409,7 @@ C  ****  Downbound electrons.
       ENDDO
       CLOSE(9)
 C  ****  Upbound photons.
-      OPEN(9,FILE='energy-ph-up.dat')
+      OPEN(9,FILE='data/energy-ph-up.dat')
       WRITE(9,9130)
  9130 FORMAT(
      1  1X,'#  Results from PENMAIN.',
@@ -427,7 +427,7 @@ C  ****  Upbound photons.
       ENDDO
       CLOSE(9)
 C  ****  Downbound photons.
-      OPEN(9,FILE='energy-ph-down.dat')
+      OPEN(9,FILE='data/energy-ph-down.dat')
       WRITE(9,9140)
  9140 FORMAT(
      1  1X,'#  Results from PENMAIN.',
@@ -445,7 +445,7 @@ C  ****  Downbound photons.
       ENDDO
       CLOSE(9)
 C  ****  Upbound positrons.
-      OPEN(9,FILE='energy-po-up.dat')
+      OPEN(9,FILE='data/energy-po-up.dat')
       WRITE(9,9150)
  9150 FORMAT(
      1  1X,'#  Results from PENMAIN.',
@@ -463,7 +463,7 @@ C  ****  Upbound positrons.
       ENDDO
       CLOSE(9)
 C  ****  Downbound positrons.
-      OPEN(9,FILE='energy-po-down.dat')
+      OPEN(9,FILE='data/energy-po-down.dat')
       WRITE(9,9160)
  9160 FORMAT(
      1  1X,'#  Results from PENMAIN.',
@@ -484,9 +484,9 @@ C
 C  ************  Angular distributions of emerging particles.
 C
       IF(NBPH.EQ.1) THEN
-        OPEN(9,FILE='polar-angle-el.dat')
+        OPEN(9,FILE='data/polar-angle-el.dat')
       ELSE
-        OPEN(9,FILE='angle-el.dat')
+        OPEN(9,FILE='data/angle-el.dat')
       ENDIF
       WRITE(9,9210)
  9210 FORMAT(
@@ -512,9 +512,9 @@ C
       CLOSE(9)
 C
       IF(NBPH.EQ.1) THEN
-        OPEN(9,FILE='polar-angle-ph.dat')
+        OPEN(9,FILE='data/polar-angle-ph.dat')
       ELSE
-        OPEN(9,FILE='angle-ph.dat')
+        OPEN(9,FILE='data/angle-ph.dat')
       ENDIF
       WRITE(9,9220)
  9220 FORMAT(
@@ -540,9 +540,9 @@ C
       CLOSE(9)
 C
       IF(NBPH.EQ.1) THEN
-        OPEN(9,FILE='polar-angle-po.dat')
+        OPEN(9,FILE='data/polar-angle-po.dat')
       ELSE
-        OPEN(9,FILE='angle-po.dat')
+        OPEN(9,FILE='data/angle-po.dat')
       ENDIF
       WRITE(9,9230)
  9230 FORMAT(
@@ -707,7 +707,7 @@ C
 C
 C  ****  Depth-dose distribution.
 C
-        OPEN(9,FILE='depth-dose.dat')
+        OPEN(9,FILE='data/depth-dose.dat')
         WRITE(9,9410)
  9410   FORMAT(
      1     1X,'#  Results from PENMAIN. Depth-dose distribution.',
@@ -760,7 +760,7 @@ C
  3020   FORMAT(/6X,'Maximum dose ... ',1P,E13.6,' +-',E8.1,' eV/g',2X,
      1    '(effic. =',E9.2,')')
 C
-        OPEN(9,FILE='3d-dose.dat')
+        OPEN(9,FILE='data/3d-dose.dat')
         WRITE(9,9420)
  9420   FORMAT(1X,'#  Results from PENMAIN. 3D dose distribution.')
         WRITE(9,9421) DXL(1),DXU(1)
@@ -804,7 +804,7 @@ C
         I2C=(NDB(2)/2)+1
         I3C=(NDB(3)/2)+1
 C
-        OPEN(9,FILE='x-dose.dat')
+        OPEN(9,FILE='data/x-dose.dat')
           WRITE(9,9440)
  9440   FORMAT(
      1     1X,'#  Results from PENMAIN.',
@@ -824,7 +824,7 @@ C
         ENDDO
         CLOSE(9)
 C
-        OPEN(9,FILE='y-dose.dat')
+        OPEN(9,FILE='data/y-dose.dat')
           WRITE(9,9450)
  9450   FORMAT(
      1     1X,'#  Results from PENMAIN.',
@@ -844,7 +844,7 @@ C
         ENDDO
         CLOSE(9)
 C
-        OPEN(9,FILE='z-dose.dat')
+        OPEN(9,FILE='data/z-dose.dat')
           WRITE(9,9460)
  9460   FORMAT(
      1     1X,'#  Results from PENMAIN.',
@@ -1035,7 +1035,7 @@ C
       DIMENSION PARINP(20)
       DIMENSION PMFILE(MAXMAT)
 C
-      OPEN(26,FILE='penmain.dat')  ! Global output/message file.
+      OPEN(26,FILE='data/penmain.dat')  ! Global output/message file.
 C
       DO I=1,3
         PRIM(I)=0.0D0
@@ -1496,6 +1496,7 @@ C
 C
       IF(KPARP.EQ.0) THEN
         LSPEC=.TRUE.  ! Generate the energy spectrum from the source.
+!        CALL GENEVENT(1,1,PTYPE,DECAYPAR,NCNT,NINCREASE)
         CALL SOURCE
         IF(LSPEC) THEN
           NSEB=200
@@ -1542,7 +1543,7 @@ C
         WCR(M)=EABS(2,M)
       ENDDO
       DO IB=1,NB
-        DSMAX(IB)=1.0D20
+        DSMAX(IB)=1.0D0
       ENDDO
 C
       NMAT=0
@@ -1605,7 +1606,7 @@ C  ****  Initialisation of PENELOPE.
 C
       WRITE(6,*) '  Initialising PENELOPE ...'
       IWR=16
-      OPEN(IWR,FILE='material.dat')
+      OPEN(IWR,FILE='data/material.dat')
         INFO=1
         CALL PEINIT(EPMAX,NMAT,IWR,INFO,PMFILE)
       CLOSE(IWR)
@@ -1632,7 +1633,7 @@ C
           WRITE(26,'(''File '',A20,'' could not be opened.'')') PFILE
           STOP
         ENDIF
-        OPEN(16,FILE='geometry.rep')
+        OPEN(16,FILE='data/geometry.rep')
         CALL GEOMIN(PARINP,NPINP,NMATG,NBODY,15,16)
         CLOSE(15)
         CLOSE(16)

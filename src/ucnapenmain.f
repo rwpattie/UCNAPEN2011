@@ -610,36 +610,9 @@ C
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
       INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
+      TSEC = 0.0
 C
-      CALL HLIMIT(NWPAWC) ! A FEW PAW FORUMS SUGGEST THIS FOR MAKING
-      IQUEST(10) = 65000  ! BIGGER NTUPLES. KINDA WORKS BUT STILL 
-                          ! LIMITED.
-       CALL HROPEN(1,'EVENT','test.hbook','NQE',1024,IERR)
-! c      if(NTYPE.NE.10)THEN
-       CALL HBOOKN(34,'DECAYS',nentries,'//EVENT',1024,DTAGS) 
-c      ELSE 
-c        CALL HBOOKN(34,'DECAYS',ngentries,'//EVENT',1024,GETAGS)
-c      ENDIF
-C      ELSE IF(DTYPE.EQ.2)THEN
-c        CALL HBOOKN(34,'DECAYS',nCDentries,'//EVENT',1024,CDTAGS)
-c      ENDIF
-      CALL HBOOK1(100,'INTIAL BETA DECAY SPECTRUM',300,0.,3000.,0.)
-      CALL HBOOK1(110,'THROWN ASYMMETRY',100,0.,1000.,0.)
-      CALL HBOOK1(120,'MEASURED ASYMMETRY (RAW)',100,0.,1000.,0.)
-      CALL HBOOK1(130,'RAW MWPC SPECTRUM - EAST',100,0.,1000.,0.)
-      CALL HBOOK1(140,'RAW MWCP SPECTRUM - WEST',100,0.,1000.,0.)
-      CALL HBOOK1(150,'RAW PMT SPECTRUM - EAST',100,0.,1000.,0.)
-      CALL HBOOK1(160,'RAW PMT SPECTRUM - WEST',100,0.,1000.,0.)
-      CALL HBOOK1(170,'RAW MYLAR SPECTRUM - EAST',100,0.,1000.,0.)
-      CALL HBOOK1(180,'RAW MYLAR SPECTRUM - WEST',100,0.,1000.,0.)
-      CALL HBOOK1(190,'SPECTRUM HITS',100,0.,1000.,0.)
-      CALL HBOOK1(195,'PHOTON ELECTRONS',36,0.,360.,0.)
-      CALL HBOOK1(200,'BACKSCATTER ENERGY SPECTRUM',100,0.,1000.,0.)
-      CALL HBOOK2(210,'BACKSCATTER ENERGY VS ANGLE SPECTRUM',100,0.,
-     +                1000.,100,0.,1.,0.)
-      CALL HBOOK1(220,'ANGLUAR DISTRIBUTION OF BACKSCATTERS',100,0.,
-     +                1.,0.)
-
+      CALL BUILDHBOOK()
 C
 C  ****  Read input files and initialize the simulation packages.
 C
@@ -650,41 +623,30 @@ C  ****  Simulation of a new shower and scoring.
 C
   101 CONTINUE
       CALL SHOWER
+      IF(MOD(INT(SHN),100).EQ.0)
+     1 PRINT*,'AT EVENT = ',INT(SHN),INT(DSHN),TSEC,TSECA
       IF(JOBEND.NE.0) GO TO 102  ! The simulation is completed.
 C
 C  ****  End the simulation after the allotted time or after completing
 C        DSHN showers.
 C
       CALL TIMER(TSEC)
-      IF(TSEC.LT.TSECA.AND.SHN.LT.DSHN) THEN
-C  ****  Write partial results after each dumping period.
-        IF(LDUMP) THEN
-          IF(TSEC-TSECAD.GT.DUMPP) THEN
-            TSECAD=TSEC
-            TSIM=TSIM+CPUTIM()-CPUT0
-            CALL PMWRT(-1)
-            WRITE(6,1001) SHN
- 1001       FORMAT(3X,'Number of simulated showers =',1P,E14.7)
-            CPUT0=CPUTIM()
-            GO TO 101
-          ENDIF
-        ENDIF
-        GO TO 101
-      ENDIF
+      IF(TSEC.LT.TSECA.AND.SHN.LT.DSHN) GO TO 101
 C
   102 CONTINUE
       TSIM=TSIM+CPUTIM()-CPUT0
   103 CONTINUE
       CALL PMWRT(1)
-      WRITE(6,1002) SHN
- 1002 FORMAT(3X,'Number of simulated showers =',1P,E14.7,
-     1  /3X,'*** END ***')
+!       WRITE(6,1002) SHN
+!  1002 FORMAT(3X,'Number of simulated showers =',1P,E14.7,
+!      1  /3X,'*** END ***')
+     
       CALL HROUT(0,ICYCLE,' ')
       CALL HPRINT(34)
-      CALL HPRINT(150)
+      CALL HPRINT(100)
       CALL HPRINT(195)
       CALL HREND('EVENT')
-     
+
       STOP
       END
 
@@ -696,18 +658,328 @@ C
 C  Simulates a new shower and keeps score of relevant quantities.
 C
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
-      LOGICAL LINTF
       INCLUDE 'pmcomms.f'
+      INCLUDE 'ucnapenmain.h'
+      LOGICAL LINTF
       EXTERNAL RAND
+      EXTERNAL DELTAT
 C
 C  ------------------------  Shower simulation starts here.
 C
 C  ************  Primary particle counters.
-C
+C     
+      CALL TIMER(EVENTSTART) ! Start timer for each particle
+      EFOILE = 0.  ! ENERGY IN EAST DECAY TRAP FOIL
+      EFOILW = 0.  ! WEST DECAY TRAP FOIL
+      DTYPE  = 1.  ! DETECTOR TYPE LATER MOVE THIS TO THE INPUT FILE
       
-  101 CONTINUE
+C  101 CONTINUE
 c     write(6,*) ISEED1,ISEED2
-      DO I=1,3
+      CALL CLEANS          ! Cleans the secondary stack.
+C
+C  **********  Set the initial state of the primary particle.
+C
+  201 CONTINUE
+  
+      CALL SHOWER_START
+      CALL GENEVENT(1,INT(SHN),PTYPE,DECAYPAR,NCNT,NINCREASE)
+      CALL INITIALIZE_EVENT(INT(SHN))
+      CALL START           ! Starts simulation in current medium.
+C
+C  ****  Check if the trajectory intersects the material system.
+C
+  302 CONTINUE
+      CALL LOCATE
+C ---- ALLOW GAMMAS TO TAKE A HUGE STEP.      
+      IF(MAT.EQ.0.AND.KPAR.EQ.2) THEN
+        IBODYL=IBODY
+        CALL STEP(1.0D30,DSEF,NCROSS)
+        IF(MAT.EQ.0) THEN  ! The particle does not enter the system.
+          IF(W.GT.0) THEN
+            IEXIT=1        ! Labels emerging upbound particles.
+          ELSE
+            IEXIT=2        ! Labels emerging downbound particles.
+          ENDIF
+          GO TO 104        ! Exit.
+        ENDIF
+C  ---- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+C  ----  Impact detectors.
+        CALL IMPACT_DETECTOR2(IBODYL)
+C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      ENDIF
+      
+      IMAT = MAT
+      WO   = W
+C     
+      IF(E.LT.EABSB(KPAR,IBODY)) THEN  ! The energy is too low.
+        DEP=E*WGHT
+        DEBO(IBODY)=DEBO(IBODY)+DEP
+        IEXIT=3
+        CALL DOSEBOX(DEP)
+        GO TO 104
+      ENDIF
+C  ---------------------------------------------------------------------
+C  ------------------------  Track simulation begins here.
+C  >>>>>>>>>>>>  Particle splitting and Russian roulette  >>>>>>>>>>>>>>
+C  ...  only for particles read from phase-space files.
+      IF(LPSF) THEN
+C  ----  Russian roulette (weight window).
+        IF(WGHT.LT.WGMIN) THEN
+          PKILL=1.0D0-WGHT*RWGMIN
+          CALL VKILL(PKILL)
+          IF(E.LT.1.0D0) GO TO 201
+        ENDIF
+C  ----  Splitting.
+        NSPL1=MAX(MIN(NSPLIT,INT(MIN(1.0D5,WGHT*RWGMIN))),1)
+        IF(NSPL1.GT.1) THEN
+          CALL VSPLIT(NSPL1)
+C  ----  Energy is locally deposited in the material.
+          DEP=(NSPL1-1)*E*WGHT
+          DEBO(IBODY)=DEBO(IBODY)+DEP
+          CALL DOSEBOX(DEP)
+        ENDIF
+      ENDIF
+C  <<<<<<<<<<<<  Particle splitting and Russian roulette  <<<<<<<<<<<<<<
+
+  102 CONTINUE
+      EABS(KPAR,MAT)=EABSB(KPAR,IBODY)
+C
+C  ************  The particle energy is less than EABS.
+C
+      IF(E.LT.EABS(KPAR,MAT)) THEN  ! The particle is absorbed.
+        DEP=E*WGHT
+C  ----  Energy is locally deposited in the material.
+        DEBO(IBODY)=DEBO(IBODY)+DEP
+        CALL DOSEBOX(DEP)
+        IEXIT=3                     ! Labels absorbed particles.
+        GO TO 104                   ! Exit.
+      ENDIF
+C
+C
+  103 CONTINUE
+      IBODYL=IBODY
+c      write(46,'(3i3,1x,5e11.3,1x,i3)')
+c     1    N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+C
+C ---- DETERMINE THE FIELD USING THE PENELOPE EMFIELDS FUNCTION TPEMF0
+C     
+      CALL TPEMF0(ULDV,ULDE,ULEM,DSMAX)
+C      
+      IF(LFORCE(IBODY,KPAR).AND.((WGHT.GE.WLOW(IBODY,KPAR)).AND.
+     1  (WGHT.LE.WHIG(IBODY,KPAR)))) THEN
+        CALL JUMPF(DSMAX(IBODY),DS)  ! Interaction forcing.
+        LINTF=.TRUE.
+      ELSE
+        CALL JUMP(DSMAX(IBODY),DS)   ! Analogue simulation.
+        LINTF=.FALSE.
+      ENDIF
+C
+C  ----  TAKE A SET BASED ON FIELDS FROM TPEMF0 AND THE JUMP DISTANCE
+C        DS
+C
+      IF(MAT.EQ.0)THEN
+         ! IN VACUUM STEP 1 CM 
+         CALL TPEMF1(1.0,DSEF,NCROSS)
+      ELSE
+         CALL TPEMF1(DS,DSEF,NCROSS)
+      ENDIF
+C  ----   INCREMENT TIME OF FLIGHT   
+      TIME = TIME + DELTAT(DS,E)      
+C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      CALL ENERGYFLUENCE(DSEF,BODYL)
+      CALL IMPACT_DETECTOR2(BODYL)
+      
+C     
+C  ----  If the particle has crossed an interface, restart the track in
+C        the new material.
+      IF(NCROSS.GT.0)THEN
+         CALL SETCOSTHETAS(IMAT,WO)
+         GO TO 102    ! The particle crossed an interface.
+      ENDIF
+      IF(MAT.NE.0)THEN
+        IF(LINTF) THEN
+          CALL KNOCKF(DE,ICOL)       ! Interaction forcing is active.
+        ELSE
+          CALL KNOCK(DE,ICOL)        ! Analogue simulation.
+        ENDIF
+      ENDIF
+      DEP=DE*WGHT
+C  ----  Energy is locally deposited in the material.
+      DEBO(IBODY)=DEBO(IBODY)+DEP
+      CALL DOSEBOX(DEP) ! PENELOPE CODE TO FILL TEXT DATA OUTPUT...
+C      
+c  ---- Fill Check the Energy Loss.
+      IF(DEP.GT.0)CALL RECORD_ENERGYLOSS(DTYPE,DEP,EFOILE,EFOILW,DS)
+c  
+      IF(E.LT.EABS(KPAR,MAT).OR.MAT.EQ.0) THEN  ! The particle has been absorbed.
+        IEXIT=3                     ! Labels absorbed particles.
+        AE = E
+        AX = X
+        AY = Y
+        AZ = Z
+        AU = U
+        AV = V
+        AW = W
+        GO TO 104                   ! Exit.
+      ENDIF
+C     
+      GO TO 103
+C  ------------------------  The simulation of the track ends here.
+C  ---------------------------------------------------------------------
+  104 CONTINUE
+C
+C  ************  Increment particle counters.
+C
+      IF(ILB(1).EQ.1) THEN
+        DPRIM(IEXIT)=DPRIM(IEXIT)+WGHT
+      ELSE
+        DSEC(KPAR,IEXIT)=DSEC(KPAR,IEXIT)+WGHT
+      ENDIF
+C
+      IF(IEXIT.LT.3) THEN
+        CALL COLLECTEMERGE
+      ENDIF
+C
+C  ************  Any secondary left?
+C
+  202 CONTINUE
+      CALL SECPAR(LEFT)
+      IF(LEFT.GT.0) THEN
+        IF(ILB(1).EQ.-1) THEN  ! Primary particle from SOURCE.
+          ILB(1)=1  ! Energy is not removed from the site.
+          IF(LSPEC) THEN
+            KE=E*RDSHE+1.0D0
+            SHIST(KE)=SHIST(KE)+1.0D0
+          ENDIF
+          GO TO 302
+        ENDIF        
+        IF(E.GT.EABSB(KPAR,IBODY)) THEN
+          DEBO(IBODY)=DEBO(IBODY)-E*WGHT  ! Energy is removed.
+          IF(LDOSEM) THEN  ! Particle inside the dose box.
+            IF((X.GT.DXL(1).AND.X.LT.DXU(1)).AND.
+     1         (Y.GT.DXL(2).AND.Y.LT.DXU(2)).AND.
+     1         (Z.GT.DXL(3).AND.Z.LT.DXU(3))) THEN
+              I1=1.0D0+(X-DXL(1))*RBDOSE(1)
+              I2=1.0D0+(Y-DXL(2))*RBDOSE(2)
+              I3=1.0D0+(Z-DXL(3))*RBDOSE(3)
+              DOSP=E*WGHT*RHOI(MAT)
+              DOSEP(I1,I2,I3)=DOSEP(I1,I2,I3)-DOSP
+              DDOSEP(I3)=DDOSEP(I3)-DOSP
+            ENDIF
+          ENDIF          
+        ELSE
+          GO TO 202
+        ENDIF
+        GO TO 102
+      ENDIF
+C
+C  ----  Energies deposited in different bodies and detectors.
+C
+      call timer(eventend)
+      tracktime = eventend - eventstart
+      
+      CALL FILLBETATREE(EFOILE,EFOILW,PTYPE,1)
+C     
+C  ----  Tallying the spectra from energy-deposition detectors.
+
+      CALL TALLYSPECTRA
+C
+C  ------------------------  The simulation of the shower ends here.
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      IF(SHN.GT.DSHN)JOBEND=1
+     
+      RETURN
+      END
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+C-----------------------------------------------------------------------C
+      SUBROUTINE GENEVENT(NTYPE,NPAR,PTYPE,DECAYPAR,NCNT,NINCREASE)
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      EXTERNAL RAND
+      COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
+      COMMON/PROTON/EPr,XPr,YPr,ZPr,UPr,VPr,WPr
+      PARAMETER(PI=3.1415926535897932D0)
+      DIMENSION DECAYPAR(12)
+      REAL DECAYPAR
+C-----------------------------------------------------------------------C
+      RUNFRAC = RAND(1.d0) !REAL(NPAR)/REAL(NPARMAX)
+      DNCNT = 1
+      NINCREASE = 1000
+      IF(NTYPE.EQ.1.OR.NTYPE.EQ.10)THEN
+         CALL PROTONS(DECAYPAR)
+         KPAR=1
+         WGHT = 1.0
+         PTYPE=0
+C         write(6,'(3i3,1x,5e11.3)')N,KPAR,ILB(1),X,Y,Z,W,E
+         CALL HFILL(100,real(E/1000.),0.,1.) ! FILL INITIAL ENERGY HISTOGRAMS
+      ELSEIF(NTYPE.EQ.2)THEN
+         CALL TIN_DECAY             ! GENERATING Events from Tin 113
+         PTYPE=1
+      ELSEIF(NTYPE.EQ.3)THEN
+         CALL AL_DECAY(NPAR)
+      ELSEIF(NTYPE.EQ.4)THEN
+         CALL GAMMA_SOURCE(EGAMMA,XG,YG,ZG,ALPHAG,THETAG)
+      ELSEIF(NTYPE.EQ.5)THEN
+         CALL BI_DECAY
+         IF(E.LT.7.E5)THEN
+             PTYPE=2
+         ELSE 
+             PTYPE=3
+         ENDIF
+      ELSEIF(NTYPE.EQ.6)THEN
+C     SIMULATES ALL THREE SOURCES IN THE SPECTROMETERS CENTER
+         IF(RUNFRAC.LT.0.25)THEN
+           CALL TIN_DECAY
+           PTYPE=1
+         ELSE IF(RUNFRAC.GE.0.25.AND.RUNFRAC.LT.0.50)THEN
+           CALL BI_DECAY
+c           call xe_135_decay(PTYPE)
+           IF(E.LT.7.E5)THEN
+             PTYPE=2
+           ELSE
+             PTYPE=3
+           ENDIF
+         ELSE IF(RUNFRAC.GE.0.50.AND.RUNFRAC.LE.0.75)THEN
+           CALL CE_DECAY
+           PTYPE=4
+         ELSE IF(RUNFRAC.GE.0.75.AND.RUNFRAC.LE.1.00)THEN
+           CALL SR_DECAY
+           PTYPE=5
+         ENDIF
+      ELSEIF(NTYPE.EQ.7)THEN
+         Counter = NCNT
+         E =  7.1d4*NINCREASE
+         THETA2 = 1. - 2.*RAND(1.d0)
+         PSI2   = 2*PI*RAND(1.d0)
+         W = THETA2
+         U = DCOS(PSI2)*DSIN(DACOS(THETA2))
+         V = DSIN(PSI2)*DSIN(DACOS(THETA2))
+1010     continue
+         x = 0.1!6.0*(1.0 - 2.0*Rand(1.d0))
+         y = 0.1!6.0*(1.0 - 2.0*Rand(1.d0))
+         if(sqrt(x*x+y*y).gt.6.0)goto 1010
+         Z = 1!140. - 280.*RAND(1.d0)
+         KPAR = 1
+         PTYPE= DNCNT
+      ELSEIF(NTYPE.EQ.8)THEN
+         CALL CU_CAPTURE(NPAR)
+         KPAR = 2
+      ELSEIF(NTYPE.EQ.9)THEN
+         CALL CD_DECAY()
+      ENDIF
+      
+      RETURN
+      END
+C--------------------------------------------------------------------------------C
+      SUBROUTINE SHOWER_START
+C--------------------------------------------------------------------------------C      
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      LOGICAL LINTF
+      INCLUDE 'pmcomms.f'
+      INCLUDE 'ucnapenmain.h'
+c      COMMON/PROTON/EPr,XPr,YPr,ZPr,UPr,VPr,WPr
+      EXTERNAL RAND
+      
+        DO I=1,3
         DPRIM(I)=0.0D0
         DO K=1,3
           DSEC(K,I)=0.0D0
@@ -724,15 +996,11 @@ C
         ENDDO
       ENDIF
       IEXIT=0
-C
-      CALL CLEANS          ! Cleans the secondary stack.
-C
-C  **********  Set the initial state of the primary particle.
-C
-  201 CONTINUE
+      
       IF(KPARP.EQ.0) THEN
 C  ****  User-defined source.
-        CALL SOURCE
+        !CALL SOURCE
+!         CALL GENEVENT(1,INT(SHN),PTYPE,DECAYPAR,NCNT,NINCREASE)
         SHN=SHN+1.0D0
         N=N+1
         IF(N.GT.2000000000) N=N-2000000000
@@ -740,8 +1008,8 @@ C  ****  User-defined source.
           KE=E*RDSHE+1.0D0
           SHIST(KE)=SHIST(KE)+1.0D0
         ENDIF
-c     write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1p,5e11.3,0p,i3)')
-c    1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
+C      write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1x,5e11.3,1x,i3)')
+C     1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
       ELSE IF(LPSF) THEN
 C  ****  Phase-space file.
         CALL RDPSF(IPSFI,NSHI,ISEC,KODEPS)
@@ -765,7 +1033,7 @@ c    2    NSHI,ISEC,KODEPS
 c       write(35,'(i2,1p,8e13.5,i3,i2,i2,i9,i9,2i3)')
 c    1    KPAR,E,X,Y,Z,U,V,W,WGHT,ILB(1),ILB(2),ILB(3),ILB(4),
 c    2    NSHI,ISEC,KODEPS
-          GO TO 101
+          RETURN !GO TO 101
         ENDIF
  3040   FORMAT(2X,'Number of simulated showers =',1P,E14.7)
  1904   FORMAT(/3X,'+ The phase-space file ',A20,' is opened.')
@@ -854,520 +1122,9 @@ C  ----  Initial energy ...
           IPOL=0
         ENDIF
       ENDIF
-      CALL START           ! Starts simulation in current medium.
-C
-C  ****  Check if the trajectory intersects the material system.
-C
-  302 CONTINUE
-      CALL LOCATE
-C     
-      CALL TPEMF0(ULDV,ULDE,ULEM,DSMAX)
-      IF(MAT.EQ.0) THEN
-        IBODYL=IBODY
-        CALL JUMP(DSMAX,DS)
-        CALL TPEMF1(DS,DSEF,NCROSS)
-        !CALL STEP(1.0D30,DSEF,NCROSS)
-        IF(MAT.EQ.0) THEN  ! The particle does not enter the system.
-          IF(W.GT.0) THEN
-            IEXIT=1        ! Labels emerging upbound particles.
-          ELSE
-            IEXIT=2        ! Labels emerging downbound particles.
-          ENDIF
-          GO TO 104        ! Exit.
-        ENDIF
-
-C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-C  ----  Impact detectors.
-        IDET=KDET(IBODY)
-        IF(IDET.NE.0) THEN
-          IF(KDET(IBODYL).NE.IDET.AND.KKDI(IDET,KPAR).EQ.1) THEN
-C
-            IF(IPSF(IDET).EQ.1) THEN
-              NSHJ=SHN-RLAST
-              CALL WRPSF(IPSFO,NSHJ,0)
-              RWRITE=RWRITE+1.0D0
-              RLAST=SHN
-            ENDIF
-C
-            DEDI(IDET)=DEDI(IDET)+E*WGHT
-            IF(LDILOG(IDET)) THEN
-              IE=1.0D0+(LOG(E)-EDILL(IDET))*RBDIEL(IDET)
-            ELSE
-              IE=1.0D0+(E-EDIL(IDET))*RBDIE(IDET)
-            ENDIF
-            IF(IE.GT.0.AND.IE.LE.NDICH(IDET)) THEN
-              IF(N.NE.LDIT(IDET,IE)) THEN
-                DIT(IDET,IE)=DIT(IDET,IE)+DITP(IDET,IE)
-                DIT2(IDET,IE)=DIT2(IDET,IE)+DITP(IDET,IE)**2
-                DITP(IDET,IE)=WGHT
-                LDIT(IDET,IE)=N
-              ELSE
-                DITP(IDET,IE)=DITP(IDET,IE)+WGHT
-              ENDIF
-              IF(N.NE.LDIP(IDET,IE,KPAR)) THEN
-                DIP(IDET,IE,KPAR)=DIP(IDET,IE,KPAR)+DIPP(IDET,IE,KPAR)
-                DIP2(IDET,IE,KPAR)=
-     1              DIP2(IDET,IE,KPAR)+DIPP(IDET,IE,KPAR)**2
-                DIPP(IDET,IE,KPAR)=WGHT
-                LDIP(IDET,IE,KPAR)=N
-              ELSE
-                DIPP(IDET,IE,KPAR)=DIPP(IDET,IE,KPAR)+WGHT
-              ENDIF
-            ENDIF
-            IF(IDCUT(IDET).EQ.0) THEN
-              DEBO(IBODY)=DEBO(IBODY)+E*WGHT
-              IEXIT=3
-              GO TO 104
-            ENDIF
-          ENDIF
-        ENDIF
-C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-      ENDIF
-C
-      IF(E.LT.EABSB(KPAR,IBODY)) THEN  ! The energy is too low.
-        DEP=E*WGHT
-        DEBO(IBODY)=DEBO(IBODY)+DEP
-        IF(LDOSEM) THEN  ! Particle inside the dose box.
-          IF((X.GT.DXL(1).AND.X.LT.DXU(1)).AND.
-     1       (Y.GT.DXL(2).AND.Y.LT.DXU(2)).AND.
-     1       (Z.GT.DXL(3).AND.Z.LT.DXU(3))) THEN
-            I1=1.0D0+(X-DXL(1))*RBDOSE(1)
-            I2=1.0D0+(Y-DXL(2))*RBDOSE(2)
-            I3=1.0D0+(Z-DXL(3))*RBDOSE(3)
-            DOSP=DEP*RHOI(MAT)
-            IF(N.NE.LDOSE(I1,I2,I3)) THEN
-              DOSE(I1,I2,I3)=DOSE(I1,I2,I3)+DOSEP(I1,I2,I3)
-              DOSE2(I1,I2,I3)=DOSE2(I1,I2,I3)+DOSEP(I1,I2,I3)**2
-              DOSEP(I1,I2,I3)=DOSP
-              LDOSE(I1,I2,I3)=N
-            ELSE
-              DOSEP(I1,I2,I3)=DOSEP(I1,I2,I3)+DOSP
-            ENDIF
-C
-            IF(N.NE.LDDOSE(I3)) THEN
-              DDOSE(I3)=DDOSE(I3)+DDOSEP(I3)
-              DDOSE2(I3)=DDOSE2(I3)+DDOSEP(I3)**2
-              DDOSEP(I3)=DOSP
-              LDDOSE(I3)=N
-            ELSE
-              DDOSEP(I3)=DDOSEP(I3)+DOSP
-            ENDIF
-          ENDIF
-        ENDIF
-        IEXIT=3
-        GO TO 104
-      ENDIF
-C  ---------------------------------------------------------------------
-C  ------------------------  Track simulation begins here.
-C
-
-C  >>>>>>>>>>>>  Particle splitting and Russian roulette  >>>>>>>>>>>>>>
-C  ...  only for particles read from phase-space files.
-      IF(LPSF) THEN
-C  ----  Russian roulette (weight window).
-        IF(WGHT.LT.WGMIN) THEN
-          PKILL=1.0D0-WGHT*RWGMIN
-          CALL VKILL(PKILL)
-          IF(E.LT.1.0D0) GO TO 201
-        ENDIF
-C  ----  Splitting.
-        NSPL1=MAX(MIN(NSPLIT,INT(MIN(1.0D5,WGHT*RWGMIN))),1)
-        IF(NSPL1.GT.1) THEN
-          CALL VSPLIT(NSPL1)
-C  ----  Energy is locally deposited in the material.
-          DEP=(NSPL1-1)*E*WGHT
-          DEBO(IBODY)=DEBO(IBODY)+DEP
-          IF(LDOSEM) THEN  ! Particle inside the dose box.
-            IF((X.GT.DXL(1).AND.X.LT.DXU(1)).AND.
-     1         (Y.GT.DXL(2).AND.Y.LT.DXU(2)).AND.
-     1         (Z.GT.DXL(3).AND.Z.LT.DXU(3))) THEN
-              I1=1.0D0+(X-DXL(1))*RBDOSE(1)
-              I2=1.0D0+(Y-DXL(2))*RBDOSE(2)
-              I3=1.0D0+(Z-DXL(3))*RBDOSE(3)
-              DOSP=DEP*RHOI(MAT)
-              IF(N.NE.LDOSE(I1,I2,I3)) THEN
-                DOSE(I1,I2,I3)=DOSE(I1,I2,I3)+DOSEP(I1,I2,I3)
-                DOSE2(I1,I2,I3)=DOSE2(I1,I2,I3)+DOSEP(I1,I2,I3)**2
-                DOSEP(I1,I2,I3)=DOSP
-                LDOSE(I1,I2,I3)=N
-              ELSE
-                DOSEP(I1,I2,I3)=DOSEP(I1,I2,I3)+DOSP
-              ENDIF
-C
-              IF(N.NE.LDDOSE(I3)) THEN
-                DDOSE(I3)=DDOSE(I3)+DDOSEP(I3)
-                DDOSE2(I3)=DDOSE2(I3)+DDOSEP(I3)**2
-                DDOSEP(I3)=DOSP
-                LDDOSE(I3)=N
-              ELSE
-                DDOSEP(I3)=DDOSEP(I3)+DOSP
-              ENDIF
-            ENDIF
-          ENDIF
-        ENDIF
-      ENDIF
-C  <<<<<<<<<<<<  Particle splitting and Russian roulette  <<<<<<<<<<<<<<
-
-  102 CONTINUE
-      EABS(KPAR,MAT)=EABSB(KPAR,IBODY)
-C
-C  ************  The particle energy is less than EABS.
-C
-      IF(E.LT.EABS(KPAR,MAT)) THEN  ! The particle is absorbed.
-        DEP=E*WGHT
-C  ----  Energy is locally deposited in the material.
-        DEBO(IBODY)=DEBO(IBODY)+DEP
-        IF(LDOSEM) THEN  ! Particle inside the dose box.
-          IF((X.GT.DXL(1).AND.X.LT.DXU(1)).AND.
-     1       (Y.GT.DXL(2).AND.Y.LT.DXU(2)).AND.
-     1       (Z.GT.DXL(3).AND.Z.LT.DXU(3))) THEN
-            I1=1.0D0+(X-DXL(1))*RBDOSE(1)
-            I2=1.0D0+(Y-DXL(2))*RBDOSE(2)
-            I3=1.0D0+(Z-DXL(3))*RBDOSE(3)
-            DOSP=DEP*RHOI(MAT)
-            IF(N.NE.LDOSE(I1,I2,I3)) THEN
-              DOSE(I1,I2,I3)=DOSE(I1,I2,I3)+DOSEP(I1,I2,I3)
-              DOSE2(I1,I2,I3)=DOSE2(I1,I2,I3)+DOSEP(I1,I2,I3)**2
-              DOSEP(I1,I2,I3)=DOSP
-              LDOSE(I1,I2,I3)=N
-            ELSE
-              DOSEP(I1,I2,I3)=DOSEP(I1,I2,I3)+DOSP
-            ENDIF
-C
-            IF(N.NE.LDDOSE(I3)) THEN
-              DDOSE(I3)=DDOSE(I3)+DDOSEP(I3)
-              DDOSE2(I3)=DDOSE2(I3)+DDOSEP(I3)**2
-              DDOSEP(I3)=DOSP
-              LDDOSE(I3)=N
-            ELSE
-              DDOSEP(I3)=DDOSEP(I3)+DOSP
-            ENDIF
-          ENDIF
-        ENDIF
-        IEXIT=3                     ! Labels absorbed particles.
-        GO TO 104                   ! Exit.
-      ENDIF
-C
-C
-  103 CONTINUE
-      IBODYL=IBODY
-c     write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1p,5e11.3,0p,i3)')
-c    1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
-C
-      CALL TPEMF0(ULDV,ULDE,ULEM,DSMAX)
-      IF(LFORCE(IBODY,KPAR).AND.((WGHT.GE.WLOW(IBODY,KPAR)).AND.
-     1  (WGHT.LE.WHIG(IBODY,KPAR)))) THEN
-        CALL JUMPF(DSMAX(IBODY),DS)  ! Interaction forcing.
-        LINTF=.TRUE.
-      ELSE
-        CALL JUMP(DSMAX(IBODY),DS)   ! Analogue simulation.
-        LINTF=.FALSE.
-      ENDIF
-      CALL TPEMF1(DS,DSEF,NCROSS)
-      !CALL STEP(DS,DSEF,NCROSS)      ! Determines step end position.
-
-C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-C  ----  Energy distribution of fluence.
-      IDET=KDET(IBODYL)
-      IF(IDET.NE.0) THEN
-        IF(IDCUT(IDET).EQ.2) THEN
-          IF(KKDI(IDET,KPAR).EQ.1) THEN
-            IF(LDILOG(IDET)) THEN
-              IE=1.0D0+(LOG(E)-EDILL(IDET))*RBDIEL(IDET)
-            ELSE
-              IE=1.0D0+(E-EDIL(IDET))*RBDIE(IDET)
-            ENDIF
-            IF(IE.GT.0.AND.IE.LE.NDICH(IDET)) THEN
-              IF(N.NE.LFST(IDET,IE)) THEN
-                FST(IDET,IE)=FST(IDET,IE)+FSTP(IDET,IE)
-                FST2(IDET,IE)=FST2(IDET,IE)+FSTP(IDET,IE)**2
-                FSTP(IDET,IE)=WGHT*DSEF
-                LFST(IDET,IE)=N
-              ELSE
-                FSTP(IDET,IE)=FSTP(IDET,IE)+WGHT*DSEF
-              ENDIF
-              IF(N.NE.LFSP(IDET,IE,KPAR)) THEN
-                FSP(IDET,IE,KPAR)=FSP(IDET,IE,KPAR)+FSPP(IDET,IE,KPAR)
-                FSP2(IDET,IE,KPAR)=
-     1              FSP2(IDET,IE,KPAR)+FSPP(IDET,IE,KPAR)**2
-                FSPP(IDET,IE,KPAR)=WGHT*DSEF
-                LFSP(IDET,IE,KPAR)=N
-              ELSE
-                FSPP(IDET,IE,KPAR)=FSPP(IDET,IE,KPAR)+WGHT*DSEF
-              ENDIF
-            ENDIF
-          ENDIF
-        ENDIF
-      ENDIF
-C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-C  ----  Check whether the particle is outside the enclosure.
-      IF(MAT.EQ.0) THEN
-        IF(W.GT.0) THEN
-          IEXIT=1        ! Labels emerging upbound particles.
-        ELSE
-          IEXIT=2        ! Labels emerging downbound particles.
-        ENDIF
-        GO TO 104        ! Exit.
-      ENDIF
-
-C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-C  ----  Impact detectors.
-      IDET=KDET(IBODY)
-      IF(IDET.NE.0) THEN
-        IF(KDET(IBODYL).NE.IDET.AND.KKDI(IDET,KPAR).EQ.1) THEN
-C
-          IF(IPSF(IDET).EQ.1) THEN
-            NSHJ=SHN-RLAST
-            CALL WRPSF(IPSFO,NSHJ,0)
-            RWRITE=RWRITE+1.0D0
-            RLAST=SHN
-          ENDIF
-C
-          DEDI(IDET)=DEDI(IDET)+E*WGHT
-          IF(LDILOG(IDET)) THEN
-            IE=1.0D0+(LOG(E)-EDILL(IDET))*RBDIEL(IDET)
-          ELSE
-            IE=1.0D0+(E-EDIL(IDET))*RBDIE(IDET)
-          ENDIF
-          IF(IE.GT.0.AND.IE.LE.NDICH(IDET)) THEN
-            IF(N.NE.LDIT(IDET,IE)) THEN
-              DIT(IDET,IE)=DIT(IDET,IE)+DITP(IDET,IE)
-              DIT2(IDET,IE)=DIT2(IDET,IE)+DITP(IDET,IE)**2
-              DITP(IDET,IE)=WGHT
-              LDIT(IDET,IE)=N
-            ELSE
-              DITP(IDET,IE)=DITP(IDET,IE)+WGHT
-            ENDIF
-            IF(N.NE.LDIP(IDET,IE,KPAR)) THEN
-              DIP(IDET,IE,KPAR)=DIP(IDET,IE,KPAR)+DIPP(IDET,IE,KPAR)
-              DIP2(IDET,IE,KPAR)=
-     1            DIP2(IDET,IE,KPAR)+DIPP(IDET,IE,KPAR)**2
-              DIPP(IDET,IE,KPAR)=WGHT
-              LDIP(IDET,IE,KPAR)=N
-            ELSE
-              DIPP(IDET,IE,KPAR)=DIPP(IDET,IE,KPAR)+WGHT
-            ENDIF
-          ENDIF
-          IF(IDCUT(IDET).EQ.0) THEN
-            DEBO(IBODY)=DEBO(IBODY)+E*WGHT
-            IEXIT=3
-            GO TO 104
-          ENDIF
-        ENDIF
-      ENDIF
-C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-C  ----  If the particle has crossed an interface, restart the track in
-C        the new material.
-      IF(NCROSS.GT.0) GO TO 102    ! The particle crossed an interface.
-C  ----  Simulate next event.
-      IF(LINTF) THEN
-        CALL KNOCKF(DE,ICOL)       ! Interaction forcing is active.
-      ELSE
-        CALL KNOCK(DE,ICOL)        ! Analogue simulation.
-      ENDIF
-      DEP=DE*WGHT
-C  ----  Energy is locally deposited in the material.
-      DEBO(IBODY)=DEBO(IBODY)+DEP
-!       IF(LDOSEM) THEN  ! The particle is inside the dose box.
-!         IF((X.GT.DXL(1).AND.X.LT.DXU(1)).AND.
-!      1     (Y.GT.DXL(2).AND.Y.LT.DXU(2)).AND.
-!      1     (Z.GT.DXL(3).AND.Z.LT.DXU(3))) THEN
-!           I1=1.0D0+(X-DXL(1))*RBDOSE(1)
-!           I2=1.0D0+(Y-DXL(2))*RBDOSE(2)
-!           I3=1.0D0+(Z-DXL(3))*RBDOSE(3)
-!           DOSP=DEP*RHOI(MAT)
-!           IF(N.NE.LDOSE(I1,I2,I3)) THEN
-!             DOSE(I1,I2,I3)=DOSE(I1,I2,I3)+DOSEP(I1,I2,I3)
-!             DOSE2(I1,I2,I3)=DOSE2(I1,I2,I3)+DOSEP(I1,I2,I3)**2
-!             DOSEP(I1,I2,I3)=DOSP
-!             LDOSE(I1,I2,I3)=N
-!           ELSE
-!             DOSEP(I1,I2,I3)=DOSEP(I1,I2,I3)+DOSP
-!           ENDIF
-! C
-!           IF(N.NE.LDDOSE(I3)) THEN
-!             DDOSE(I3)=DDOSE(I3)+DDOSEP(I3)
-!             DDOSE2(I3)=DDOSE2(I3)+DDOSEP(I3)**2
-!             DDOSEP(I3)=DOSP
-!             LDDOSE(I3)=N
-!           ELSE
-!             DDOSEP(I3)=DDOSEP(I3)+DOSP
-!           ENDIF
-!         ENDIF
-!       ENDIF
-C
-      IF(E.LT.EABS(KPAR,MAT)) THEN  ! The particle has been absorbed.
-        IEXIT=3                     ! Labels absorbed particles.
-        GO TO 104                   ! Exit.
-      ENDIF
-C
-      GO TO 103
-C  ------------------------  The simulation of the track ends here.
-C  ---------------------------------------------------------------------
-  104 CONTINUE
-C
-C  ************  Increment particle counters.
-C
-      IF(ILB(1).EQ.1) THEN
-        DPRIM(IEXIT)=DPRIM(IEXIT)+WGHT
-      ELSE
-        DSEC(KPAR,IEXIT)=DSEC(KPAR,IEXIT)+WGHT
-      ENDIF
-C
-C      IF(IEXIT.LT.3) THEN
-C  ****  Energy distribution of emerging particles.
-!         K=1.0D0+(E-EMIN)*RBSE
-!         IF(K.GT.0.AND.K.LE.NBE) THEN
-!           IF(N.NE.LPDE(KPAR,IEXIT,K)) THEN
-!             PDE(KPAR,IEXIT,K)=PDE(KPAR,IEXIT,K)+PDEP(KPAR,IEXIT,K)
-!             PDE2(KPAR,IEXIT,K)=
-!      1        PDE2(KPAR,IEXIT,K)+PDEP(KPAR,IEXIT,K)**2
-!             PDEP(KPAR,IEXIT,K)=WGHT
-!             LPDE(KPAR,IEXIT,K)=N
-!           ELSE
-!             PDEP(KPAR,IEXIT,K)=PDEP(KPAR,IEXIT,K)+WGHT
-!           ENDIF
-!         ENDIF
-! C  ****  Angular distribution of emerging particles.
-!         THETA=ACOS(W)
-!         KTH=1.0D0+THETA*RA2DE*RBSTH
-!         IF(ABS(U).GT.1.0D-16) THEN  ! Azimuthal bin number corrected.
-!            PHI=ATAN2(V,U)
-!         ELSE IF(ABS(V).GT.1.0D-16) THEN
-!            PHI=ATAN2(V,U)
-!         ELSE
-!            PHI=0.0D0
-!         ENDIF
-!         IF(PHI.LT.0.0D0) PHI=TWOPI+PHI
-!         KPH=1.0D0+PHI*RA2DE*RBSPH
-!         IF(N.NE.LPDA(KPAR,KTH,KPH)) THEN
-!           PDA(KPAR,KTH,KPH)=PDA(KPAR,KTH,KPH)+PDAP(KPAR,KTH,KPH)
-!           PDA2(KPAR,KTH,KPH)=PDA2(KPAR,KTH,KPH)+PDAP(KPAR,KTH,KPH)**2
-!           PDAP(KPAR,KTH,KPH)=WGHT
-!           LPDA(KPAR,KTH,KPH)=N
-!         ELSE
-!           PDAP(KPAR,KTH,KPH)=PDAP(KPAR,KTH,KPH)+WGHT
-!         ENDIF
-C      ENDIF
-C
-C  ************  Any secondary left?
-C
-  202 CONTINUE
-      CALL SECPAR(LEFT)
-      IF(LEFT.GT.0) THEN
-c     write(6,'(/''new secondary'')')
-c     write(6,'(''n,kpar,ilb(1:4),ibody,mat='',i6,4i4,i10,2i4)')
-c    1    N,KPAR,ILB(1),ILB(2),ILB(3),ILB(4),IBODY,MAT
-c     write(6,'(''  ener,x,y,z='',1p,5e14.6)') E,X,Y,Z
-c     write(6,'(''  wght,u,v,w='',1p,5e14.6)') WGHT,U,V,W
-        IF(ILB(1).EQ.-1) THEN  ! Primary particle from SOURCE.
-          ILB(1)=1  ! Energy is not removed from the site.
-          IF(LSPEC) THEN
-            KE=E*RDSHE+1.0D0
-            SHIST(KE)=SHIST(KE)+1.0D0
-          ENDIF
-          GO TO 302
-        ENDIF
-        IF(E.GT.EABSB(KPAR,IBODY)) THEN
-          DEBO(IBODY)=DEBO(IBODY)-E*WGHT  ! Energy is removed.
-!           IF(LDOSEM) THEN  ! Particle inside the dose box.
-!             IF((X.GT.DXL(1).AND.X.LT.DXU(1)).AND.
-!      1         (Y.GT.DXL(2).AND.Y.LT.DXU(2)).AND.
-!      1         (Z.GT.DXL(3).AND.Z.LT.DXU(3))) THEN
-!               I1=1.0D0+(X-DXL(1))*RBDOSE(1)
-!               I2=1.0D0+(Y-DXL(2))*RBDOSE(2)
-!               I3=1.0D0+(Z-DXL(3))*RBDOSE(3)
-!               DOSP=E*WGHT*RHOI(MAT)
-!               DOSEP(I1,I2,I3)=DOSEP(I1,I2,I3)-DOSP
-!               DDOSEP(I3)=DDOSEP(I3)-DOSP
-!             ENDIF
-!           ENDIF
-        ELSE
-          GO TO 202
-        ENDIF
-
-C  >>>>>>>>>>>>>>>>>>>>>>>  Russian roulette  >>>>>>>>>>>>>>>>>>>>>>>>>>
-C  ****  Russian roulette for photons moving downstream.
-cr      IF(KPAR.EQ.2.AND.W.LT.0.0D0) THEN
-cr        IF(WGHT.LT.0.1D0) THEN
-cr          PKILL=0.75D0
-cr          CALL VKILL(PKILL)
-cr          IF(E.LT.EABSB(KPAR,IBODY)) GO TO 202
-cr        ENDIF
-cr      ENDIF
-C  <<<<<<<<<<<<<<<<<<<<<<<  Russian roulette  <<<<<<<<<<<<<<<<<<<<<<<<<<
-
-        GO TO 102
-      ENDIF
-C
-      IF(LPSF) THEN
-        IF(ISEC.EQ.1) GO TO 201
-      ENDIF
-C
-C  ----  Energies deposited in different bodies and detectors.
-C
-C  ----  Tallying the spectra from energy-deposition detectors.
-      IF(NDEDEF.GT.0) THEN
-        DO KD=1,NDEDEF
-          DEDE(KD)=0.0D0
-        ENDDO
-        DO KB=1,NBODY
-          IDET=KBDE(KB)
-          IF(IDET.NE.0) THEN
-            DEDE(IDET)=DEDE(IDET)+DEBO(KB)
-          ENDIF
-        ENDDO
-C
-        DO KD=1,NDEDEF
-          TDED(KD)=TDED(KD)+DEDE(KD)
-          TDED2(KD)=TDED2(KD)+DEDE(KD)**2
-          IF(DEDE(KD).GT.1.0D-5) THEN
-            IF(LDELOG(KD)) THEN
-              KE=1.0D0+(LOG(DEDE(KD))-EDELL(KD))*RBDEEL(KD)
-            ELSE
-              KE=1.0D0+(DEDE(KD)-EDEL(KD))*RBDEE(KD)
-            ENDIF
-            IF(KE.GT.0.AND.KE.LE.NDECH(KD)) THEN
-              DET(KD,KE)=DET(KD,KE)+1.0D0
-            ENDIF
-          ENDIF
-        ENDDO
-      ENDIF
-      DO KB=1,NBODY
-        TDEBO(KB)=TDEBO(KB)+DEBO(KB)
-        TDEBO2(KB)=TDEBO2(KB)+DEBO(KB)**2
-      ENDDO
-C  --  Average energies 'collected' by impact detectors.
-      IF(NDIDEF.GT.0) THEN
-        DO KD=1,NDIDEF
-          TDID(KD)=TDID(KD)+DEDI(KD)
-          TDID2(KD)=TDID2(KD)+DEDI(KD)**2
-        ENDDO
-      ENDIF
-C  --  Final state counters.
-      DO I=1,3
-        PRIM(I)=PRIM(I)+DPRIM(I)
-        PRIM2(I)=PRIM2(I)+DPRIM(I)**2
-        DO K=1,3
-          SEC(K,I)=SEC(K,I)+DSEC(K,I)
-          SEC2(K,I)=SEC2(K,I)+DSEC(K,I)**2
-        ENDDO
-      ENDDO
-C
-C  ------------------------  The simulation of the shower ends here.
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-
+      
       RETURN
       END
-
-
-
-
-
-
 
 
 

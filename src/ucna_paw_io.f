@@ -5,11 +5,10 @@ c----------------------------------------------------------------------c
 c----------------------------------------------------------------------c
       CALL HLIMIT(NWPAWC) ! A FEW PAW FORUMS SUGGEST THIS FOR MAKING
       IQUEST(10) = 65000  ! BIGGER NTUPLES. KINDA WORKS BUT STILL 
-                          ! LIMITED.
-      
+       
       CALL HROPEN(1,'EVENT','test.hbook','NQE',1024,IERR)
 ! c      if(NTYPE.NE.10)THEN
-      CALL HBOOKN(34,'DECAYS',nentries,'//EVENT',1024,DTAGS) 
+      CALL HBOOKN(34,'DECAYS',NENTRIES,'//EVENT',1024,DTAGS) 
 c      ELSE 
 c        CALL HBOOKN(34,'DECAYS',ngentries,'//EVENT',1024,GETAGS)
 c      ENDIF
@@ -36,49 +35,45 @@ c      ENDIF
       RETURN
       END
 C----------------------------------------------------------------------C     
-      SUBROUTINE FILLBETATREE(DECS,EDEP,EFOILE,EFOILW,EAL,PTYPE
-     1                       ,NENTRIES,DTYPE,COSTHETA)
+      SUBROUTINE FILLBETATREE(EFOILE,EFOILW,PTYPE,DTYPE)
 CC---------------------------------------------------------------------C
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      INCLUDE 'ucnapenmain.h'
+      PARAMETER(NB=5000)
       COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
-      COMMON/MWPC/ECX(170),ECY(170),WCX(170),WCY(170)
-      COMMON/NPEBL/PHTE,PHTW,PHTEN,PHTWN,PTOF,wi,wim,TIME
-      COMMON/TRGT/TRGEAST(10),TRGWEST(10)
-      COMMON/ABORT/TRACKTIME,ABOR,AX,AY,AZ,AU,AV,AW
-      COMMON/PROTON/EP,XP,YP,ZP,UP,VP,WP
-      REAL DECS,COSTHETA
-      DIMENSION EDEP(500)
-      DIMENSION DECS(nentries)
-      DIMENSION COSTHETA(12)
+      COMMON/CNT1/TDEBO(NB),TDEBO2(NB),DEBO(NB)
       EXTERNAL POSIT,DETREP
 C----------------------------------------------------------------------C
-
-      ! SCINTILLATOR
-           DECS(14) = REAL(EDEP(398))
-           DECS(13) = REAL(EDEP(416))
-        ! DEAD LAYERS
-           DECS(50) = REAL(EDEP(429))
-           DECS(51) = REAL(EDEP(411))
-!           DECS(50) = REAL(EDEP(418))
-           DECS(18) = REAL(EDEP(396)) ! East Detector Foils
-           DECS(49) = REAL(EDEP(397)) 
-           DECS(17) = REAL(EDEP(414)) ! West Detector Foils 
-           DECS(48) = REAL(EDEP(415))
-           DECS(21) = REAL(efoile)
-           DECS(22) = REAL(efoilw)
-           DECS(23) = REAL(EDEP(431))  ! Decay Tube
-           DECS(24) = REAL(EDEP(430))
+      IF(DTYPE.EQ.1)THEN
+        dtype = 1
+      ENDIF
+         
+      ! SCINTILLATOR      
+           DECS(14) = REAL(DEBO(398))
+           DECS(13) = REAL(DEBO(416))
+      ! DEAD LAYERS
+           DECS(50) = REAL(DEBO(429))
+           DECS(51) = REAL(DEBO(411))
+          ! DECS(50) = REAL(DEBO(418))
+           DECS(18) = REAL(DEBO(396)) ! East Detector Foils
+           DECS(49) = REAL(DEBO(397)) 
+           DECS(17) = REAL(DEBO(414)) ! West Detector Foils 
+           DECS(48) = REAL(DEBO(415))
+           DECS(21) = REAL(EFOILE)
+           DECS(22) = REAL(EFOILW)
+           DECS(23) = REAL(DEBO(431))  ! Decay Tube
+           DECS(24) = REAL(DEBO(430))
            DECS(25) = REAL(POSIT(ECX))
            DECS(26) = REAL(POSIT(ECY))
            DECS(27) = REAL(POSIT(WCX))
            DECS(28) = REAL(POSIT(WCY))
            DECS(29) = REAL(TRGWEST(1))
            DECS(30) = REAL(TRGEAST(1))
-           DECS(31) = REAL(DETREP(EDEP(416)))
-           DECS(32) = REAL(DETREP(EDEP(398)))
-           DECS(77) = REAL(EDEP(434))
-         
-          DO I = 1,14
+           DECS(31) = REAL(DETREP(DEBO(416)))
+           DECS(32) = REAL(DETREP(DEBO(398)))
+           DECS(77) = REAL(DEBO(434))
+
+        DO I = 1,14
             IF(ECX(I).GT.0)DECS(33)=REAL(DECS(33)+1.)
             IF(ECY(I).GT.0)DECS(34)=REAL(DECS(34)+1.)
             IF(WCX(I).GT.0)DECS(35)=REAL(DECS(35)+1.)
@@ -101,30 +96,92 @@ C----------------------------------------------------------------------C
          DECS(53) = REAL(DETREP(PHTW))
          DECS(54) = REAL(PHTE)
          DECS(55) = REAL(PHTW)
-         DECS(56) = REAL(EP)
-         DECS(57) = REAL(XP)
-         DECS(58) = REAL(YP)
-         DECS(59) = REAL(ZP)
-         DECS(60) = REAL(UP)
-         DECS(61) = REAL(VP)
-         DECS(62) = REAL(WP)
+         DECS(56) = REAL(EPr)
+         DECS(57) = REAL(XPr)
+         DECS(58) = REAL(YPr)
+         DECS(59) = REAL(ZPr)
+         DECS(60) = REAL(UPr)
+         DECS(61) = REAL(VPr)
+         DECS(62) = REAL(WPr)
          DECS(63) = REAL(PTOF)
          DECS(64) = REAL(PTYPE)
-         DECS(65) = REAL(EDEP(435))
-         DECS(70) = REAL(EDEP(440))
+         DECS(65) = REAL(DEBO(435))
+         DECS(70) = REAL(DEBO(440))
 
          DO I = 1,64
-             DECS(71) = DECS(71) + REAL(EDEP(I))
-             DECS(72) = DECS(72) + REAL(EDEP(I+65))
-             DECS(73) = DECS(73) + REAL(EDEP(I+132))
-             DECS(74) = DECS(74) + REAL(EDEP(I+197))
-             DECS(75) = DECS(75) + REAL(EDEP(I+262))
-             DECS(76) = DECS(76) + REAL(EDEP(I+328))
+             DECS(71) = DECS(71) + REAL(DEBO(I))
+             DECS(72) = DECS(72) + REAL(DEBO(I+65))
+             DECS(73) = DECS(73) + REAL(DEBO(I+132))
+             DECS(74) = DECS(74) + REAL(DEBO(I+197))
+             DECS(75) = DECS(75) + REAL(DEBO(I+262))
+             DECS(76) = DECS(76) + REAL(DEBO(I+328))
         ENDDO 
         DO I = 1,12
-             DECS(77+I) = COSTHETA(I)
+             DECS(77+I) = REAL(COSTHETA(I))
         ENDDO 
-              
+   
+        CALL HFN(34,DECS) ! FILL EVENT RECORD
+        
       RETURN
       END
 C======================================================================C
+C======================================================================c
+      SUBROUTINE INITIALIZE_EVENT(NPAR)
+c----------------------------------------------------------------------c
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      PARAMETER(NB=5000)
+      INCLUDE 'ucnapenmain.h'
+      COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
+      COMMON/CNT1/TDEBO(NB),TDEBO2(NB),DEBO(NB)
+c----------------------------------------------------------------------c
+      DECS(1) = REAL(NPAR) ! Filling the initial event ntuple
+      DECS(2) = REAL(KPAR) ! Particle number,type,position,energy,and
+      DECS(3) = REAL(E)    ! momentum direction are stored in this
+      DECS(4) = REAL(X)    ! ntuple.
+      DECS(5) = REAL(Y)
+      DECS(6) = REAL(Z)
+      DECS(7) = REAL(U)
+      DECS(8) = REAL(V)
+      DECS(9) = REAL(W)
+  
+      DECS(10) = 0.       ! BACKSCATTERED ENERGY
+      DECS(11) = 0.       ! BACKSCATTERED POLAR COSINE
+      DECS(12) = 0.       ! LOGICAL SWITCH 1 IF MIRRORED
+      
+      DO I = 13,NENTRIES  ! CLEAR DATA ARRAY
+         DECS(I)=0.
+      ENDDO
+      DO I = 1,170        ! CLEAR CATHODE CHANNELS
+         ECX(I) = 0.
+         ECY(I) = 0.
+         WCX(I) = 0.
+         WCY(I) = 0.
+      ENDDO
+c    
+      TIME  = 0.0D0
+      PHTE  = 0.
+      PHTW  = 0.
+      PHTEN = 0.
+      PHTWN = 0.
+      PTOF  = 0.
+      wi  = w ! INITIAL PITCH ANGLE
+      wim = w
+c
+      DO I=1,12
+           IF(I.LE.10)THEN
+             TRGEAST(I)  = 0.00D0  ! Set trigger times to 0
+             TRGWEST(I)  = 0.00D0
+           ENDIF
+           COSTHETA(I) = 0.0D0
+      ENDDO
+c
+      DO I=1,NB
+          DEBO(I)=0.0 ! Set Energy depostion to 0
+      ENDDO
+
+      ILB(1) = 1   ! ILB(1) = 1 TELLS PENELOPE THIS IS A PRIMARY
+      ILB(5) = 0   ! ILB(1) > 1 ARE SECONDARIES, TERTIARIES...
+
+      RETURN
+      END
+C---------------------------------------------------------------------------C
