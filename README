@@ -8,3 +8,6 @@
         link and compile the code found here with the penelope.f, pengeom.f, penvared.f, timer.f oh just look in 
         the Makefile.
        
+        Also, I will not be including the material files so you'll need to create those yourself.  Since they'll just
+        scattering cross section tables I'm not sure if it matters whether I distribute them, but you should learn to 
+        create them using PENELOPE's handy material function. 

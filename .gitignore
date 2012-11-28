@@ -6,4 +6,6 @@ src/penvared.f
 src/rita.f
 src/penfield.f
 src/pmcomms.f
+src/penmain.f
+src/penelope_old/*
 *.o

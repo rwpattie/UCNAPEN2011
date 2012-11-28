@@ -151,6 +151,7 @@ C  ------------------------  Print simulation results.
 C
 C     IEXIT: 1=upbound, 2=downbound, 3=absorbed.
 C
+
       OPEN(27,FILE='data/penmain-res.dat')
       WRITE(27,3000)
  3000 FORMAT(//3X,35('*')/3X,'**   Program PENMAIN. Results.   **',
