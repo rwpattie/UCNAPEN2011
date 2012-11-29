@@ -1,13 +1,7 @@
-TITLE  Simple accelerator head and water phantom (step 1)
+TITLE  Simulation of the UCNA Experiment
        .
-       This example calculates the dose distribution in a water
-       phantom from a simple electron accelerator model. The
-       calculation is performed by running PENMAIN twice. A first
-       run, with the input file 'accel1.in', generates a psf named
-       'pm_psf_impdet_01.dat' at a plane beyond the bottom of the
-       accelerator head. A second run of PENMAIN, with the input
-       file 'accel2.in', reads initial particle states from that psf
-       and produces the dose distribution in the water phantom.
+       Current version of the UCNA experiment. Remember all units are in
+       cm and eV.
        .
        >>>>>>>> Source definition.
 SKPAR  0        [Primary particles: 1=electron, 2=photon, 3=positron]
@@ -45,7 +39,7 @@ DSMAX  397 1e-5                  [EAST MYLAR PLANE BACK             ]
 DSMAX  398 1e-2                  [EAST SCINTILLATOR                 ]
 DSMAX  405 1E-2                  [EAST MWPC GAS                     ]
 DSMAX  406 1E-2                  [EAST MWPC GAS                     ] 
-DSMAX  411 3E-5                  [EAST SCINTILLATOR DEAD LAYER      ]
+DSMAX  411 1E-5                  [EAST SCINTILLATOR DEAD LAYER      ]
 DSMAX  410 0.1                   [EAST N2 VOLUME                    ]
 DSMAX  414 1E-5                  [WEST MYLAR PLANE FRONT            ]
 DSMAX  415 1E-5                  [WEST MYLAR PLANE BACK             ]
@@ -53,9 +47,13 @@ DSMAX  416 1E-2                  [WEST SCINTILLATOR                 ]
 DSMAX  423 1E-2                  [WEST MWPC GAS                     ]
 DSMAX  424 1E-2                  [WEST MWPC GAS                     ]
 DSMAX  428 0.1                   [WEST N2 VOLUME                    ]
-DSMAX  429 3E-5                  [WEST DEAD LAYER                   ]
+DSMAX  429 1E-5                  [WEST DEAD LAYER                   ]
 DSMAX  432 1E-6                  [DECAY TRAP FOILS                  ]
 DSMAX  433 1E-6                  [DECAY TRAP BE                     ]
+DSMAX  435 5.0                   [DECAY NEAR VACUUM VOLUME          ]
+DSMAX  436 5.0                   [DECAY NEAR VACUUM VOLUME          ]
+DSMAX  430 5.0                   [WEST DETECTOR NEAR VACUUM VOLUME  ]
+DSMAX  412 5.0                   [EAST DETECTOR NEAR VACUUM VOLUME  ]
        .
        >>>>>>>> Interaction forcing.
 IFORCE 1 1 4  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
@@ -72,8 +70,12 @@ IDBODY 416               [Active body; one line for each active body]
 
        .       .
 RSEED  1000  1000
-NSIMSH 1e4                      [Desired number of simulated showers]
-TIME   3e1                         [Allotted simulation time, in sec]
+NSIMSH 1e9                      [Desired number of simulated showers]
+TIME   1e3                         [Allotted simulation time, in sec]
+       .
+       >>>>>>>>> Volume Limits of the Experimental Geometry.
+ZMAX   240                          [Z limit of the simulation in cm]
+RADMAX 25                           [R limit of the simulation in cm]
        .
 END                                  [Ends the reading of input data]
 
