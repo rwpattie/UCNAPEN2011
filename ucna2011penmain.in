@@ -23,7 +23,7 @@ MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
 MFNAME mats/N2_100torr.mat            [Material file, up to 20 chars]
 MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
 MFNAME mats/vacuum.mat                [Material file, up to 20 chars]
-MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+MSIMPA 1e2 1e3 1e2 0.2 0.2 1e4 1e4          [EABS(1:3),C1,C2,WCC,WCR]
 MFNAME mats/Be.mat                    [Material file, up to 20 chars]
 MSIMPA 1e2 1e2 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
 MFNAME mats/g10.mat                   [Material file, up to 20 chars]
@@ -50,10 +50,10 @@ DSMAX  428 0.1                   [WEST N2 VOLUME                    ]
 DSMAX  429 1E-5                  [WEST DEAD LAYER                   ]
 DSMAX  432 1E-6                  [DECAY TRAP FOILS                  ]
 DSMAX  433 1E-6                  [DECAY TRAP BE                     ]
-DSMAX  435 5.0                   [DECAY NEAR VACUUM VOLUME          ]
-DSMAX  436 5.0                   [DECAY NEAR VACUUM VOLUME          ]
-DSMAX  430 5.0                   [WEST DETECTOR NEAR VACUUM VOLUME  ]
-DSMAX  412 5.0                   [EAST DETECTOR NEAR VACUUM VOLUME  ]
+DSMAX  435 1.0                   [DECAY NEAR VACUUM VOLUME          ]
+DSMAX  436 1.0                   [DECAY NEAR VACUUM VOLUME          ]
+DSMAX  430 1.0                   [WEST DETECTOR NEAR VACUUM VOLUME  ]
+DSMAX  412 1.0                   [EAST DETECTOR NEAR VACUUM VOLUME  ]
        .
        >>>>>>>> Interaction forcing.
 IFORCE 1 1 4  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
@@ -67,11 +67,13 @@ NBANGL 45 24               [No. of bins for the angles THETA and PHI]
 IMPDET 1e3 1e6 1000 1 0          [E-window, no. of bins, IPSF, IDCUT]
 IDBODY 398               [Active body; one line for each active body]
 IDBODY 416               [Active body; one line for each active body]
-
-       .       .
+       .
+       .
+       >>>>>>>> Job properties
 RSEED  1000  1000
 NSIMSH 1e9                      [Desired number of simulated showers]
-TIME   1e3                         [Allotted simulation time, in sec]
+TIME   1e1                         [Allotted simulation time, in sec]
+HBOOKF data/event          [Path and prefix to the hbook output file]
        .
        >>>>>>>>> Volume Limits of the Experimental Geometry.
 ZMAX   240                          [Z limit of the simulation in cm]
@@ -79,7 +81,7 @@ RADMAX 25                           [R limit of the simulation in cm]
        .
 END                                  [Ends the reading of input data]
 
-       >>>>>>>> Job properties
+       
 RESUME dump1.dmp               [Resume from this dump file, 20 chars]
 DUMPTO dump1.dmp                  [Generate this dump file, 20 chars]
 DUMPP  60                                    [Dumping period, in sec]

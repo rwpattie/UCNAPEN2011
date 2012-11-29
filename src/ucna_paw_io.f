@@ -1,12 +1,18 @@
 c----------------------------------------------------------------------c
-      SUBROUTINE BUILDHBOOK()
+      SUBROUTINE BUILDHBOOK
 c----------------------------------------------------------------------c
+      INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
 c----------------------------------------------------------------------c
+      CHARACTER*26 HBOOKFILE
       CALL HLIMIT(NWPAWC) ! A FEW PAW FORUMS SUGGEST THIS FOR MAKING
       IQUEST(10) = 65000  ! BIGGER NTUPLES. KINDA WORKS BUT STILL 
-       
-      CALL HROPEN(1,'EVENT','test.hbook','NQE',1024,IERR)
+      
+      print*,HBKFN
+      HBOOKFILE = TRIM(HBKFN)//'.hbook'
+      print*,hbookfile
+      
+      CALL HROPEN(1,'EVENT',HBKFN,'NQE',1024,IERR)
 ! c      if(NTYPE.NE.10)THEN
       CALL HBOOKN(34,'DECAYS',NENTRIES,'//EVENT',1024,DTAGS) 
 c      ELSE 

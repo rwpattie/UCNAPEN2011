@@ -612,12 +612,11 @@ C
       INCLUDE 'ucnapenmain.h'
       TSEC = 0.0
 C
-      CALL BUILDHBOOK()
-C
 C  ****  Read input files and initialize the simulation packages.
 C
       CALL PMRDR
       IF(JOBEND.NE.0) GO TO 103 ! The simulation was already completed.
+      CALL BUILDHBOOK
 C
 C  ****  Simulation of a new shower and scoring.
 C
@@ -746,7 +745,6 @@ C  ----  Energy is locally deposited in the material.
 C  <<<<<<<<<<<<  Particle splitting and Russian roulette  <<<<<<<<<<<<<<
 
   102 CONTINUE
-c      CALL LOCATE
       EABS(KPAR,MAT)=EABSB(KPAR,IBODY)
 C
 C  ************  The particle energy is less than EABS.
@@ -762,10 +760,9 @@ C  ----  Energy is locally deposited in the material.
 C
 C
   103 CONTINUE
-!      CALL LOCATE 
       IBODYL=IBODY
-      write(46,'(3i3,1x,5e11.3,1x,i3)')
-     1    N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+c      write(46,'(3i3,1x,5e11.3,1x,i3)')
+c     1    N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
 C
 C ---- DETERMINE THE FIELD USING THE PENELOPE EMFIELDS FUNCTION TPEMF0
 C     
@@ -794,9 +791,10 @@ C
          GO TO 104
       ENDIF
 C  ----   INCREMENT TIME OF FLIGHT   
-      
       TIME = TIME + DELTAT(DS,E)      
 C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+C     More penelope functions to fill detector arrays....
+C
       CALL ENERGYFLUENCE(DSEF,IBODYL)
       CALL IMPACT_DETECTOR2(IBODYL)
 C     

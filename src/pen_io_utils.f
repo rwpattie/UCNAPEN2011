@@ -1018,7 +1018,7 @@ C
      1  KWGEOM,KWSMAX,KWEABS,KWIFOR,  KWNBE,KWNBAN,KWIDET,KWIPSF,
      1  KWISPC,KWIFLN,KWIBOD,KWIPAR,  KWEDET,KWESPC,KWEBOD,KGRDXX,
      1  KGRDYY,KGRDZZ,KGRDBN,KWRESU,  KWDUMP,KWDMPP,KWRSEE,KWNSIM,
-     1  KWTIME,KWCOMM,KZMAXD,KRADMX
+     1  KWTIME,KWCOMM,KZMAXD,KRADMX,  KHBKFN
       PARAMETER (
      1  KWTITL='TITLE ',KWKPAR='SKPAR ',KWSENE='SENERG',KWSPEC='SPECTR',
      1  KWSPOL='SGPOL ',KWSPOS='SPOSIT',KWSBOX='SBOX  ',KWSBOD='SBODY ',
@@ -1030,7 +1030,8 @@ C
      1  KWEDET='ENDETC',KWESPC='EDSPC ',KWEBOD='EDBODY',KGRDXX='GRIDX ',
      1  KGRDYY='GRIDY ',KGRDZZ='GRIDZ ',KGRDBN='GRIDBN',KWRESU='RESUME',
      1  KWDUMP='DUMPTO',KWDMPP='DUMPP ',KWRSEE='RSEED ',KWNSIM='NSIMSH',
-     1  KWTIME='TIME  ',KWCOMM='      ',KZMAXD='ZMAX  ',KRADMX='RADMAX')
+     1  KWTIME='TIME  ',KWCOMM='      ',KZMAXD='ZMAX  ',KRADMX='RADMAX',
+     1  KHBKFN='HBOOKF')
 C
       INCLUDE 'pmcomms.f'
       DIMENSION PARINP(20)
@@ -1982,7 +1983,7 @@ C
           IF(KWORD.EQ.KWCOMM) GO TO 64
         ELSE
           WRITE(BUF2,'(I5)') 1000+NDIDEF
-          SPCDIO(NDIDEF)='spc-impdet-'//BUF2(4:5)//'.dat'
+          SPCDIO(NDIDEF)='data/spc-impdet-'//BUF2(4:5)//'.dat'
           WRITE(26,1612) SPCDIO(NDIDEF)
         ENDIF
 C
@@ -2012,7 +2013,7 @@ C
         ELSE
           IF(IPSF(NDIDEF).GT.0) THEN
             WRITE(BUF2,'(I5)') 1000+NDIDEF
-            PSFDIO(NDIDEF)='psf-impdet-'//BUF2(4:5)//'.dat'
+            PSFDIO(NDIDEF)='data/psf-impdet-'//BUF2(4:5)//'.dat'
             WRITE(26,1611) PSFDIO(NDIDEF)
             NPSFO=NPSFO+1
             IF(NPSFO.GT.1) THEN
@@ -2048,7 +2049,7 @@ C
         ELSE
           IF(IDCUT(NDIDEF).EQ.2) THEN
             WRITE(BUF2,'(I5)') 1000+NDIDEF
-            SPCFSO(NDIDEF)='fln-impdet-'//BUF2(4:5)//'.dat'
+            SPCFSO(NDIDEF)='data/fln-impdet-'//BUF2(4:5)//'.dat'
             WRITE(26,1662) SPCFSO(NDIDEF)
           ENDIF
         ENDIF
@@ -2237,7 +2238,7 @@ C
           IF(KWORD.EQ.KWCOMM) GO TO 45
         ELSE
           WRITE(BUF2,'(I5)') 1000+NDEDEF
-          SPCDEO(NDEDEF)='spc-enddet-'//BUF2(4:5)//'.dat'
+          SPCDEO(NDEDEF)='data/spc-enddet-'//BUF2(4:5)//'.dat'
           WRITE(26,1651) SPCDEO(NDEDEF)
         ENDIF
 C
@@ -2472,6 +2473,17 @@ C
       TSECAD=TSECIN
       WRITE(26,1870)
  1870 FORMAT(/3X,72('-'))
+ 
+      IF(KWORD.EQ.KHBKFN)THEN
+         READ(BUFFER,'(A20)') HBKFN
+   85    CONTINUE
+         READ(5,'(A6,1X,A120)') KWORD,BUFFER
+         IF(KWORD.EQ.KWCOMM) GO TO 85
+      ELSE
+         HBKFN = 'test.hbook'
+      ENDIF
+      WRITE(26,1975) HBKFN
+ 1975 FORMAT(3X,'HBOOK file name = ',A20)
  
       IF(KWORD.EQ.KZMAXD)THEN
          READ(BUFFER,*) ZEND

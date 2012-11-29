@@ -1,5 +1,7 @@
 F77    = gfortran  -Wall -O3
+
 CLIBS ='/usr/lib'
+
 OBJ = penelope.o ucnapenmain.o rita.o pengeom.o timer.o penvared.o penfield.o b_field.o\
       pen_math_utils.o pen_io_utils.o ucna_detector_utils.o ucna_paw_io.o\
       full_neutron.o al_decay.o tin_decay.o bismuth.o cd_decay.o \
