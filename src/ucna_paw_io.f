@@ -15,7 +15,7 @@ c      ENDIF
 C      ELSE IF(DTYPE.EQ.2)THEN
 c        CALL HBOOKN(34,'DECAYS',nCDentries,'//EVENT',1024,CDTAGS)
 c      ENDIF
-      CALL HBOOK1(100,'INTIAL BETA DECAY SPECTRUM',300,0.,3000.,0.)
+      CALL HBOOK1(100,'INTIAL BETA DECAY SPECTRUM',100,0.,1000.,0.)
       CALL HBOOK1(110,'THROWN ASYMMETRY',100,0.,1000.,0.)
       CALL HBOOK1(120,'MEASURED ASYMMETRY (RAW)',100,0.,1000.,0.)
       CALL HBOOK1(130,'RAW MWPC SPECTRUM - EAST',100,0.,1000.,0.)
@@ -31,6 +31,7 @@ c      ENDIF
      1                1000.,100,0.,1.,0.)
       CALL HBOOK1(220,'ANGLUAR DISTRIBUTION OF BACKSCATTERS',100,0.,
      1                1.,0.)
+      CALL HBOOK1(225,'COMPUTER TIME DISTRIBUTION',100,0.,10.,0.)
 
       RETURN
       END
@@ -121,6 +122,7 @@ C----------------------------------------------------------------------C
         ENDDO 
    
         CALL HFN(34,DECS) ! FILL EVENT RECORD
+        CALL HFILL(225,REAL(TRACKTIME),0.,1.)
         
       RETURN
       END

@@ -623,7 +623,7 @@ C  ****  Simulation of a new shower and scoring.
 C
   101 CONTINUE
       CALL SHOWER
-      IF(MOD(INT(SHN),100).EQ.0)
+      IF(MOD(INT(SHN),10).EQ.0)
      1 PRINT*,'AT EVENT = ',INT(SHN),INT(DSHN),TSEC,TSECA
       IF(JOBEND.NE.0) GO TO 102  ! The simulation is completed.
 C
@@ -637,6 +637,7 @@ C
       TSIM=TSIM+CPUTIM()-CPUT0
   103 CONTINUE
       CALL PMWRT(1)
+      
 !       WRITE(6,1002) SHN
 !  1002 FORMAT(3X,'Number of simulated showers =',1P,E14.7,
 !      1  /3X,'*** END ***')
@@ -644,7 +645,7 @@ C
       CALL HROUT(0,ICYCLE,' ')
       CALL HPRINT(34)
       CALL HPRINT(100)
-      CALL HPRINT(195)
+      CALL HPRINT(225)
       CALL HREND('EVENT')
 
       STOP
@@ -681,10 +682,9 @@ C  **********  Set the initial state of the primary particle.
 C
   201 CONTINUE
   
-      CALL SHOWER_START
-      CALL GENEVENT(1,INT(SHN),PTYPE,DECAYPAR,NCNT,NINCREASE)
-      CALL INITIALIZE_EVENT(INT(SHN))
-      CALL START           ! Starts simulation in current medium.
+      CALL SHOWER_START  ! Generate event using the method specified in the input file
+      CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS
+      CALL START                      ! Starts simulation in current medium.
 C
 C  ****  Check if the trajectory intersects the material system.
 C
@@ -706,6 +706,10 @@ C  ---- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 C  ----  Impact detectors.
         CALL IMPACT_DETECTOR2(IBODYL)
 C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      ELSE IF(DABS(Z).GT.ZEND.OR.DSQRT(X*X+Y*Y).GT.RMAX)THEN
+          ! SANITY CHECK FOR PARTICLES LEAVING THE SYSTEM
+          IEXIT = 2
+          GOTO 104
       ENDIF
       
       IMAT = MAT
@@ -742,6 +746,7 @@ C  ----  Energy is locally deposited in the material.
 C  <<<<<<<<<<<<  Particle splitting and Russian roulette  <<<<<<<<<<<<<<
 
   102 CONTINUE
+c      CALL LOCATE
       EABS(KPAR,MAT)=EABSB(KPAR,IBODY)
 C
 C  ************  The particle energy is less than EABS.
@@ -757,9 +762,10 @@ C  ----  Energy is locally deposited in the material.
 C
 C
   103 CONTINUE
+!      CALL LOCATE 
       IBODYL=IBODY
-c      write(46,'(3i3,1x,5e11.3,1x,i3)')
-c     1    N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+      write(46,'(3i3,1x,5e11.3,1x,i3)')
+     1    N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
 C
 C ---- DETERMINE THE FIELD USING THE PENELOPE EMFIELDS FUNCTION TPEMF0
 C     
@@ -777,18 +783,22 @@ C
 C  ----  TAKE A SET BASED ON FIELDS FROM TPEMF0 AND THE JUMP DISTANCE
 C        DS
 C
-      IF(MAT.EQ.0)THEN
-         ! IN VACUUM STEP 1 CM 
-         CALL TPEMF1(1.0,DSEF,NCROSS)
+      IF(DABS(Z).LT.ZEND.AND.DSQRT(X*X+Y*Y).LT.RMAX)THEN
+        IF(MAT.EQ.0)THEN
+           ! IN VACUUM STEP 1 CM 
+           CALL TPEMF1(1.0,DSEF,NCROSS)
+        ELSE
+           CALL TPEMF1(DS,DSEF,NCROSS)
+        ENDIF
       ELSE
-         CALL TPEMF1(DS,DSEF,NCROSS)
+         GO TO 104
       ENDIF
 C  ----   INCREMENT TIME OF FLIGHT   
+      
       TIME = TIME + DELTAT(DS,E)      
 C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      CALL ENERGYFLUENCE(DSEF,BODYL)
-      CALL IMPACT_DETECTOR2(BODYL)
-      
+      CALL ENERGYFLUENCE(DSEF,IBODYL)
+      CALL IMPACT_DETECTOR2(IBODYL)
 C     
 C  ----  If the particle has crossed an interface, restart the track in
 C        the new material.
@@ -796,6 +806,7 @@ C        the new material.
          CALL SETCOSTHETAS(IMAT,WO)
          GO TO 102    ! The particle crossed an interface.
       ENDIF
+c      
       IF(MAT.NE.0)THEN
         IF(LINTF) THEN
           CALL KNOCKF(DE,ICOL)       ! Interaction forcing is active.
@@ -894,12 +905,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 C-----------------------------------------------------------------------C
       SUBROUTINE GENEVENT(NTYPE,NPAR,PTYPE,DECAYPAR,NCNT,NINCREASE)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      INCLUDE 'pmcomms.f'
+      INCLUDE 'ucnapenmain.h'
       EXTERNAL RAND
-      COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
-      COMMON/PROTON/EPr,XPr,YPr,ZPr,UPr,VPr,WPr
-      PARAMETER(PI=3.1415926535897932D0)
-      DIMENSION DECAYPAR(12)
-      REAL DECAYPAR
 C-----------------------------------------------------------------------C
       RUNFRAC = RAND(1.d0) !REAL(NPAR)/REAL(NPARMAX)
       DNCNT = 1
@@ -976,7 +984,7 @@ C-------------------------------------------------------------------------------
       LOGICAL LINTF
       INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
-c      COMMON/PROTON/EPr,XPr,YPr,ZPr,UPr,VPr,WPr
+
       EXTERNAL RAND
       
         DO I=1,3
@@ -996,11 +1004,11 @@ C
         ENDDO
       ENDIF
       IEXIT=0
-      
+c      
       IF(KPARP.EQ.0) THEN
 C  ****  User-defined source.
         !CALL SOURCE
-!         CALL GENEVENT(1,INT(SHN),PTYPE,DECAYPAR,NCNT,NINCREASE)
+        CALL GENEVENT(1,INT(SHN),PTYPE,DECAYPAR,NCNT,NINCREASE)
         SHN=SHN+1.0D0
         N=N+1
         IF(N.GT.2000000000) N=N-2000000000
@@ -1008,8 +1016,8 @@ C  ****  User-defined source.
           KE=E*RDSHE+1.0D0
           SHIST(KE)=SHIST(KE)+1.0D0
         ENDIF
-C      write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1x,5e11.3,1x,i3)')
-C     1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
+!       write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1x,5e11.3,1x,i3)')
+!      1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
       ELSE IF(LPSF) THEN
 C  ****  Phase-space file.
         CALL RDPSF(IPSFI,NSHI,ISEC,KODEPS)

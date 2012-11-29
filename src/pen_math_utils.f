@@ -519,6 +519,7 @@ C **********************************************************************
 C        SUBROUTINE ENERGYFLUENCE
 C **********************************************************************
       SUBROUTINE ENERGYFLUENCE(DSEF,IBODYL)
+c---------------------------------------------------------------
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
       INCLUDE 'pmcomms.f'
 C  ----  Energy distribution of fluence.

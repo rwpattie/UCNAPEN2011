@@ -44,7 +44,6 @@ c      bz = 0.0
          endif
       ENDIF
       
-c      BZ=Abs(BZ)
       IF(Z.lt.0.0) Then
         BX=-1.0*BX
         BY=-1.0*BY
