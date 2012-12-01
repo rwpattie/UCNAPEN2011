@@ -305,3 +305,46 @@ C----------------------------------------------------------------------C
       RETURN
       END
 C======================================================================C
+      SUBROUTINE TRACKSTEPS
+      
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      INCLUDE 'pmcomms.f'
+      INCLUDE 'ucnapenmain.h'
+      
+      IF(IBODY.EQ.432)THEN
+           IDCE = IDCE + 1
+      ELSE IF(IBODY.EQ.433)THEN
+           IBEE = IBEE + 1
+      ELSE IF(IBODY.EQ.434)THEN
+           IBEW = IBEW + 1
+      ELSE IF(IBODY.EQ.435)THEN
+           IDCW = IDCW + 1
+      ELSE IF(IBODY.EQ.429)THEN
+           IDDE = IDDE + 1
+      ELSE IF(IBODY.EQ.415)THEN
+           IMYBE = IMYBE + 1
+      ELSE IF(IBODY.EQ.414)THEN
+           IMYFE = IMYFE + 1
+      ELSE IF(IBODY.EQ.411)THEN
+           IDDW = IDDW + 1
+      ELSE IF(IBODY.EQ.397)THEN
+           IMYBW = IMYBW + 1
+      ELSE IF(IBODY.EQ.396)THEN
+           IMYFW = IMYFW + 1
+      ENDIF
+      
+      RETURN
+      END
+C=-===================================================================C
+      SUBROUTINE WRITESTEPS
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      INCLUDE 'pmcomms.f'
+      INCLUDE 'ucnapenmain.h'
+      
+ 
+      WRITE(47,'(1F10.3,1X,5I8,1X,1F10.3,1X,5I8)') 
+     1 DEBO(416),IBEE,IDCE,IMYFE,IMYBE,IDDE,
+     1 DEBO(398),IBEW,IDCW,IMYFW,IMYBW,IDDW
+      
+      RETURN
+      END

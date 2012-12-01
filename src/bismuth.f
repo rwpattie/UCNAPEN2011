@@ -1,35 +1,290 @@
-      subroutine bi_decay 
+      subroutine bi_decay
 c---------------------------------------------------------------------c
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
-      parameter(pi=3.141592654d0,ME=510.9870d3)
+      parameter(ME=510.9870d3)
+      INCLUDE 'pmcomms.f'
       EXTERNAL rand,energy1
-      COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
-      COMMON/RSEED/ISEED1,ISEED2
-      DIMENSION ILBH(5)
 c----------------------------------------------------------------------c
 c    This give the approximate level scheme for IC beta's from Bi207
 c    taken from :
 c
 c  http://www.nndc.bnl.gov/chart/decaysearchdirect.jsp?nuc=207BI&unc=nds
 c------------------------------------------------------------------------
-      gprob = 1.0*rand(1.d0)
-      
-      if(grob.le.0.745)then
+      GPROB = 1.029*RAND(1.0d0)
+      ! Select the correct gamma branch
+      ! there are 3 level 7/2- (7.03%), 13/2+ (84.0%), and 5/2- (8.9%)
+      ! 
+      if(GPROB.le.0.84)then
          ngamma = 2
-      else 
+      else if(gprob.gt.0.84.and.gprob.le.0.929)then
          ngamma = 1
+      else if(gprob.gt.0.929.and.gprob.le.1.0)then
+         ngamma = 3
+      else if(gprob.gt.1.0)then
+         ngamma = 4
       endif
-   
+  
+      if(ngamma.eq.1)then
+          CALL BI569K
+      else if(ngamma.eq.2)then
+          CALL BI1063K
+          CALL BI569KS
+      ELSE IF(NGAMMA.EQ.3)THEN
+           GPROB = 7.0d0*RAND(1.0D0)
+           IF(GPROB.LE.6.87)THEN
+              CALL BIBRANCH1770
+           ELSE 
+              CALL BIBRANCH1442
+           ENDIF
+      ELSE IF(NGAMMA.EQ.4)THEN
+          CALL BIAUGER
+      ENDIF
+      
+      return
+      end
+C-----------------------------------------------------------------------------C
+      SUBROUTINE BIBRANCH1442
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      EXTERNAL rand,energy1
+      
+      ILB(1) = 1
+      ILB(2) = 0
+      ILB(3) = 0
+      ILB(4) = 0
+      ILB(5) = 0
+      
+      phi   = 2.*pi*rand(1.d0)
+      costh = 1.-2.*rand(1.d0)
+      theta = dacos(costh)
+      u     = dsin(theta)*dcos(phi)
+      v     = dsin(theta)*dsin(phi)
+      w     = dcos(theta)
+      kpar  = 1
+      x     = 0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
+      y     = 0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      z     = 1.
+      
+      XE = 1.310757D-1*RAND(1.0d0)
+      IF(XE.LE.1.31D-1)THEN
+         E    = 1442.2D3
+         KPAR = 2
+      ELSE IF(XE.GT.1.31D-1.AND.XE.LE.0.1310613)THEN
+         E    = 1426.34D3
+      ELSE IF(XE.GT.0.1310613)THEN
+         E    = 1438.35D3
+      ENDIF
+      PTYPE = 5
+      
+      BPROB = 0.12869 * RAND(1.D0)
+      IF(BPROB.LE.0.128)THEN
+         CALL BI328KS
+         CALL BI569KS
+      ELSE 
+         CALL BI897KS
+      ENDIF
+      
+      RETURN
+      END
+C-----------------------------------------------------------------------------C
+      SUBROUTINE BI897KS
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      DIMENSION ILBH(5)
+      EXTERNAL rand,energy1
+      
+      ILBH(1) = -1
+      ILBH(2) = 0
+      ILBH(3) = 0
+      ILBH(4) = 0
+      ILBH(5) = 0
+      
+      XS=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
+      YS=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      ZS = 1.!155.d0
+      ! Create Second 
+      theta  = 1.0- 2.0*rand(1.d0)
+      psi    = 2*pi*rand(1.d0)
+      us     = dsin(dacos(theta))*dcos(psi)
+      vs     = dsin(dacos(theta))*dsin(psi)
+      ws     = theta
+
+      xe = 0.130962*RAND(1.0D0)
+      KPAR2 = 1
+      if(XE.LE.0.128)THEN
+        E2    = 897.77D3
+        KPAR2 = 2
+      ELSE IF(XE.GT.0.128.AND.XE.LE.0.13046)then
+        E2    = 809.77D3
+      else if(xe.gt.0.13046.AND.XE.LE.0.130867)then
+        E2    = 881.91D3
+      else if(xe.gt.0.130867)then
+        E2    = 893.93D3
+      endif
+      PTYPE = 6
+      CALL STORES(E2,XS,YS,ZS,US,VS,WS,1,KPAR2,ILBH,0)
+      RETURN       
+      END
+C-----------------------------------------------------------------------------C      
+      SUBROUTINE BI328KS
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      DIMENSION ILBH(5)
+      EXTERNAL rand,energy1
+      
+      ILBH(1) = -1
+      ILBH(2) = 0
+      ILBH(3) = 0
+      ILBH(4) = 0
+      ILBH(5) = 0
+      
+      XS=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
+      YS=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      ZS = 1.!155.d0
+      ! Create Second 
+      theta  = 1.0- 2.0*rand(1.d0)
+      psi    = 2*pi*rand(1.d0)
+      us     = dsin(dacos(theta))*dcos(psi)
+      vs     = dsin(dacos(theta))*dsin(psi)
+      ws     = theta
+
+      xe = 9.175E-4*RAND(1.0D0)
+      KPAR2 = 1
+      if(XE.LE.6.9D-4)THEN
+        E2    = 328.1D3
+        KPAR2 = 2
+      ELSE IF(XE.GT.6.9D-4.AND.XE.LE.8.78D-4)then
+        E2    = 240.10D3
+      else if(xe.gt.8.78D-4.AND.XE.LE.9.10D-4)then
+        E2    = 312.24D3 
+      else if(xe.gt.9.1D-4)then
+        E2    = 324.25D3
+      endif
+      PTYPE = 6
+      CALL STORES(E2,XS,YS,ZS,US,VS,WS,1,KPAR2,ILBH,0)
+      RETURN 
+      END
+C-----------------------------------------------------------------------------C
+      SUBROUTINE BIBRANCH1770
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      EXTERNAL rand,energy1
+      
+      ILB(1) = 1
+      ILB(2) = 0
+      ILB(3) = 0
+      ILB(4) = 0
+      ILB(5) = 0
+      
       phi = 2.*pi*rand(1.d0)
       costh = 1.-2.*rand(1.d0)
       theta = dacos(costh)
-
-      ILBH(1) = 2
-      ILBH(2) = 1
-      ILBH(3) = 1
+      u = dsin(theta)*dcos(phi)
+      v = dsin(theta)*dsin(phi)
+      w = dcos(theta)
+      kpar = 1
+      x=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
+      y=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      z = 1.
+      
+      XE = 6.8972D0*RAND(1.0D0)
+      IF(XE.LE.6.87)THEN
+         E    = 1770.228D3
+         KPAR = 2
+      ELSE IF(XE.GT.6.87.AND.XE.LE.6.8738)THEN
+         E    = 1682.224D3
+      ELSE IF(XE.GT.6.8738)THEN
+         E    = 1754.367D3
+      ENDIF
+      PTYPE = 5
+      
+      CALL BI569KS
+      
+      RETURN
+      END
+C-----------------------------------------------------------------------------C
+      SUBROUTINE BIAUGER
+      
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      EXTERNAL rand
+      
+      ILB(1) = 1 ! THIS DEFINES THE EVENT AS BEING FROM THE 
+      ILB(2) = 0  ! SOURCE PREVENTING LOCAL ENERGY SUBTRACTION
+      ILB(3) = 0
+      ILB(4) = 0
+      ILB(5) = 0     
+   
+      kpar = 1
+      x=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
+      y=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      z = 1.!155.d0
+        
+      theta  = 1.0 - 2.0*rand(1.d0)
+      PSI    = 2*PI*rand(1.d0)
+      U      = dsin(dacos(theta))*dcos(psi)
+      V      = dsin(dacos(theta))*dsin(psi)
+      W      = theta
+      E      = 56.7D3
+      PTYPE  = 5
+      RETURN
+      END
+C-----------------------------------------------------------------------------C      
+      SUBROUTINE BI569KS
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      parameter(ME=510.9870d3)
+      INCLUDE 'pmcomms.f'
+      DIMENSION ILBH(5)
+      EXTERNAL rand,energy1
+      
+      ILBH(1) = -1
+      ILBH(2) = 0
+      ILBH(3) = 0
       ILBH(4) = 0
-      ILBH(5) = 1
- 
+      ILBH(5) = 0
+      
+      XS=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
+      YS=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      ZS = 1.!155.d0
+      ! Create Second 
+      theta  = 1.0- 2.0*rand(1.d0)
+      psi    = 2*pi*rand(1.d0)
+      us     = dsin(dacos(theta))*dcos(psi)
+      vs     = dsin(dacos(theta))*dsin(psi)
+      ws     = theta
+
+      xe = 100.*rand(1.d0)
+      KPAR2 = 1
+      if(xe.le.1.52)then
+        E2 = 4.816935e5
+      Else if(xe.gt.1.52.and.xe.le.1.958)then
+        E2 = 5.53872e5
+      else if(xe.gt.1.958.and.xe.le.2.105)then
+        E2 = 5.658473e5
+      else if(xe.gt.2.105)then
+        E2 = 5.69698e5
+        KPAR2 = 2
+      endif
+      PTYPE = 2
+      CALL STORES(E2,XS,YS,ZS,US,VS,WS,1,KPAR2,ILBH,0)
+      RETURN 
+      END
+c-----------------------------------------------------------------------------c
+      SUBROUTINE BI569K
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      parameter(ME=510.9870d3)
+      INCLUDE 'pmcomms.f'
+      EXTERNAL rand,energy1
+      
+      ILB(1) = 1
+      ILB(2) = 0
+      ILB(3) = 0
+      ILB(4) = 0
+      ILB(5) = 0
+      
+      phi = 2.*pi*rand(1.d0)
+      costh = 1.-2.*rand(1.d0)
+      theta = dacos(costh)
       u = dsin(theta)*dcos(phi)
       v = dsin(theta)*dsin(phi)
       w = dcos(theta)
@@ -37,68 +292,60 @@ c------------------------------------------------------------------------
       x=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
       y=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
       z = 1.!155.d0
-
-      if(ngamma.eq.1)then
-           xe = 100.0*rand(1.d0)          
-          if(xe.le.1.537)then
-            E = 481693.5
-           else if(xe.gt.1.537.and.xe.le.1.979)then
-            E = 5.53872e5
-           else if(xe.gt.1.979.and.xe.le.2.190)then
-            E = 5.658473e5
-           else if(xe.gt.2.105)then 
-            E    = 5.69698e5
-            kpar = 2 
-          endif
-      elseif(ngamma.eq.2)then
-          xe = 100.0*rand(1.d0)+2.105
-          ! Create first particle
-          if(xe.gt.2.105.and.xe.le.3.945)then
-             E = 1.047795e6
-          else if(xe.gt.3.945.and.xe.le.10.975)then
-             E = 9.75651e5
-          else if(xe.gt.10.975.and.xe.le.11.515)then
-             E = 1.0598e6
-          else if(xe.gt.11.515)then
-             E = 1.063656e6
-             kpar = 2
-          endif
-          ! Create Second 
-            theta  = 1.0- 2.0*rand(1.d0)
-            psi    = 2*pi*rand(1.d0)
-            us     = dsin(dacos(theta))*dcos(psi)
-            vs     = dsin(dacos(theta))*dsin(psi)
-            ws     = theta
-
-           xe = 100.*rand(1.d0)
-           KPAR2 = 1
-           if(xe.le.1.52)then
-            E2 = 4.816935e5
-           else if(xe.gt.1.52.and.xe.le.1.958)then
-            E2 = 5.53872e5
-           else if(xe.gt.1.958.and.xe.le.2.105)then
-            E2 = 5.658473e5
-           else if(xe.gt.2.105)then
-            E2 = 5.69698e5
-            KPAR2 = 2
-           endif
-           CALL STORES(E2,X,Y,Z,US,VS,WS,1,KPAR2,ILBH)
+      
+      xe = 100.0*rand(1.d0)          
+      if(xe.le.1.537)then
+        E = 481693.5
+      else if(xe.gt.1.537.and.xe.le.1.979)then
+        E = 5.53872e5
+      else if(xe.gt.1.979.and.xe.le.2.190)then
+        E = 5.658473e5
+      else if(xe.gt.2.105)then 
+        E    = 5.69698e5
+        kpar = 2 
       endif
-        
-      gprob = 1.0*rand(1.d0)
-      if(grob.gt.0.029)then
-         theta   = 1.0- 2.0*rand(1.d0)
-          psi    = 2*pi*rand(1.d0)
-          us     = dsin(dacos(theta))*dcos(psi)
-          vs     = dsin(dacos(theta))*dsin(psi)
-          ws     = theta
-          E3     = 56.7e3
-          CALL STORES(E3,X,Y,Z,US,VS,WS,1,1,ILBH)
-      endif
-   
-      return
-      end
+      PTYPE = 1
+      
+      RETURN 
+      END
 c-----------------------------------------------------------------------------c
+      SUBROUTINE BI1063K
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
+      INCLUDE 'pmcomms.f'
+      EXTERNAL rand,energy1
+      
+      ILB(1) = 1
+      ILB(2) = 0
+      ILB(3) = 0
+      ILB(4) = 0
+      ILB(5) = 0
+      
+      phi = 2.*pi*rand(1.d0)
+      costh = 1.-2.*rand(1.d0)
+      theta = dacos(costh)
+      u = dsin(theta)*dcos(phi)
+      v = dsin(theta)*dsin(phi)
+      w = dcos(theta)
+      kpar = 1
+      x=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
+      y=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      z = 1.!155.d0
+      xe = 100.0*rand(1.d0)+2.105
+          ! Create first particle
+      if(xe.gt.2.105.and.xe.le.3.945)then
+          E = 1.047795e6
+      else if(xe.gt.3.945.and.xe.le.10.975)then
+          E = 9.75651e5
+      else if(xe.gt.10.975.and.xe.le.11.515)then
+          E = 1.0598e6
+      else if(xe.gt.11.515)then
+          E = 1.063656e6
+          kpar = 2
+      endif
+      
+      RETURN 
+      END
+C-----------------------------------------------------------------------------C
       subroutine ce_decay
 c---------------------------------------------------------------------c
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
@@ -138,7 +385,7 @@ c------------------------------------------------------------------------
 
       return
       end
-c-----------------------------------------------------------------
+c-----------------------------------------------------------------------------C
       subroutine sr_decay
 c---------------------------------------------------------------------c
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
@@ -174,7 +421,7 @@ c------------------------------------------------------------------------
 
       return
       end
-c----------------------------------------------------------------------
+c-----------------------------------------------------------------------------C
       subroutine xe_135_decay(ptype)
 c----------------------------------------------------------------------
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
@@ -358,8 +605,7 @@ c      betaprob = 0.50
            
       return
       end      
-c--------------------------------------------------------------------------
-
+c-----------------------------------------------------------------------------C
       double precision function energy3(qend)
       implicit double precision(a-h,J-M,o-z), integer*4(i,n)
       parameter(emass=510.991e3)
@@ -367,12 +613,12 @@ c--------------------------------------------------------------------------
       common/rseed/iseed1,iseed2
       external rand
 c
-      E0 = qend/emass + 1
-50    E=(E0-1.0)*RAND(1.D0)
+      EO = qend/emass + 1
+50    E=(EO-1.0)*RAND(1.D0)
       y=2.80*RAND(1.D0)
       G=(-E/(DSQRT(E**2+2*E)*137))
       FERMI=(2.0*PI*G)/(DEXP(2*PI*G)-1)
-      f=Fermi*DSQRT(E**2+2*E)*(E0-(E+1))**2*(E+1)
+      f=Fermi*DSQRT(E**2+2*E)*(EO-(E+1))**2*(E+1)
       if (f.lt.y) goto 50
 
       E = E*emass

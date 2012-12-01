@@ -644,6 +644,8 @@ C
       CALL HROUT(0,ICYCLE,' ')
       CALL HPRINT(34)
       CALL HPRINT(100)
+      CALL HPRINT(150)
+      CALL HPRINT(160)
       CALL HPRINT(225)
       CALL HREND('EVENT')
 
@@ -672,6 +674,8 @@ C
       EFOILE = 0.  ! ENERGY IN EAST DECAY TRAP FOIL
       EFOILW = 0.  ! WEST DECAY TRAP FOIL
       DTYPE  = 1.  ! DETECTOR TYPE LATER MOVE THIS TO THE INPUT FILE
+      IEXIT  = 0   ! EXIT CODE
+      NE00   = 0 
       
 C  101 CONTINUE
 c     write(6,*) ISEED1,ISEED2
@@ -680,20 +684,19 @@ C
 C  **********  Set the initial state of the primary particle.
 C
   201 CONTINUE
-  
       CALL SHOWER_START  ! Generate event using the method specified in the input file
       CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS
-      CALL START                      ! Starts simulation in current medium.
-C
+      
+C     
 C  ****  Check if the trajectory intersects the material system.
 C
   302 CONTINUE
       CALL LOCATE
 C ---- ALLOW GAMMAS TO TAKE A HUGE STEP.      
-      IF(MAT.EQ.0.AND.KPAR.EQ.2) THEN
+      IF((MAT.EQ.0.OR.MAT.EQ.7).AND.KPAR.EQ.2) THEN
         IBODYL=IBODY
         CALL STEP(1.0D30,DSEF,NCROSS)
-        IF(MAT.EQ.0) THEN  ! The particle does not enter the system.
+        IF(MAT.EQ.7.OR.MAT.EQ.0) THEN  ! The particle does not enter the system.
           IF(W.GT.0) THEN
             IEXIT=1        ! Labels emerging upbound particles.
           ELSE
@@ -705,7 +708,9 @@ C  ---- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 C  ----  Impact detectors.
         CALL IMPACT_DETECTOR2(IBODYL)
 C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      ELSE IF(DABS(Z).GT.ZEND.OR.DSQRT(X*X+Y*Y).GT.RMAX)THEN
+      ENDIF
+      
+      IF(DABS(Z).GT.ZEND.OR.DSQRT(X*X+Y*Y).GT.RMAX)THEN
           ! SANITY CHECK FOR PARTICLES LEAVING THE SYSTEM
           IEXIT = 2
           GOTO 104
@@ -757,12 +762,18 @@ C  ----  Energy is locally deposited in the material.
         IEXIT=3                     ! Labels absorbed particles.
         GO TO 104                   ! Exit.
       ENDIF
+      
+      CALL START                      ! Starts simulation in current medium.
 C
 C
   103 CONTINUE
       IBODYL=IBODY
-c      write(46,'(3i3,1x,5e11.3,1x,i3)')
-c     1    N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+      IF(INT(SHN).EQ.1488.AND.KPAR.EQ.3)
+     1  write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+      IF(W.NE.W)THEN
+        DEBO(IBODY) = DEBO(IBODY) + E
+        GO TO 104
+      ENDIF
 C
 C ---- DETERMINE THE FIELD USING THE PENELOPE EMFIELDS FUNCTION TPEMF0
 C     
@@ -812,13 +823,18 @@ c
           CALL KNOCK(DE,ICOL)        ! Analogue simulation.
         ENDIF
       ENDIF
+      
+      CALL TRACKSTEPS
+      
       DEP=DE*WGHT
 C  ----  Energy is locally deposited in the material.
       DEBO(IBODY)=DEBO(IBODY)+DEP
       CALL DOSEBOX(DEP) ! PENELOPE CODE TO FILL TEXT DATA OUTPUT...
 C      
 c  ---- Fill Check the Energy Loss.
-      IF(DEP.GT.0)CALL RECORD_ENERGYLOSS(DTYPE,DEP,EFOILE,EFOILW,DS)
+      IF(DEP.GT.0) THEN
+           CALL RECORD_ENERGYLOSS(DTYPE,DEP,EFOILE,EFOILW,DS)
+      ENDIF
 c  
       IF(E.LT.EABS(KPAR,MAT).OR.MAT.EQ.0) THEN  ! The particle has been absorbed.
         IEXIT=3                     ! Labels absorbed particles.
@@ -856,12 +872,13 @@ C
       IF(LEFT.GT.0) THEN
         IF(ILB(1).EQ.-1) THEN  ! Primary particle from SOURCE.
           ILB(1)=1  ! Energy is not removed from the site.
+          IF(E.EQ.56.7E3)NE00 = 1
           IF(LSPEC) THEN
             KE=E*RDSHE+1.0D0
             SHIST(KE)=SHIST(KE)+1.0D0
           ENDIF
           GO TO 302
-        ENDIF        
+        ENDIF
         IF(E.GT.EABSB(KPAR,IBODY)) THEN
           DEBO(IBODY)=DEBO(IBODY)-E*WGHT  ! Energy is removed.
           IF(LDOSEM) THEN  ! Particle inside the dose box.
@@ -887,11 +904,12 @@ C
       call timer(eventend)
       tracktime = eventend - eventstart
       
-      CALL FILLBETATREE(EFOILE,EFOILW,PTYPE,1)
+      CALL FILLBETATREE(EFOILE,EFOILW,1)
 C     
 C  ----  Tallying the spectra from energy-deposition detectors.
-
+     
       CALL TALLYSPECTRA
+      CALL WRITESTEPS
 C
 C  ------------------------  The simulation of the shower ends here.
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -901,7 +919,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       END
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 C-----------------------------------------------------------------------C
-      SUBROUTINE GENEVENT(NTYPE,NPAR,PTYPE,DECAYPAR,NCNT,NINCREASE)
+      SUBROUTINE GENEVENT(NTYPE,NPAR,DECAYPAR,NCNT,NINCREASE)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
       INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
@@ -913,10 +931,7 @@ C-----------------------------------------------------------------------C
       IF(NTYPE.EQ.1.OR.NTYPE.EQ.10)THEN
          CALL PROTONS(DECAYPAR)
          KPAR=1
-         WGHT = 1.0
          PTYPE=0
-C         write(6,'(3i3,1x,5e11.3)')N,KPAR,ILB(1),X,Y,Z,W,E
-         CALL HFILL(100,real(E/1000.),0.,1.) ! FILL INITIAL ENERGY HISTOGRAMS
       ELSEIF(NTYPE.EQ.2)THEN
          CALL TIN_DECAY             ! GENERATING Events from Tin 113
          PTYPE=1
@@ -926,11 +941,6 @@ C         write(6,'(3i3,1x,5e11.3)')N,KPAR,ILB(1),X,Y,Z,W,E
          CALL GAMMA_SOURCE(EGAMMA,XG,YG,ZG,ALPHAG,THETAG)
       ELSEIF(NTYPE.EQ.5)THEN
          CALL BI_DECAY
-         IF(E.LT.7.E5)THEN
-             PTYPE=2
-         ELSE 
-             PTYPE=3
-         ENDIF
       ELSEIF(NTYPE.EQ.6)THEN
 C     SIMULATES ALL THREE SOURCES IN THE SPECTROMETERS CENTER
          IF(RUNFRAC.LT.0.25)THEN
@@ -972,6 +982,9 @@ c           call xe_135_decay(PTYPE)
       ELSEIF(NTYPE.EQ.9)THEN
          CALL CD_DECAY()
       ENDIF
+
+      WGHT = 1.0 ! Set Weight 
+      CALL HFILL(100,real(E/1000.),0.,1.) ! FILL INITIAL ENERGY HISTOGRAMS
       
       RETURN
       END
@@ -1006,7 +1019,7 @@ c
       IF(KPARP.EQ.0) THEN
 C  ****  User-defined source.
         !CALL SOURCE
-        CALL GENEVENT(1,INT(SHN),PTYPE,DECAYPAR,NCNT,NINCREASE)
+        CALL GENEVENT(NSIMTYPE,INT(SHN),DECAYPAR,NCNT,NINCREASE)
         SHN=SHN+1.0D0
         N=N+1
         IF(N.GT.2000000000) N=N-2000000000

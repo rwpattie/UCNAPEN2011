@@ -11,7 +11,7 @@ src/penelope_old/*
 src/.*~
 mats/*
 data/*
-fort.46
+fort.*
 geometry.rep
 material
 plane.in

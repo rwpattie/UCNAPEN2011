@@ -5,6 +5,7 @@ TITLE  Simulation of the UCNA Experiment
        .
        >>>>>>>> Source definition.
 SKPAR  0        [Primary particles: 1=electron, 2=photon, 3=positron]
+SIMTYP 5        [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
 SENERG 1e6              [Initial energy (monoenergetic sources only)]
 SPOSIT 0.0 0.0 -20.0                      [Coordinates of the source]
 SCONE  0 0 0                            [Conical beam; angles in deg]
@@ -41,6 +42,7 @@ DSMAX  405 1E-2                  [EAST MWPC GAS                     ]
 DSMAX  406 1E-2                  [EAST MWPC GAS                     ] 
 DSMAX  411 1E-5                  [EAST SCINTILLATOR DEAD LAYER      ]
 DSMAX  410 0.1                   [EAST N2 VOLUME                    ]
+DSMAX  412 1.0                   [EAST DETECTOR NEAR VACUUM VOLUME  ]
 DSMAX  414 1E-5                  [WEST MYLAR PLANE FRONT            ]
 DSMAX  415 1E-5                  [WEST MYLAR PLANE BACK             ]
 DSMAX  416 1E-2                  [WEST SCINTILLATOR                 ]
@@ -48,12 +50,13 @@ DSMAX  423 1E-2                  [WEST MWPC GAS                     ]
 DSMAX  424 1E-2                  [WEST MWPC GAS                     ]
 DSMAX  428 0.1                   [WEST N2 VOLUME                    ]
 DSMAX  429 1E-5                  [WEST DEAD LAYER                   ]
-DSMAX  432 1E-6                  [DECAY TRAP FOILS                  ]
-DSMAX  433 1E-6                  [DECAY TRAP BE                     ]
-DSMAX  435 1.0                   [DECAY NEAR VACUUM VOLUME          ]
-DSMAX  436 1.0                   [DECAY NEAR VACUUM VOLUME          ]
 DSMAX  430 1.0                   [WEST DETECTOR NEAR VACUUM VOLUME  ]
-DSMAX  412 1.0                   [EAST DETECTOR NEAR VACUUM VOLUME  ]
+DSMAX  432 5E-7                  [DECAY TRAP FOILS                  ]
+DSMAX  433 5E-7                  [DECAY TRAP BE EAST                ]
+DSMAX  434 5E-7                  [DECAY TRAP BE WEST                ]
+DSMAX  435 5E-7                  [DECAY TRAP FOILS WEST             ]
+DSMAX  436 1.0                   [DECAY NEAR VACUUM VOLUME          ]
+DSMAX  437 1.0                   [DECAY INTERNAL VACUUM             ]
        .
        >>>>>>>> Interaction forcing.
 IFORCE 1 1 4  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
@@ -68,11 +71,10 @@ IMPDET 1e3 1e6 1000 1 0          [E-window, no. of bins, IPSF, IDCUT]
 IDBODY 398               [Active body; one line for each active body]
 IDBODY 416               [Active body; one line for each active body]
        .
-       .
        >>>>>>>> Job properties
-RSEED  1000  1000
+RSEED  4321  1234
 NSIMSH 1e9                      [Desired number of simulated showers]
-TIME   1e1                         [Allotted simulation time, in sec]
+TIME   1e2                         [Allotted simulation time, in sec]
 HBOOKF data/event          [Path and prefix to the hbook output file]
        .
        >>>>>>>>> Volume Limits of the Experimental Geometry.
