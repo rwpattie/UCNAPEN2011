@@ -611,19 +611,24 @@ C
       INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
       TSEC = 0.0
+      NFILE = 0
 C
 C  ****  Read input files and initialize the simulation packages.
 C
       CALL PMRDR
       IF(JOBEND.NE.0) GO TO 103 ! The simulation was already completed.
-      CALL BUILDHBOOK
+      CALL BUILDHBOOK(NFILE)
 C
 C  ****  Simulation of a new shower and scoring.
 C
   101 CONTINUE
       CALL SHOWER
-      IF(MOD(INT(SHN),10).EQ.0)
+      IF(MOD(INT(SHN),1000).EQ.0)
      1 PRINT*,'AT EVENT = ',INT(SHN),INT(DSHN),TSEC,TSECA
+      IF(MOD(INT(SHN),250000).EQ.0)THEN ! close and reopen the paw ntuple
+        NFILE = NFILE + 1               ! file to avoid crashes after 250k events
+        CALL BUILDHBOOK(NFILE)
+      ENDIF
       IF(JOBEND.NE.0) GO TO 102  ! The simulation is completed.
 C
 C  ****  End the simulation after the allotted time or after completing
