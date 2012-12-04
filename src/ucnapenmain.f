@@ -642,9 +642,9 @@ C
   103 CONTINUE
       CALL PMWRT(1)
       
-!       WRITE(6,1002) SHN
-!  1002 FORMAT(3X,'Number of simulated showers =',1P,E14.7,
-!      1  /3X,'*** END ***')
+      WRITE(6,1002) SHN
+ 1002 FORMAT(3X,'Number of simulated showers =',1P,E14.7,
+     1  /3X,'*** END ***')
      
       CALL HROUT(0,ICYCLE,' ')
       CALL HPRINT(34)
@@ -684,19 +684,23 @@ C
       
 C  101 CONTINUE
 c     write(6,*) ISEED1,ISEED2
-      CALL CLEANS          ! Cleans the secondary stack.
+    
 C
 C  **********  Set the initial state of the primary particle.
 C
   201 CONTINUE
+      CALL CLEANS          ! Cleans the secondary stack.
       CALL SHOWER_START  ! Generate event using the method specified in the input file
-      CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS
-      
+      CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS     
 C     
 C  ****  Check if the trajectory intersects the material system.
 C
   302 CONTINUE
       CALL LOCATE
+!       IF(ILB(5).EQ.1.AND.KPAR.EQ.1.AND.ILB(1).EQ.1)THEN
+!         write(36,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+!       ENDIF  
+      
 C ---- ALLOW GAMMAS TO TAKE A HUGE STEP.      
       IF((MAT.EQ.0.OR.MAT.EQ.7).AND.KPAR.EQ.2) THEN
         IBODYL=IBODY
@@ -755,7 +759,7 @@ C  ----  Energy is locally deposited in the material.
 C  <<<<<<<<<<<<  Particle splitting and Russian roulette  <<<<<<<<<<<<<<
 
   102 CONTINUE
-      EABS(KPAR,MAT)=EABSB(KPAR,IBODY)
+      EABS(KPAR,MAT) = EABSB(KPAR,IBODY)
 C
 C  ************  The particle energy is less than EABS.
 C
@@ -773,8 +777,10 @@ C
 C
   103 CONTINUE
       IBODYL=IBODY
-      IF(INT(SHN).EQ.1488.AND.KPAR.EQ.3)
-     1  write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+!        IF(PTYPE.EQ.105)THEN
+!          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+!        ENDIF  
+!    
       IF(W.NE.W)THEN
         DEBO(IBODY) = DEBO(IBODY) + E
         GO TO 104
@@ -876,8 +882,11 @@ C
       CALL SECPAR(LEFT)
       IF(LEFT.GT.0) THEN
         IF(ILB(1).EQ.-1) THEN  ! Primary particle from SOURCE.
-          ILB(1)=1  ! Energy is not removed from the site.
-          IF(E.EQ.56.7E3)NE00 = 1
+          CALL HFILL(100,real(E/1000.),0.,1.) ! fill the 
+c        write(36,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+          ILB(1) = 1  ! Energy is not removed from the site.
+          ILB(5) = 1  !
+          WGHT = 1.0D0
           IF(LSPEC) THEN
             KE=E*RDSHE+1.0D0
             SHIST(KE)=SHIST(KE)+1.0D0
@@ -954,11 +963,6 @@ C     SIMULATES ALL THREE SOURCES IN THE SPECTROMETERS CENTER
          ELSE IF(RUNFRAC.GE.0.25.AND.RUNFRAC.LT.0.50)THEN
            CALL BI_DECAY
 c           call xe_135_decay(PTYPE)
-           IF(E.LT.7.E5)THEN
-             PTYPE=2
-           ELSE
-             PTYPE=3
-           ENDIF
          ELSE IF(RUNFRAC.GE.0.50.AND.RUNFRAC.LE.0.75)THEN
            CALL CE_DECAY
            PTYPE=4
@@ -989,6 +993,7 @@ c           call xe_135_decay(PTYPE)
       ENDIF
 
       WGHT = 1.0 ! Set Weight 
+
       CALL HFILL(100,real(E/1000.),0.,1.) ! FILL INITIAL ENERGY HISTOGRAMS
       
       RETURN

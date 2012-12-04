@@ -74,7 +74,7 @@ IDBODY 416               [Active body; one line for each active body]
        >>>>>>>> Job properties
 RSEED  4321  1234
 NSIMSH 1e9                      [Desired number of simulated showers]
-TIME   2.5e4                         [Allotted simulation time, in sec]
+TIME   1e3                         [Allotted simulation time, in sec]
 HBOOKF data/event          [Path and prefix to the hbook output file]
        .
        >>>>>>>>> Volume Limits of the Experimental Geometry.
