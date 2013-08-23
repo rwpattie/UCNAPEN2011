@@ -9,7 +9,6 @@ src/pmcomms.f
 src/penmain.f
 src/penelope_old/*
 src/.*~
-mats/*
 data/*
 fort.*
 geometry.rep
@@ -26,6 +25,7 @@ test.hbook
 test.root
 tester
 ucnapenmain
+output.dat
 .*~
 *.o
 *~
