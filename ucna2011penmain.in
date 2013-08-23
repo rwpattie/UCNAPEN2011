@@ -5,7 +5,7 @@ TITLE  Simulation of the UCNA Experiment
        .
        >>>>>>>> Source definition.
 SKPAR  0        [Primary particles: 1=electron, 2=photon, 3=positron]
-SIMTYP 5        [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
+SIMTYP 1        [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
 SENERG 1e6              [Initial energy (monoenergetic sources only)]
 SPOSIT 0.0 0.0 -20.0                      [Coordinates of the source]
 SCONE  0 0 0                            [Conical beam; angles in deg]
@@ -33,7 +33,7 @@ MFNAME mats/Si.mat                    [Material file, up to 20 chars]
 MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
        .
        >>>>>>>> Geometry definition file.
-GEOMFN geos/detectorC                 [Geometry file, up to 20 chars]
+GEOMFN geos/detectorC            [Geometry file, up to 20 chars]
 DSMAX  1 2e-2                    [KB, maximum step length in body KB]
 DSMAX  396 1e-5                  [EAST MYLAR PLANE FRONT            ]
 DSMAX  397 1e-5                  [EAST MYLAR PLANE BACK             ]
@@ -56,7 +56,8 @@ DSMAX  433 5E-7                  [DECAY TRAP BE EAST                ]
 DSMAX  434 5E-7                  [DECAY TRAP BE WEST                ]
 DSMAX  435 5E-7                  [DECAY TRAP FOILS WEST             ]
 DSMAX  436 1.0                   [DECAY NEAR VACUUM VOLUME          ]
-DSMAX  437 1.0                   [DECAY INTERNAL VACUUM             ]
+DSMAX  437 1.0                   [SOURCE RING HOLDER                ]
+DSMAX  438 1.0                   [DECAY INTERNAL VACUUM             ]
        .
        >>>>>>>> Interaction forcing.
 IFORCE 1 1 4  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
@@ -82,7 +83,6 @@ ZMAX   240                          [Z limit of the simulation in cm]
 RADMAX 25                           [R limit of the simulation in cm]
        .
 END                                  [Ends the reading of input data]
-
        
 RESUME dump1.dmp               [Resume from this dump file, 20 chars]
 DUMPTO dump1.dmp                  [Generate this dump file, 20 chars]

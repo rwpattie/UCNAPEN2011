@@ -1,4 +1,4 @@
-F77    = gfortran  -Wall -O3
+F77    = gfortran -Wall -O3
 
 CLIBS ='/usr/lib'
 
