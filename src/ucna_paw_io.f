@@ -10,7 +10,7 @@ c----------------------------------------------------------------------c
       IQUEST(10) = 65000  ! BIGGER NTUPLES. KINDA WORKS BUT STILL 
       
       IF(NFILE.GT.0)THEN
-          CALL HROUT(0,ICYCLE,' ')
+          CALL HROUT(0,ICYCLE,'T')
           CALL HREND('EVENT')
       ENDIF
       
@@ -19,14 +19,7 @@ c----------------------------------------------------------------------c
       HBOOKFILE = TRIM(HBKFN)//'_'//TRIM(FILENUMBER)//'.hbook'
       
       CALL HROPEN(1,'EVENT',HBOOKFILE,'NQE',1024,IERR)
-! c      if(NTYPE.NE.10)THEN
       CALL HBOOKN(34,'DECAYS',NENTRIES,'//EVENT',1024,DTAGS) 
-c      ELSE 
-c        CALL HBOOKN(34,'DECAYS',ngentries,'//EVENT',1024,GETAGS)
-c      ENDIF
-C      ELSE IF(DTYPE.EQ.2)THEN
-c        CALL HBOOKN(34,'DECAYS',nCDentries,'//EVENT',1024,CDTAGS)
-c      ENDIF
       CALL HBOOK1(100,'INTIAL BETA DECAY SPECTRUM',100,0.,1000.,0.)
       CALL HBOOK1(110,'THROWN ASYMMETRY',100,0.,1000.,0.)
       CALL HBOOK1(120,'MEASURED ASYMMETRY (RAW)',100,0.,1000.,0.)
@@ -120,7 +113,7 @@ C----------------------------------------------------------------------C
          DECS(62) = REAL(WPr)
          DECS(63) = REAL(PTOF)
          DECS(64) = REAL(PTYPE)
-         DECS(65) = REAL(DEBO(435))
+         DECS(65) = REAL(DEBO(437)+DEBO(438))
          DECS(70) = REAL(DEBO(440))
 
          DO I = 1,64
