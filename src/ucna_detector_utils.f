@@ -59,7 +59,7 @@ c----------------------------------------------------------------------c
       END 
 ************************************************************************
 c----------------------------------------------------------------------c
-      DOUBLE PRECISION FUNCTION BIRKS_LAW(E,D,X)
+      DOUBLE PRECISION FUNCTION BIRKS_LAW(E,D)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
       PARAMETER (Sk = 0.42050, Bk = 0.01907)
       PARAMETER (AA = 116.7,BB= -0.7287,RHO = 1.032);
@@ -77,9 +77,11 @@ C       return 1.0/(1+kb*dEdx);
 c     The factor of e-6 takes the energy loss in eV to MeV
 c     S is 1000 times greater since it takes npe/meV -> npe/keV 
       DE = D*1d-6
-      XE = X
       dEdx = AA*RHO*(E*1d-3)**BB 
-      BIRKS_LAW = DE/(1.+BK*dEdX)*1d6
+      BIRKS_LAW = DE / (1. + BK*dEdX)*1d6
+      IF(BIRKS_LAW.EQ.0)Print*,DE,birks_law,DEDX,E,(E*1D-3),
+     1 (E*1D-3)**BB
+      
 C      BIRKS_LAW = (Sk*(DE/XE)) / (1. + Bk*(DE/XE))
 C      BIRKS_LAW = BIRKS_LAW*XE*1.0d6
 
@@ -87,25 +89,25 @@ C      BIRKS_LAW = BIRKS_LAW*XE*1.0d6
       END
 C-----------------------------------------------------------------------C
       DOUBLE PRECISION FUNCTION DELTAT(DS,E)
-     
+c-----------------------------------------------------------------------c
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
       PARAMETER(C=2.99792548D10,ME=510998.0D0)
       
-        BETA = DSQRT(E*(E+2*ME))/(E+ME)
+        BETA = DSQRT(E*(E + 2*ME))/(E + ME)
         DELTAT = DS / (BETA*C)
         
       RETURN
       END
-C------------------------------------------------------------------------C
-      SUBROUTINE RECORD_ENERGYLOSS(DTYPE,DE,EFOILE,EFOILW,DS)
-C----------------------------------------------------------------------C
+C-----------------------------------------------------------------------C
+      SUBROUTINE RECORD_ENERGYLOSS(DTYPE,DE,EFOILE,EFOILW,DS,EPRE)
+C-----------------------------------------------------------------------C
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
       INCLUDE 'ucnapenmain.h'
       PARAMETER(NB = 5000)
       COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/CNT1/TDEBO(NB),TDEBO2(NB),DEBO(NB)
-C----------------------------------------------------------------------C
-c      PRINT*,DTYPE
+      EXTERNAL BIRKS_LAW
+C-----------------------------------------------------------------------C
        dtype = 1
 c      IF(DTYPE.NE.2.AND.DTYPE.LE.8)THEN
 c       PRINT*,X,Y,Z,IBODY,MAT,DTYPE,DS
@@ -120,24 +122,24 @@ C        BOTH THE FOIL AND THE COATING
                EFOILW=EFOILW+DE
          ENDIF
 C        IF THE ELECTRON IS IN THE DEAD LAYER ADD ITS ENERGY TO THE EDEAD* 
-C        COUNTERS           
-         IF(IBODY.EQ.416)THEN
+C        COUNTERS
+         IF(IBODY.EQ.416.)THEN
                                 ! TURN THE ENERGY LOSS IN A PATH LENGTH INTO
                                 ! NPE USING BIRKS LAW,
                                 ! CURRENTLY TESTING WHETHER INTEGER OR CONTINUOUS 
                                 ! MODEL
-               PHTEN = PHTEN + BIRKS_LAW(E,DE,DS)
-               PHTE  = PHTE  + BIRKS_LAW(E,DE,DS)
-         ELSE IF(IBODY.EQ.398)THEN
-               PHTWN = PHTWN + BIRKS_LAW(E,DE,DS)
-               PHTW  = PHTW  + BIRKS_LAW(E,DE,DS)
+      !         PHTEN = PHTEN + BIRKS_LAW(E,DE)
+               PHTE  = PHTE  + BIRKS_LAW(EPRE,DE)
+         ELSE IF(IBODY.EQ.398.)THEN
+       !        PHTWN = PHTWN + BIRKS_LAW(E,DE)
+               PHTW  = PHTW  + BIRKS_LAW(EPRE,DE)
          END IF
 c      ENDIF
 c
 c        check to see if the detectors are triggerred.
 c
 c      if(dtype .ne. 2) then
-          CALL TRIGGERCHECK(PHTW,PHTE,TIME*1.0d9,TRGEAST,TRGWEST)
+          CALL TRIGGERCHECK(PHTW,PHTE,TIME,TRGEAST,TRGWEST)
 c      else if(dtype .eq. 2) then
 c           if(DEBO(4).gt.0.and.trgeast(1).eq.0.0) trgeast(1)=time*1.0d9
 c           if(DEBO(19).gt.0.and.trgwest(1).eq.0.0)trgwest(1)=time*1.0d9

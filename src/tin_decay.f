@@ -1,10 +1,9 @@
       subroutine tin_decay
 c---------------------------------------------------------------------c
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
-      parameter(pi=3.141592654d0,ME=510.9870d3)
+c      parameter(pi=3.141592654d0)
+      INCLUDE 'pmcomms.f'
       EXTERNAL rand
-      COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
-      COMMON/RSEED/ISEED1,ISEED2
 c---------------------------------------------------------------------c
 c     Generating radiation mode; 
 c     (1) Electron capture will either emit a k or l shell beta or a

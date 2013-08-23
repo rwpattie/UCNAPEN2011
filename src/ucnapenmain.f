@@ -691,16 +691,14 @@ C
   201 CONTINUE
       CALL CLEANS          ! Cleans the secondary stack.
       CALL SHOWER_START  ! Generate event using the method specified in the input file
-      CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS     
+      CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS    
+c      goto 203 ! stupid goto command meant to skip transport to check the event 
+                ! generator.
 C     
 C  ****  Check if the trajectory intersects the material system.
 C
   302 CONTINUE
       CALL LOCATE
-!       IF(ILB(5).EQ.1.AND.KPAR.EQ.1.AND.ILB(1).EQ.1)THEN
-!         write(36,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
-!       ENDIF  
-      
 C ---- ALLOW GAMMAS TO TAKE A HUGE STEP.      
       IF((MAT.EQ.0.OR.MAT.EQ.7).AND.KPAR.EQ.2) THEN
         IBODYL=IBODY
@@ -813,7 +811,7 @@ C
          GO TO 104
       ENDIF
 C  ----   INCREMENT TIME OF FLIGHT   
-      TIME = TIME + DELTAT(DS,E)      
+      TIME = TIME + DELTAT(DSEF,E)      
 C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 C     More penelope functions to fill detector arrays....
 C
@@ -827,6 +825,7 @@ C        the new material.
          GO TO 102    ! The particle crossed an interface.
       ENDIF
 c      
+      EPRE = E
       IF(MAT.NE.0)THEN
         IF(LINTF) THEN
           CALL KNOCKF(DE,ICOL)       ! Interaction forcing is active.
@@ -843,8 +842,8 @@ C  ----  Energy is locally deposited in the material.
       CALL DOSEBOX(DEP) ! PENELOPE CODE TO FILL TEXT DATA OUTPUT...
 C      
 c  ---- Fill Check the Energy Loss.
-      IF(DEP.GT.0) THEN
-           CALL RECORD_ENERGYLOSS(DTYPE,DEP,EFOILE,EFOILW,DS)
+      IF(DEP.GT.0.AND.ILB(1).EQ.1) THEN
+           CALL RECORD_ENERGYLOSS(DTYPE,DEP,EFOILE,EFOILW,DS,EPRE)
       ENDIF
 c  
       IF(E.LT.EABS(KPAR,MAT).OR.MAT.EQ.0) THEN  ! The particle has been absorbed.
@@ -881,6 +880,7 @@ C
   202 CONTINUE
       CALL SECPAR(LEFT)
       IF(LEFT.GT.0) THEN
+        WGHT = 1.0
         IF(ILB(1).EQ.-1) THEN  ! Primary particle from SOURCE.
           CALL HFILL(100,real(E/1000.),0.,1.) ! fill the 
 c        write(36,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
@@ -917,7 +917,7 @@ C  ----  Energies deposited in different bodies and detectors.
 C
       call timer(eventend)
       tracktime = eventend - eventstart
-      
+  203 continue      
       CALL FILLBETATREE(EFOILE,EFOILW,1)
 C     
 C  ----  Tallying the spectra from energy-deposition detectors.

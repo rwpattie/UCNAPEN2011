@@ -52,8 +52,8 @@ C-----------------------------------------------------------------------------C
       v     = dsin(theta)*dsin(phi)
       w     = dcos(theta)
       kpar  = 1
-      x     = 0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
-      y     = 0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
+      x     = 0.4*(0.5-1.0*rand(1.d0)) ! for background runs, tin source is
+      y     = 0.4*(0.5-1.0*rand(1.d0)) !   approximately at (-5.5,0,155).
       z     = 1.
       
       XE = 1.310757D-1*RAND(1.0d0)
