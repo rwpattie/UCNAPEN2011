@@ -15,7 +15,6 @@ c----------------------------------------------------------------------c
       ENDIF
       
       WRITE(FILENUMBER,'(I0.3)')NFILE
-      
       HBOOKFILE = TRIM(HBKFN)//'_'//TRIM(FILENUMBER)//'.hbook'
       
       CALL HROPEN(1,'EVENT',HBOOKFILE,'NQE',1024,IERR)

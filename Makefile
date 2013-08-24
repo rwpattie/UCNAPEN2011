@@ -9,6 +9,11 @@ OBJ = penelope.o ucnapenmain.o rita.o pengeom.o timer.o penvared.o penfield.o b_
 
 MOBJ = material.o \
 
+GOBJ = geo_writer.o \
+
+geo_writer : src/geo_writer.f
+	$(F77) src/geo_writer.f -o geo_writer
+
 tester : tester.o
 	$(F77) -o tester tester.o \
 	$(CLIBS)/libpacklib.so \
