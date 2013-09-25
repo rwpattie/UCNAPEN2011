@@ -694,6 +694,8 @@ C
       CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS    
 c      goto 203 ! stupid goto command meant to skip transport to check the event 
                 ! generator.
+      z = 10.0
+      
 C     
 C  ****  Check if the trajectory intersects the material system.
 C
@@ -775,9 +777,10 @@ C
 C
   103 CONTINUE
       IBODYL=IBODY
-!        IF(PTYPE.EQ.105)THEN
-!          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
-!        ENDIF  
+ !       IF(PTYPE.EQ.1)THEN
+      IF(ABS(Z).LT.10)THEN
+          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+	ENDIF  
 !    
       IF(W.NE.W)THEN
         DEBO(IBODY) = DEBO(IBODY) + E
@@ -990,6 +993,8 @@ c           call xe_135_decay(PTYPE)
          KPAR = 2
       ELSEIF(NTYPE.EQ.9)THEN
          CALL CD_DECAY()
+      ELSEIF(NTYPE.EQ.11)THEN
+         CALL XE_135_DECAY
       ENDIF
 
       WGHT = 1.0 ! Set Weight 

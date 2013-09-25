@@ -26,9 +26,6 @@ c     1      ABZ,P,BP,BPG1,BPG2)
 
       CALL CALCULATE_BZ(BZ,X,Y,Z)
       CALL CALCULATE_BP(BP,X,Y,Z)
-c      bx = 0.0
-c      by = 0.0
-c      bz = 0.0
 
       IF(X.EQ.0.0.AND.Y.EQ.0.0)THEN
          BX=0.0
@@ -237,7 +234,6 @@ C-----------------------------------------------------------------------C
       P    = DSQRT(X*X + Y*Y)
       ARGZ = D*(ABS(Z) - C)
 
-
       CH   = COSH(ARGZ)*COSH(ARGZ)
       TH   = TANH(ARGZ)
       
@@ -270,7 +266,7 @@ C----------------------------------------------------------------------C
       D5BZ = 8*B*D*D*D*D*D/CH*
      1        (6*TH/CH - (TH - 2./CH) * (2*TH + 1./CH))
 
-      BP   = -DBZ*P/2. + D3BZ*PP**3/16. + D5BZ*P**5/192.
+      BP   = -DBZ*P/2. + D3BZ*PP**3/16. + D5BZ*P**5/C
     
       RETURN 
       END
