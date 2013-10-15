@@ -5,6 +5,7 @@ c----------------------------------------------------------------------c
       INCLUDE 'ucnapenmain.h'
 c----------------------------------------------------------------------c
       CHARACTER*26 HBOOKFILE
+      CHARACTER*20 HBKFN
       CHARACTER*3  FILENUMBER,FORMSTR
       CALL HLIMIT(NWPAWC) ! A FEW PAW FORUMS SUGGEST THIS FOR MAKING
       IQUEST(10) = 65000  ! BIGGER NTUPLES. KINDA WORKS BUT STILL 
