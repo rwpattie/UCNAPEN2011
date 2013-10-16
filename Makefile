@@ -11,6 +11,8 @@ MOBJ = material.o \
 
 GOBJ = geo_writer.o \
 
+all : geo_writer ucnapenmain
+
 geo_writer : src/geo_writer.f
 	$(F77) src/geo_writer.f -o geo_writer
 

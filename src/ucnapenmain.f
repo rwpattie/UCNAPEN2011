@@ -694,8 +694,6 @@ C
       CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS    
 c      goto 203 ! stupid goto command meant to skip transport to check the event 
                 ! generator.
-      z = 10.0
-      
 C     
 C  ****  Check if the trajectory intersects the material system.
 C
@@ -777,10 +775,10 @@ C
 C
   103 CONTINUE
       IBODYL=IBODY
- !       IF(PTYPE.EQ.1)THEN
-      IF(ABS(Z).LT.10)THEN
-          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
-	ENDIF  
+c !       IF(PTYPE.EQ.1)THEN
+c      IF(ABS(Z).LT.10)THEN
+c          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+c	ENDIF  
 !    
       IF(W.NE.W)THEN
         DEBO(IBODY) = DEBO(IBODY) + E
@@ -945,6 +943,7 @@ C-----------------------------------------------------------------------C
       RUNFRAC = RAND(1.d0) !REAL(NPAR)/REAL(NPARMAX)
       DNCNT = 1
       NINCREASE = 1000
+      write(6,*)"simtype " , ntype
       IF(NTYPE.EQ.1.OR.NTYPE.EQ.10)THEN
          CALL PROTONS(DECAYPAR)
          KPAR=1
@@ -1042,8 +1041,8 @@ C  ****  User-defined source.
           KE=E*RDSHE+1.0D0
           SHIST(KE)=SHIST(KE)+1.0D0
         ENDIF
-!       write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1x,5e11.3,1x,i3)')
-!      1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
+       write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1x,5e11.3,1x,i3)')
+     1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
       ELSE IF(LPSF) THEN
 C  ****  Phase-space file.
         CALL RDPSF(IPSFI,NSHI,ISEC,KODEPS)

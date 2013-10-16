@@ -287,7 +287,7 @@ c     set the proton energy and direction
       UP = PU
       VP = PV
       WP = PW
-
+      print*,E,U,V,W
       DECAYPAR(1) = REAL(E)
       DECAYPAR(2) = REAL(U)
       DECAYPAR(3) = REAL(V)
