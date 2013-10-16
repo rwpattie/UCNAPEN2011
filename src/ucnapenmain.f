@@ -716,7 +716,7 @@ C  ----  Impact detectors.
         CALL IMPACT_DETECTOR2(IBODYL)
 C  ----  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       ENDIF
-      
+
       IF(DABS(Z).GT.ZEND.OR.DSQRT(X*X+Y*Y).GT.RMAX)THEN
           ! SANITY CHECK FOR PARTICLES LEAVING THE SYSTEM
           IEXIT = 2
@@ -943,7 +943,7 @@ C-----------------------------------------------------------------------C
       RUNFRAC = RAND(1.d0) !REAL(NPAR)/REAL(NPARMAX)
       DNCNT = 1
       NINCREASE = 1000
-      write(6,*)"simtype " , ntype
+c      write(6,*)"simtype " , ntype
       IF(NTYPE.EQ.1.OR.NTYPE.EQ.10)THEN
          CALL PROTONS(DECAYPAR)
          KPAR=1
@@ -1041,8 +1041,8 @@ C  ****  User-defined source.
           KE=E*RDSHE+1.0D0
           SHIST(KE)=SHIST(KE)+1.0D0
         ENDIF
-       write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1x,5e11.3,1x,i3)')
-     1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
+c       write(6,'(''n,kpar,gen,x,y,z,w,e,ibody='',3i3,1x,5e11.3,1x,i3)')
+c     1    MOD(N,100),KPAR,ILB(1),X,Y,Z,W,E,IBODY
       ELSE IF(LPSF) THEN
 C  ****  Phase-space file.
         CALL RDPSF(IPSFI,NSHI,ISEC,KODEPS)
