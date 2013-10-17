@@ -10,6 +10,7 @@ c
 c  http://www.nndc.bnl.gov/chart/decaysearchdirect.jsp?nuc=207BI&unc=nds
 c------------------------------------------------------------------------
       GPROB = 1.029*RAND(1.0d0)
+
       ! Select the correct gamma branch
       ! there are 3 level 7/2- (7.03%), 13/2+ (84.0%), and 5/2- (8.9%)
       ! This routine selects the energy level of the initial decay
