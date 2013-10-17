@@ -26,6 +26,7 @@ c     1      ABZ,P,BP,BPG1,BPG2)
 
       CALL CALCULATE_BZ(BZ,X,Y,Z)
       CALL CALCULATE_BP(BP,X,Y,Z)
+      print*,z,bz
 
       IF(X.EQ.0.0.AND.Y.EQ.0.0)THEN
          BX=0.0

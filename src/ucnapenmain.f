@@ -665,6 +665,7 @@ C
 C  Simulates a new shower and keeps score of relevant quantities.
 C
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
+      PARAMETER( DSVAC = 1.D0)
       INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
       LOGICAL LINTF
@@ -769,7 +770,9 @@ C  ----  Energy is locally deposited in the material.
         IEXIT=3                     ! Labels absorbed particles.
         GO TO 104                   ! Exit.
       ENDIF
-      
+      IF(sqrt(x**2+y**2).gt.rmax.or.ABS(Z).gt.ZEND.or.E.gt.1e10)then
+        goto 104
+      endif
       CALL START                      ! Starts simulation in current medium.
 C
 C
@@ -777,7 +780,7 @@ C
       IBODYL=IBODY
 c !       IF(PTYPE.EQ.1)THEN
 c      IF(ABS(Z).LT.10)THEN
-c          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+c         write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
 c	ENDIF  
 !    
       IF(W.NE.W)THEN
@@ -804,7 +807,7 @@ C
       IF(DABS(Z).LT.ZEND.AND.DSQRT(X*X+Y*Y).LT.RMAX)THEN
         IF(MAT.EQ.0)THEN
            ! IN VACUUM STEP 1 CM 
-           CALL TPEMF1(1.0,DSEF,NCROSS)
+           CALL TPEMF1(DSVAC,DSEF,NCROSS)
         ELSE
            CALL TPEMF1(DS,DSEF,NCROSS)
         ENDIF
@@ -818,6 +821,7 @@ C     More penelope functions to fill detector arrays....
 C
       CALL ENERGYFLUENCE(DSEF,IBODYL)
       CALL IMPACT_DETECTOR2(IBODYL)
+c      write(6,*)kpar,e
 C     
 C  ----  If the particle has crossed an interface, restart the track in
 C        the new material.
@@ -843,6 +847,7 @@ C  ----  Energy is locally deposited in the material.
       CALL DOSEBOX(DEP) ! PENELOPE CODE TO FILL TEXT DATA OUTPUT...
 C      
 c  ---- Fill Check the Energy Loss.
+c      write(6,*)kpar,e
       IF(DEP.GT.0.AND.ILB(1).EQ.1) THEN
            CALL RECORD_ENERGYLOSS(DTYPE,DEP,EFOILE,EFOILW,DS,EPRE)
       ENDIF
@@ -859,6 +864,7 @@ c
         GO TO 104                   ! Exit.
       ENDIF
 C     
+c            write(6,*)kpar,e
       GO TO 103
 C  ------------------------  The simulation of the track ends here.
 C  ---------------------------------------------------------------------
@@ -880,11 +886,12 @@ C  ************  Any secondary left?
 C
   202 CONTINUE
       CALL SECPAR(LEFT)
+c      write(6,*)'in secpar',kpar,e,ILB
       IF(LEFT.GT.0) THEN
         WGHT = 1.0
         IF(ILB(1).EQ.-1) THEN  ! Primary particle from SOURCE.
           CALL HFILL(100,real(E/1000.),0.,1.) ! fill the 
-c        write(36,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
           ILB(1) = 1  ! Energy is not removed from the site.
           ILB(5) = 1  !
           WGHT = 1.0D0
@@ -994,6 +1001,7 @@ c           call xe_135_decay(PTYPE)
          CALL CD_DECAY()
       ELSEIF(NTYPE.EQ.11)THEN
          CALL XE_135_DECAY
+c         write(6,*)'in generate event',kpar,e,ptype
       ENDIF
 
       WGHT = 1.0 ! Set Weight 

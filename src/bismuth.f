@@ -429,13 +429,12 @@ c------------------------------------------------------------------------
       return
       end
 c-----------------------------------------------------------------------------C
-      subroutine xe_135_decay(ptype)
+      subroutine xe_135_decay
 c----------------------------------------------------------------------
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
-      parameter(pi=3.141592654d0,ME=510.9870d3)
+c      parameter(pi=3.141592654d0,ME=510.9870d3)
       EXTERNAL rand,energy3
-      COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
-      COMMON/RSEED/ISEED1,ISEED2
+      include 'pmcomms.f'
       DIMENSION ILBH(5)
 
       betaprob = rand(1.d0)
@@ -493,32 +492,48 @@ c      betaprob = 0.50
       us     = dsin(dacos(theta))*dcos(psi)
       vs     = dsin(dacos(theta))*dsin(psi)
       ws     = theta
-     
+C     
+C      AUGER ENERGIES
+C 
+      EE1 = 2.49794E5
+      EE2 = 2.13809E5
+      EE3 = 2.4408E5
+      EE4 = 2.48577E5
+      EE5 = 2.49563E5
+      EE6 = 2.49778E5
+C
+C   AUGERS 2
+C     
+      EE7 = 6.08185E5
+      EE8 = 5.72200E5
+      EE9 = 6.02471E5
+      E10 = 6.06968E5
+
       if(nbetatype.eq.0)then
         augerprob = 0.966388*rand(1.0d0)
         if(augerprob.le.0.90)then
-          CALL STORES(249.794e3,X,Y,Z,US,VS,WS,1,2,ILBH)  
+          CALL STORES(EE1,X,Y,Z,US,VS,WS,1.d0,2,ILBH,0)  
         else if(augerprob.gt.0.90.and.augerprob.le.0.9561)then
-          CALL STORES(213.809e3,X,Y,Z,US,VS,WS,1,1,ILBH)
+          CALL STORES(EE2,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         else if(augerprob.gt.0.9561.and.augerprob.le.0.9643)then
-          CALL STORES(244.08e3,X,Y,Z,US,VS,WS,1,1,ILBH)
+          CALL STORES(EE3,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         else if(augerprob.gt.0.9643.and.augerprob.le.0.96599)then
-          CALL STORES(248.577e3,X,Y,Z,US,VS,WS,1,1,ILBH)
+          CALL STORES(EE4,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         else if(augerprob.gt.0.96599.and.augerprob.le.0.9634)then
-          CALL STORES(249.563e3,X,Y,Z,US,VS,WS,1,1,ILBH) 
+          CALL STORES(EE5,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0) 
         else if(augerprob.gt.0.9634)then
-          CALL STORES(249.778e3,X,Y,Z,US,VS,WS,1,1,ILBH)
+          CALL STORES(EE6,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         endif
       else if(nbetatype.eq.1)then
         augerprob = 2.921005*rand(1.d0)
         if(augerprob.le.2.90)then
-         CALL STORES(608.185e3,X,Y,Z,US,VS,WS,1,2,ILBH)
-        else if(augerprob.gt.2.90.and.augerprob.le.2.9182)then
-         CALL STORES(572.200e3,X,Y,Z,US,VS,WS,1,1,ILBH)
+         CALL STORES(EE7,X,Y,Z,US,VS,WS,1.d0,2,ILBH,0)
+         else if(augerprob.gt.2.90.and.augerprob.le.2.9182)then
+         CALL STORES(EE8,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         else if(augerprob.gt.2.9182.and.augerprob.le.2.92053)then
-         CALL STORES(602.471e3,X,Y,Z,US,VS,WS,1,1,ILBH)
+         CALL STORES(EE9,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         else if(augerprob.gt.2.92053)then
-         CALL STORES(606.968e3,X,Y,Z,US,VS,WS,1,1,ILBH)
+         CALL STORES(E10,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         endif
       endif 
       ptype = 1
