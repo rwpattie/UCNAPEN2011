@@ -149,7 +149,7 @@ C-----------------------------------------------------------------------------C
         KPAR2 = 2
       ELSE IF(XE.GT.6.9D-4.AND.XE.LE.8.78D-4)then
         E2    = 240.10D3
-      else if(xe.gt.8.78D-4.AND.XE.LE.9.10D-4)then
+      else if(e.gt.8.78D-4.AND.XE.LE.9.10D-4)then
         E2    = 312.24D3 
       else if(xe.gt.9.1D-4)then
         E2    = 324.25D3
@@ -446,7 +446,7 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
       nbetatype = 0
       qend = 0.d0
 
-      ILBH(1) = 2
+      ILBH(1) = -1
       ILBH(2) = 1
       ILBH(3) = 1
       ILBH(4) = 0

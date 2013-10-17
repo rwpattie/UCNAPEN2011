@@ -886,12 +886,11 @@ C  ************  Any secondary left?
 C
   202 CONTINUE
       CALL SECPAR(LEFT)
-c      write(6,*)'in secpar',kpar,e,ILB
       IF(LEFT.GT.0) THEN
         WGHT = 1.0
         IF(ILB(1).EQ.-1) THEN  ! Primary particle from SOURCE.
           CALL HFILL(100,real(E/1000.),0.,1.) ! fill the 
-          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+c          write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
           ILB(1) = 1  ! Energy is not removed from the site.
           ILB(5) = 1  !
           WGHT = 1.0D0
