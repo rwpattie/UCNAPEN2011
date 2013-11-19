@@ -780,8 +780,8 @@ C
       IBODYL=IBODY
 c !       IF(PTYPE.EQ.1)THEN
 c      IF(ABS(Z).LT.10)THEN
-c         write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
-c	ENDIF  
+c      write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
+c      ENDIF  
 !    
       IF(W.NE.W)THEN
         DEBO(IBODY) = DEBO(IBODY) + E
@@ -1001,6 +1001,11 @@ c           call xe_135_decay(PTYPE)
       ELSEIF(NTYPE.EQ.11)THEN
          CALL XE_135_DECAY
 c         write(6,*)'in generate event',kpar,e,ptype
+      ELSEIF(NTYPE.EQ.12)THEN
+         CALL CE_DECAY
+	 PTYPE=4
+      ELSEIF(NTYPE.EQ.13)THEN
+         CALL IN_DECAY()
       ENDIF
 
       WGHT = 1.0 ! Set Weight 

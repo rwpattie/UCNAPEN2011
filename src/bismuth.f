@@ -440,8 +440,8 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
 
       betaprob = rand(1.d0)
       if(betaprob.gt.0.25.and.betaprob.le.0.50)goto 1100
-      if(betaprob.gt.0.50.and.betaprob.le.0.75)goto 1200
-      if(betaprob.gt.0.75)goto 1300
+      if(betaprob.gt.0.50.and.betaprob.le.0.75)goto 1300
+      if(betaprob.gt.0.75)goto 1500
       
       betaprob = rand(1.d0)
       nbetatype = 0
@@ -474,11 +474,15 @@ c      betaprob = 0.50
          nbetatype = 4
       endif
 
-      rad   = 6.5*rand(1.d0)
-      psi   = 2*pi*rand(1.d0)
+      !rad   = 6.5*rand(1.d0)
+      !psi   = 2*pi*rand(1.d0)
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
-      x     = rad*dcos(psi)
-      y     = rad*dsin(psi)
+1000  continue 
+      x     = 6.5*(1.0 - 2.0*rand(1.d0))
+      y     = 6.5*(1.0 - 2.0*rand(1.d0))
+      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1000
+      !x     = rad*dcos(psi)
+      !y     = rad*dsin(psi)
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
@@ -554,11 +558,15 @@ C
         E = 163.914d3
       endif
    
-      rad   = 6.5*rand(1.d0)
-      psi   = 2*pi*rand(1.d0)
+      !rad   = 6.5*rand(1.d0)
+      !psi   = 2*pi*rand(1.d0)
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
-      x     = rad*dcos(psi)
-      y     = rad*dsin(psi)
+1200  continue
+      x     = 6.5*(1.0 - 2.0*rand(1.d0))
+      y     = 6.5*(1.0 - 2.0*rand(1.d0))
+      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1200
+      !x     = rad*dcos(psi)
+      !y     = rad*dsin(psi)
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
@@ -568,7 +576,7 @@ C
     
       return
   
-1200  continue
+1300  continue
       ptype = 3
       betaprob = rand(1.d0)
  
@@ -583,11 +591,15 @@ C
         e = energy3(qend)
       endif 
       
-      rad   = 6.5*rand(1.d0)
-      psi   = 2*pi*rand(1.d0)
+      !rad   = 6.5*rand(1.d0)
+      !psi   = 2*pi*rand(1.d0)
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
-      x     = rad*dcos(psi)
-      y     = rad*dsin(psi)
+1400  continue
+      x     = 6.5*(1.0 - 2.0*rand(1.d0))
+      y     = 6.5*(1.0 - 2.0*rand(1.d0))
+      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1400
+      !x     = rad*dcos(psi)
+      !y     = rad*dsin(psi)
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
@@ -597,7 +609,7 @@ C
 
       return
  
-1300  continue
+1500  continue
       ptype = 4
       betaprob = rand(1.d0)
  
@@ -613,11 +625,15 @@ C
         E = 233.013e3
       endif
 
-      rad   = 6.5*rand(1.d0)
-      psi   = 2*pi*rand(1.d0)
+      !rad   = 6.5*rand(1.d0)
+      !psi   = 2*pi*rand(1.d0)
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
-      x     = rad*dcos(psi)
-      y     = rad*dsin(psi)
+1600  continue
+      x     = 6.5*(1.0 - 2.0*rand(1.d0))
+      y     = 6.5*(1.0 - 2.0*rand(1.d0))
+      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1600
+      !x     = rad*dcos(psi)
+      !y     = rad*dsin(psi)
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)

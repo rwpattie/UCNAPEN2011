@@ -4,7 +4,7 @@ c----------------------------------------------------------------------c
       INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
 c----------------------------------------------------------------------c
-      CHARACTER*26 HBOOKFILE
+      CHARACTER*29 HBOOKFILE
       CHARACTER*3  FILENUMBER,FORMSTR
       CALL HLIMIT(NWPAWC) ! A FEW PAW FORUMS SUGGEST THIS FOR MAKING
       IQUEST(10) = 65000  ! BIGGER NTUPLES. KINDA WORKS BUT STILL 
@@ -16,7 +16,8 @@ c----------------------------------------------------------------------c
       
       WRITE(FILENUMBER,'(I0.3)')NFILE
       HBOOKFILE = TRIM(HBKFN)//'_'//TRIM(FILENUMBER)//'.hbook'
-      
+     
+      print*, "HBOOKFILE is ", HBOOKFILE 
       CALL HROPEN(1,'EVENT',HBOOKFILE,'NQE',1024,IERR)
       CALL HBOOKN(34,'DECAYS',NENTRIES,'//EVENT',1024,DTAGS) 
       CALL HBOOK1(100,'INTIAL BETA DECAY SPECTRUM',100,0.,1000.,0.)
@@ -93,7 +94,8 @@ C----------------------------------------------------------------------C
          DECS(40) = REAL(AX)
          DECS(41) = REAL(AY)
          DECS(42) = REAL(AZ)
-         DECS(43) = REAL(AU)
+         print*, "AZ is ", DECS(42)
+	 DECS(43) = REAL(AU)
          DECS(44) = REAL(AV)
          DECS(45) = REAL(AW)
       
@@ -147,6 +149,7 @@ c----------------------------------------------------------------------c
       DECS(1) = REAL(NPAR) ! Filling the initial event ntuple
       DECS(2) = REAL(KPAR) ! Particle number,type,position,energy,and
       DECS(3) = REAL(E)    ! momentum direction are stored in this
+      print*, "E is ", DECS(3)
       DECS(4) = REAL(X)    ! ntuple.
       DECS(5) = REAL(Y)
       DECS(6) = REAL(Z)

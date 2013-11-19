@@ -116,15 +116,24 @@ c     Generating the angular distribution which will assumed to be    c
 c     isotropic.                                                      c
 c---------------------------------------------------------------------c
 100   continue
-      x=0.4*(0.5-1*rand(1.d0)) ! for background runs, tin source is
-      y=0.4*(0.5-1*rand(1.d0)) !   approximately at (-5.5,0,155).
-      z=1.0!1.55d2 
+      
+1000  continue
+      y = (0.15 - 0.3*rand(1.d0))  ! for background runs, tin source is
+      x = (0.15 - 0.3*rand(1.d0))  ! approximately at (-5.5,0,155).
+      !x = (4.68 - 0.3*rand(1.d0)) ! edge of decay trap test
+      if(sqrt(x**2 + y**2) .gt. 0.15) goto 1000  
+      !if(sqrt((x-4.53)**2 + y**2) .gt. 0.15) goto 1000
+      z=1.0!1.55d2
+      !z=1.87309d2!1.55d2 
       costh = 1.-2.*rand(1.d0)   ! sample from cos(theta)
       theta = dabs(dacos(costh)) !    pi*rand(1.0d0)
       phi   =  2.*pi*rand(1.0d0)
       w=dcos(theta)
       u=dsin(theta)*dcos(phi)
       v=dsin(theta)*dsin(phi)
+      !w=1.
+      !u=0.
+      !v=0.
       win=w
       uin=u
       vin=v
