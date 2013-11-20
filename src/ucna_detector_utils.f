@@ -117,9 +117,11 @@ C        BOTH THE FOIL AND THE COATING
          IF((MAT.EQ.8.OR.MAT.EQ.7.OR.MAT.EQ.3)
      1       .AND.Z.GT.140.AND.Z.LT.160)THEN
                EFOILE=EFOILE+DE
+               EFLE = EFLE+DE
          ELSEIF((mat.eq.8.or.mat.eq.7.or.mat.eq.3)
      1          .and.z.lt.-140.and.z.gt.-160)then
                EFOILW=EFOILW+DE
+               EFLW = EFLW+DE
          ENDIF
 C        IF THE ELECTRON IS IN THE DEAD LAYER ADD ITS ENERGY TO THE EDEAD* 
 C        COUNTERS
@@ -154,6 +156,10 @@ c----------------------------------------------------------------------c
       PARAMETER(NENTRIES=89)
       COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/MWPC/ECX(170),ECY(170),WCX(170),WCY(170)
+      COMMON/EDEP/EPE,EPW,EPER,EPED,EPWD,EPWR,EGEA,EGWA,
+     1 EGEDF,EGEDB,EGWDF,EGWDB,EFLE,EFLW,ETUBE,EAL,EME1,EME2,
+     1 EMW1,EMW2,PHW,PHEN,PHE,PHWN,EHOLDER,EEAN,EEC1,EEC2,EWAN,
+     1 EWC1,EWC2,ECOL
       REAL DECS(NENTRIES)
       REAL COSTHETA(12)
       COMMON/HBOOKU/DECS,COSTHETA
@@ -187,10 +193,13 @@ c----------------------------------------------------------------------
 
            IF((IBODY.EQ.423.OR.IBODY.EQ.424).AND.Z.LT.ZCATH1)THEN
               DECS(16) = DECS(16)+REAL(DE)
+              EGEDF = EGEDF + DE
            ELSE IF(IBODY.EQ.423.AND.Z.GT.ZCATH2)THEN
               DECS(46) = DECS(46)+REAL(DE)
+              EGEDB = EGEDB + DE
            ELSE IF(IBODY.EQ.423.AND.DABS(Z-ZCATHC).LT.1)THEN
               DECS(15) = DECS(15)+REAL(DE)
+              EGEA  = EGEA + DE
            ENDIF
 
       ELSEIF(Z.LT.0)THEN
@@ -215,10 +224,13 @@ c----------------------------------------------------------------------
 
            IF((IBODY.EQ.406.OR.IBODY.EQ.405).AND.DABS(Z).LT.ZCATH1)THEN
               DECS(20)  =DECS(20)+REAL(DE)
+              EGWA = EGWA + DE
            ELSE IF(IBODY.EQ.405.AND.DABS(Z).GT.ZCATH2)THEN 
               DECS(47)  =DECS(47)+REAL(DE)
+              EGWDB = EGWDB + DE
            ELSE IF(IBODY.EQ.405.AND.DABS(DABS(Z)-ZCATHC).LT.1)THEN
               DECS(19)=DECS(19)+REAL(DE)
+              EGWDF = EGWDF + DE 
            ENDIF
       ENDIF
 

@@ -625,10 +625,10 @@ C
       CALL SHOWER
       IF(MOD(INT(SHN),1000).EQ.0)
      1 PRINT*,'AT EVENT = ',INT(SHN),INT(DSHN),TSEC,TSECA
-      IF(MOD(INT(SHN),250000).EQ.0)THEN ! close and reopen the paw ntuple
-        NFILE = NFILE + 1               ! file to avoid crashes after 250k events
-        CALL BUILDHBOOK(NFILE)
-      ENDIF
+!       IF(MOD(INT(SHN),250000).EQ.0)THEN ! close and reopen the paw ntuple
+!         NFILE = NFILE + 1               ! file to avoid crashes after 250k events
+        !CALL BUILDHBOOK(NFILE)
+  !    ENDIF
       IF(JOBEND.NE.0) GO TO 102  ! The simulation is completed.
 C
 C  ****  End the simulation after the allotted time or after completing
@@ -646,14 +646,15 @@ C
  1002 FORMAT(3X,'Number of simulated showers =',1P,E14.7,
      1  /3X,'*** END ***')
      
-      CALL HROUT(0,ICYCLE,' ')
-      CALL HPRINT(34)
-      CALL HPRINT(100)
-      CALL HPRINT(150)
-      CALL HPRINT(160)
-      CALL HPRINT(225)
-      CALL HREND('EVENT')
-
+!       CALL HROUT(0,ICYCLE,' ')
+! !       CALL HPRINT(34)
+! !       CALL HPRINT(100)
+! !       CALL HPRINT(150)
+! !       CALL HPRINT(160)
+! !       CALL HPRINT(225)
+!       CALL HREND('EVENT')
+      call closerootfile();
+      
       STOP
       END
 
