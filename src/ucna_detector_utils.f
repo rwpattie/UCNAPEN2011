@@ -91,15 +91,15 @@ C-----------------------------------------------------------------------C
       DOUBLE PRECISION FUNCTION DELTAT(DS,E)
 c-----------------------------------------------------------------------c
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
-      PARAMETER(C=2.99792548D10,ME=510998.0D0)
+      PARAMETER(C=2.99792548D10,EMASS=510998.0D0)
       
-        BETA = DSQRT(E*(E + 2*ME))/(E + ME)
+        BETA = DSQRT(E*(E + 2*EMASS))/(E + EMASS)
         DELTAT = DS / (BETA*C)
         
       RETURN
       END
 C-----------------------------------------------------------------------C
-      SUBROUTINE RECORD_ENERGYLOSS(DTYPE,DE,EFOILE,EFOILW,DS,EPRE)
+      SUBROUTINE RECORD_ENERGYLOSS(DTYPE,DE,EPRE)
 C-----------------------------------------------------------------------C
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
       INCLUDE 'ucnapenmain.h'
@@ -116,11 +116,9 @@ C        IF THE DECAY TRAP FOILS ENERGY COUNTERS WITH ENERGY LOST IN
 C        BOTH THE FOIL AND THE COATING
          IF((MAT.EQ.8.OR.MAT.EQ.7.OR.MAT.EQ.3)
      1       .AND.Z.GT.140.AND.Z.LT.160)THEN
-               EFOILE=EFOILE+DE
                EFLE = EFLE+DE
          ELSEIF((mat.eq.8.or.mat.eq.7.or.mat.eq.3)
      1          .and.z.lt.-140.and.z.gt.-160)then
-               EFOILW=EFOILW+DE
                EFLW = EFLW+DE
          ENDIF
 C        IF THE ELECTRON IS IN THE DEAD LAYER ADD ITS ENERGY TO THE EDEAD* 
@@ -130,10 +128,8 @@ C        COUNTERS
                                 ! NPE USING BIRKS LAW,
                                 ! CURRENTLY TESTING WHETHER INTEGER OR CONTINUOUS 
                                 ! MODEL
-      !         PHTEN = PHTEN + BIRKS_LAW(E,DE)
                PHTE  = PHTE  + BIRKS_LAW(EPRE,DE)
          ELSE IF(IBODY.EQ.398.)THEN
-       !        PHTWN = PHTWN + BIRKS_LAW(E,DE)
                PHTW  = PHTW  + BIRKS_LAW(EPRE,DE)
          END IF
 c      ENDIF
@@ -355,7 +351,6 @@ C=-===================================================================C
       INCLUDE 'pmcomms.f'
       INCLUDE 'ucnapenmain.h'
       
- 
       WRITE(47,'(1F10.3,1X,5I8,1X,1F10.3,1X,5I8)') 
      1 DEBO(416),IBEE,IDCE,IMYFE,IMYBE,IDDE,
      1 DEBO(398),IBEW,IDCW,IMYFW,IMYBW,IDDW

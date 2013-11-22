@@ -822,7 +822,6 @@ C     More penelope functions to fill detector arrays....
 C
       CALL ENERGYFLUENCE(DSEF,IBODYL)
       CALL IMPACT_DETECTOR2(IBODYL)
-c      write(6,*)kpar,e
 C     
 C  ----  If the particle has crossed an interface, restart the track in
 C        the new material.
@@ -850,10 +849,10 @@ C
 c  ---- Fill Check the Energy Loss.
 c      write(6,*)kpar,e
       IF(DEP.GT.0.AND.ILB(1).EQ.1) THEN
-           CALL RECORD_ENERGYLOSS(DTYPE,DEP,EFOILE,EFOILW,DS,EPRE)
+           CALL RECORD_ENERGYLOSS(DTYPE,DEP,EPRE)
       ENDIF
 c  
-      IF(E.LT.EABS(KPAR,MAT).OR.MAT.EQ.0) THEN  ! The particle has been absorbed.
+      IF(E.LT.EABS(KPAR,MAT).OR.MAT.EQ.0.and.ILB(1).eq.1) THEN  ! The particle has been absorbed.
         IEXIT=3                     ! Labels absorbed particles.
         AE = E
         AX = X
@@ -924,9 +923,8 @@ C
 C  ----  Energies deposited in different bodies and detectors.
 C
       call timer(eventend)
-      tracktime = eventend - eventstart
-  203 continue      
-      CALL FILLBETATREE(EFOILE,EFOILW,1)
+      tracktime = eventend - eventstart   
+      CALL FILLBETATREE(1)
 C     
 C  ----  Tallying the spectra from energy-deposition detectors.
      
@@ -961,7 +959,7 @@ c      write(6,*)"simtype " , ntype
       ELSEIF(NTYPE.EQ.3)THEN
          CALL AL_DECAY(NPAR)
       ELSEIF(NTYPE.EQ.4)THEN
-         CALL GAMMA_SOURCE(EGAMMA,XG,YG,ZG,ALPHAG,THETAG)
+         CALL GAMMA_SOURCE(EGAMMA,XG,YG,ZG)
       ELSEIF(NTYPE.EQ.5)THEN
          CALL BI_DECAY
       ELSEIF(NTYPE.EQ.6)THEN
@@ -995,7 +993,7 @@ c           call xe_135_decay(PTYPE)
          KPAR = 1
          PTYPE= DNCNT
       ELSEIF(NTYPE.EQ.8)THEN
-         CALL CU_CAPTURE(NPAR)
+         CALL CU_CAPTURE
          KPAR = 2
       ELSEIF(NTYPE.EQ.9)THEN
          CALL CD_DECAY()
@@ -1004,14 +1002,14 @@ c           call xe_135_decay(PTYPE)
 c         write(6,*)'in generate event',kpar,e,ptype
       ELSEIF(NTYPE.EQ.12)THEN
          CALL CE_DECAY
-	 PTYPE=4
+         PTYPE=4
       ELSEIF(NTYPE.EQ.13)THEN
          CALL IN_DECAY()
       ENDIF
 
       WGHT = 1.0 ! Set Weight 
 
-      CALL HFILL(100,real(E/1000.),0.,1.) ! FILL INITIAL ENERGY HISTOGRAMS
+C      CALL HFILL(100,real(E/1000.),0.,1.) ! FILL INITIAL ENERGY HISTOGRAMS
       
       RETURN
       END

@@ -1,9 +1,9 @@
 c-----------------------------------------------------------------
-      subroutine cu_capture(npar)
+      subroutine cu_capture
 c-----------------------------------------------------------------
 c
       implicit DOUBLE PRECISION(A-H,J-M,O-Z), integer*4(i,n)
-      parameter(pi=3.141592654d0,ME=510.9870d3)
+      parameter(pi=3.141592654d0)
       EXTERNAL rand
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
@@ -19,14 +19,14 @@ c        http://www.nndc.bnl.gov/capgam/byn/page070.html
 
       IF(CUISOTOPE.LT.67.)THEN
 100     CONTINUE
-        ROW  = NINT(325*RAND(1.D0))
-        IF(CLINES2(3,ROW) .LE. PICK) GOTO 100
-        E = CLINES2(1,ROW)*1.D3 ! TABLE ENERGIES ARE IN keV
+        NROW  = NINT(325*RAND(1.D0))
+        IF(CLINES2(3,NROW) .LE. PICK) GOTO 100
+        E = CLINES2(1,NROW)*1.D3 ! TABLE ENERGIES ARE IN keV
       ELSE
 110     CONTINUE
-        ROW  = NINT(424*RAND(1.D0))
-        IF(CLINES(3,ROW) .LE. PICK) GOTO 110
-        E = CLINES(1,ROW)*1.D3 ! TABLE ENERGIES ARE IN ke
+        NROW  = NINT(424*RAND(1.D0))
+        IF(CLINES(3,NROW) .LE. PICK) GOTO 110
+        E = CLINES(1,NROW)*1.D3 ! TABLE ENERGIES ARE IN ke
       ENDIF
 
       KPAR  = 2 ! Set Particle Type as Photon

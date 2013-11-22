@@ -1,4 +1,4 @@
-F77    = gfortran -Wall -O3
+F77    = gfortran -Wall -O3 -fno-align-commons
 
 CLIBS ='/usr/lib/i386-linux-gnu'
 

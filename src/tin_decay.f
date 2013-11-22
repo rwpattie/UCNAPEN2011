@@ -1,7 +1,6 @@
       subroutine tin_decay
 c---------------------------------------------------------------------c
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
-c      parameter(pi=3.141592654d0)
       INCLUDE 'pmcomms.f'
       EXTERNAL rand
 c---------------------------------------------------------------------c

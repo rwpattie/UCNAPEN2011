@@ -86,12 +86,13 @@ extern "C" {
 extern "C" {
   extern struct{
     double emx,emy,wmx,wmy;
+    double eposx,eposy,wposx,wposy;
   }multi_;
 }
 
 extern "C"{
   extern struct{
-    double w1,w2,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12; 
+    double w[12]; 
   }cos_;
 }
 
@@ -101,7 +102,7 @@ TTree *tree;
 
 extern "C" int openrootfile_(char *hbookfile,int ll)
 {
-    hbookfile[ll--] = '\0';
+    hbookfile[ll--] = '\0';  // ADD A NULL CHARACTER TO THE END
     printf("ROOT File to open is : %s\n",hbookfile);
     fout = new TFile(hbookfile,"RECREATE");
     tree = new TTree("tree","Output ntuple from PENELOPE");
@@ -111,13 +112,11 @@ extern "C" int openrootfile_(char *hbookfile,int ll)
 			       "Etube:Eal:Eme1:Eme2:Emw1:Emw2:Phw:Phen:"
 			       "Phe:Phwn:Eholder:Eean:Eec1:Eec2:Ewan:"
 			       "Ewc1:Ewc2:Ecol");
-    tree->Branch("trgt",&trgt_,"trgeast[10]/D:trgwest[10]");
+    tree->Branch("trgt"  ,&trgt_,"trgeast[10]/D:trgwest[10]");
     tree->Branch("proton",&proton_,"Ep/D:Xp:Yp:Zp:Up:Vp:Wp:PTOF");
-    tree->Branch("cos",&cos_,"W1/D:W2:W3:W4:W5:W6:W7:W8:W9:W10:W11:W12");
-    tree->Branch("multi",&multi_,"Emx/D:Emy:Wmx:Wmy");
-    tree->Branch("abort",&abort_,"Time/D:Abor:Ae:Ax:Ay:Az:Au:Av:Aw");
-    
-		
+    tree->Branch("cos"   ,&cos_,"W1[12]/D");
+    tree->Branch("multi" ,&multi_,"Emx/D:Emy:Wmx:Wmy:Eposx:Eposy:Wposx:Wposy");
+    tree->Branch("abort" ,&abort_,"Time/D:Abor:Ae:Ax:Ay:Az:Au:Av:Aw");
     
     return(1);
 }

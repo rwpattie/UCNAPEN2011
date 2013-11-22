@@ -5,7 +5,7 @@ c     decay using functions from F. Gluck, "Measurable Distributions of
 c     Unpolarized Neutron Beta Decay", Phys. Rev. D., V 47 N 7 2840 (1993).
 c---------------------------------------------------------------------c
       IMPLICIT DOUBLE PRECISION(A-H,M-Z), INTEGER*4(I-L)
-      parameter(pi=3.141592654d0,ME=510.9870d3)
+      parameter(pi=3.141592654d0,EMASS=510.9870d3)
       external energy2,aprob2
       EXTERNAL rand
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
@@ -14,7 +14,7 @@ c---------------------------------------------------------------------c
       DIMENSION DECAYPAR(12)
       REAL DECAYPAR
 
-      PARAMETER( MN = 939.5656D6, MP = 938.2723D6)
+      PARAMETER( ANMASS = 939.5656D6, PMASS = 938.2723D6)
       PARAMETER( ELAMBDA = -1.267,alpha =1./137.)
       
       IGLUCHECK = 2
@@ -25,15 +25,15 @@ c      READ*,POL,AEXP,BEXP
       bexp = 1
       REJECT = 100
 c     DEFINE MASSES IN TERMS OF THE ELECTRON REST MASS
-      MN1 = MN/ME 
-      MP1 = MP/ME
-      ME1 = 1.
-      DELTA = MN1 - MP1
+      ANMASS1 = ANMASS/EMASS 
+      PMASS1 = PMASS/EMASS
+      EMASS1 = 1.
+      DELTA = ANMASS1 - PMASS1
 C     ELECTRON CRITICAL ENERGY
-      XCRIT = 0.5*(DELTA + ME1*ME1/DELTA)
+      XCRIT = 0.5*(DELTA + EMASS1*EMASS1/DELTA)
 C     MAXIMUM ELECTRON ENERGY
  
-      EEMAX = DELTA - (DELTA*DELTA-1.)/(2.*MN1)
+      EEMAX = DELTA - (DELTA*DELTA-1.)/(2.*ANMASS1)
 
 C     CALCULATE STANDARD MODEL VALUES FOR a,b,A,B
 C
@@ -109,40 +109,43 @@ C
 C     CHECK TO SEE IF THETAEP IS INSIDE THE ALLOW KINEMATIC REGION
 C 
       IF(EE.GE.XCRIT)THEN
-            THETAMAX = -SQRT(1.-((MP1/MN1)*(EEMAX-EE)/PE)**2)
+            THETAMAX = -SQRT(1.-((PMASS1/ANMASS1)*(EEMAX-EE)/PE)**2)
             IF(THETAEP.GT.THETAMAX)GOTO 11
       ENDIF
      
 C
 C     EVAULATE DELTA FUNCTION TO FIND PROTON ENERGY
 C
-      XM = MN1 - EE
-      X  = XM*XM-PE*PE+MP1*MP1
+      XM = ANMASS1 - EE
+      X  = XM*XM-PE*PE+PMASS1*PMASS1
       Y  = PE*THETAEP
 C 
 C     SOLUTIONS TO THE QUADRATIC EQUATION FOR THE PROTON MOMENTA
 C 
       aa = 4.*(xm*xm-y*y)
       bb = 4.*y*x
-      hbig = 0.5*(mp1+mn1+1./(mp1+mn1))
-      hlit = 4.*(mn1*mn1-mp1*mp1)*(ee-xcrit)*(hbig-ee)
+      hbig = 0.5*(PMASS1+ANMASS1+1./(PMASS1+ANMASS1))
+      hlit = 4.*(ANMASS1*ANMASS1-PMASS1*PMASS1)*(ee-xcrit)*(hbig-ee)
       s = sqrt(bb*bb - 4.*aa*hlit)
 c
       ppp = (-bb + s)/(2.*aa)
       ppm = (-bb - s)/(2.*aa)
 c 
-      RRP = SQRT(PPP*PPP+MP1*MP1)
-      RRM = SQRT(PPM*PPM+MP1*MP1)
+      RRP = SQRT(PPP*PPP+PMASS1*PMASS1)
+      RRM = SQRT(PPM*PPM+PMASS1*PMASS1)
 C
 C     CHECK KINEMATIC LIMITS OF PROTON ENERGY
 C
 c
-      EPMAX = SQRT((PE+(MN1*(DELTA-EE)/(MN1-EE-PE)))**2 + MP1**2)
+      EPMAX = SQRT((PE+(ANMASS1*(DELTA-EE)/(ANMASS1-EE-PE)))**2 
+     1 + PMASS1**2)
 c
       IF(EE.LT.XCRIT)THEN
-           EPMIN=SQRT(((MN1*(DELTA-EE)/(MN1-EE-PE))-PE)**2 + MP1**2)
+           EPMIN=SQRT(((ANMASS1*(DELTA-EE)/(ANMASS1-EE-PE))-PE)**2 
+     1      + PMASS1**2)
       ELSE
-           EPMIN=SQRT((PE-(MN1*(DELTA-EE)/(MN1-EE-PE)))**2 + MP1**2)
+           EPMIN=SQRT((PE-(ANMASS1*(DELTA-EE)/(ANMASS1-EE-PE)))**2 
+     1      + PMASS1**2)
       ENDIF
 c
       if(ee.gt.xcrit)then
@@ -154,8 +157,8 @@ c
 C
 C     DEFINE THE JACOBIAN FOR THE DELTA FUNCTION 
 C
-       FDP = ABS(PPP/RRP + (PPP+Y)/(MN1-EE-RRP))
-       FDM = ABS(PPM/RRM + (PPM+Y)/(MN1-EE-RRM))
+       FDP = ABS(PPP/RRP + (PPP+Y)/(ANMASS1-EE-RRP))
+       FDM = ABS(PPM/RRM + (PPM+Y)/(ANMASS1-EE-RRM))
 C
 C     DEFINE THE MATRIX ELEMENT
 C
@@ -188,19 +191,19 @@ c
          fdm=1./dabs((ppm/rrm)*((bb+s)/(2*aa*aa)*da-(bb+s)/(2.*aa*s)*db+
      1      hlit/(aa*s)*da))
 cC
-         el1 = mn1 - ee - rrp
-         el2 = mn1 - ee - rrm
+         el1 = ANMASS1 - ee - rrp
+         el2 = ANMASS1 - ee - rrm
 c
          fkap = 1.855
 c
-         elmax = delta - (delta*delta+1.)/(2.*mn1)
-         emax  = mp1 + (delta*delta-1.)/(2.*mn1)
+         elmax = delta - (delta*delta+1.)/(2.*ANMASS1)
+         emax  = PMASS1 + (delta*delta-1.)/(2.*ANMASS1)
 c
-         dv1 = ee*(eemax-ee)+el1*(elmax-el1)-mp1*(emax-rrp)
-         dv2 = ee*(eemax-ee)+el2*(elmax-el2)-mp1*(emax-rrm)
+         dv1 = ee*(eemax-ee)+el1*(elmax-el1)-PMASS1*(emax-rrp)
+         dv2 = ee*(eemax-ee)+el2*(elmax-el2)-PMASS1*(emax-rrm)
 c
-         da1 = ee*(eemax-ee)+el1*(elmax-el1)+mp1*(emax-rrp)
-         da2 = ee*(eemax-ee)+el2*(elmax-el2)+mp1*(emax-rrm)
+         da1 = ee*(eemax-ee)+el1*(elmax-el1)+PMASS1*(emax-rrp)
+         da2 = ee*(eemax-ee)+el2*(elmax-el2)+PMASS1*(emax-rrm)
 c
          di1 = 2.*(ee*(eemax-ee)-el1*(elmax-el1))
          di2 = 2.*(ee*(eemax-ee)-el2*(elmax-el2))
@@ -256,13 +259,13 @@ c
 C
 C     DETERMINE THE NEUTRINO VARIALBES
 C
-      EN = MN1 - EE - EP
+      EN = ANMASS1 - EE - EP
       NU = -(PE*EU+PP*PU)/EN
       NV = -(PE*EV+PP*PV)/EN
       NW = -(PE*EW+PP*PW)/EN
       THETANE = EU*NU+EV*NV+EW*NW
 C     Set the electron energy and dirction
-      E = (EE -1.) * ME
+      E = (EE -1.) * EMASS
 c
       RADIUS = 6.0
 c      PPSI   = 2*PI*RAND(1.D0)
@@ -280,7 +283,7 @@ c     quick hack for unpolarized decay
       W = EW
 
 c     set the proton energy and direction
-      EP = EP*ME - MP
+      EP = EP*EMASS - PMASS
       XP = X
       YP = Y
       ZP = Z

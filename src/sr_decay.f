@@ -1,7 +1,7 @@
       subroutine sr_decay 
 c---------------------------------------------------------------------c
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
-      parameter(pi=3.141592654d0,ME=510.9870d3)
+      parameter(pi=3.141592654d0)
       EXTERNAL rand,energy1
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
