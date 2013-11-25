@@ -87,6 +87,7 @@ extern "C" {
   extern struct{
     double emx,emy,wmx,wmy;
     double eposx,eposy,wposx,wposy;
+    double exsci,eysci,wxsci,wysci;
   }multi_;
 }
 
@@ -115,7 +116,8 @@ extern "C" int openrootfile_(char *hbookfile,int ll)
     tree->Branch("trgt"  ,&trgt_,"trgeast[10]/D:trgwest[10]");
     tree->Branch("proton",&proton_,"Ep/D:Xp:Yp:Zp:Up:Vp:Wp:PTOF");
     tree->Branch("cos"   ,&cos_,"W1[12]/D");
-    tree->Branch("multi" ,&multi_,"Emx/D:Emy:Wmx:Wmy:Eposx:Eposy:Wposx:Wposy");
+    tree->Branch("multi" ,&multi_,"Emx/D:Emy:Wmx:Wmy:Eposx:Eposy:Wposx:Wposy:"
+				  "Exsci:Eysci:Wxsci:Wysci");
     tree->Branch("abort" ,&abort_,"Time/D:Abor:Ae:Ax:Ay:Az:Au:Av:Aw");
     
     return(1);

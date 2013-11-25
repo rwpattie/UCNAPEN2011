@@ -234,9 +234,11 @@ c----------------------------------------------------------------------
       END
 C-----------------------------------------------------------------------------C------------------------------------------------------------------------C
       SUBROUTINE TRIGGERCHECK(PEW,PEE,TIME,TRGEAST,TRGWEST)
-C------------------------------------------------------------------------C
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
       DIMENSION TRGEAST(10),TRGWEST(10)
+      COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
+      COMMON/MULTI/EMX,EMY,WMX,WMY,EPOSX,EPOSY,WPOSX,WPOSY,
+     1 EXSCI,EYSCI,WXSCI,WYSCI    
 C------------------------------------------------------------------------C
       DO I = 1,4
 C     CHECK IF THE DETECT HAS BEEN TRIGGERED AT THIS THRESHOLD
@@ -246,12 +248,16 @@ C     THE TRACK.
        IF(TRGEAST(I).EQ.0.0)THEN
          IF(PEE.GE.2.)THEN
            TRGEAST(I)=TIME
+	   EXSCI=X
+           EYSCI=Y
          ENDIF
        ENDIF
 C
        IF(TRGWEST(I).EQ.0.0)THEN
          IF(PEW.GE.2.)THEN
            TRGWEST(I)=TIME
+           WXSCI=X
+	   WYSCI=Y
          ENDIF
        ENDIF
 C
