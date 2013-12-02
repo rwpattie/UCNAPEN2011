@@ -137,7 +137,8 @@ c
 c        check to see if the detectors are triggerred.
 c
 c      if(dtype .ne. 2) then
-          CALL TRIGGERCHECK(PHTW,PHTE,TIME,TRGEAST,TRGWEST)
+          CALL TRIGGERCHECK(PHTW,PHTE,DEBO(440),DEBO(441),TIME,TRGEAST,
+     1 TRGWEST)
 c      else if(dtype .eq. 2) then
 c           if(DEBO(4).gt.0.and.trgeast(1).eq.0.0) trgeast(1)=time*1.0d9
 c           if(DEBO(19).gt.0.and.trgwest(1).eq.0.0)trgwest(1)=time*1.0d9
@@ -233,12 +234,12 @@ c----------------------------------------------------------------------
       RETURN
       END
 C-----------------------------------------------------------------------------C------------------------------------------------------------------------C
-      SUBROUTINE TRIGGERCHECK(PEW,PEE,TIME,TRGEAST,TRGWEST)
+      SUBROUTINE TRIGGERCHECK(PEW,PEE,PEA,PEH,TIME,TRGEAST,TRGWEST)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
       DIMENSION TRGEAST(10),TRGWEST(10)
       COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/MULTI/EMX,EMY,WMX,WMY,EPOSX,EPOSY,WPOSX,WPOSY,
-     1 EXSCI,EYSCI,WXSCI,WYSCI    
+     1 EXSCI,EYSCI,WXSCI,WYSCI,TAPD    
 C------------------------------------------------------------------------C
       DO I = 1,4
 C     CHECK IF THE DETECT HAS BEEN TRIGGERED AT THIS THRESHOLD
@@ -262,6 +263,11 @@ C
        ENDIF
 C
       ENDDO
+      IF(TAPD.EQ.0.0)THEN
+	IF(PEA.GE.2.)THEN
+    	  TAPD=TIME
+	ENDIF
+      ENDIF
 C
       RETURN
       END

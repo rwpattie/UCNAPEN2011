@@ -81,6 +81,8 @@ C----------------------------------------------------------------------C
            EPWR  = DETREP(DEBO(398))
            EPER  = DETREP(DEBO(416))
            ECOL  = DEBO(436)
+	   EAPD  = DEBO(440)
+           EAPDH = DEBO(441)	
            
           ! SCINTILLATOR      
            DECS(14) = REAL(DEBO(398))
@@ -191,7 +193,11 @@ C----------------------------------------------------------------------C
         W10 = COSTHETA(10)
         W11 = COSTHETA(11)
         W12 = COSTHETA(12)
-        
+	
+	DECS(90) = REAL(DEBO(440))
+	DECS(91) = REAL(DEBO(441))
+        DECS(92) = REAL(TAPD)
+
         call filltree();
 !         CALL HFN(34,DECS) ! FILL EVENT RECORD
 !         IF(DEBO(398).GT.0)CALL HFILL(150,REAL(DEBO(398))/1E3,0,1.)
@@ -263,6 +269,7 @@ c
       PHTEN = 0.
       PHTWN = 0.
       PTOF  = 0.
+      TAPD  = 0.
       wi  = w ! INITIAL PITCH ANGLE
       wim = w
 c

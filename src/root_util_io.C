@@ -7,7 +7,7 @@
 
 extern "C" {
   extern struct{
-    float decs[89];
+    float decs[92];
     float costheta[12];
   } hbooku_;
 }
@@ -79,7 +79,7 @@ extern "C" {
     double egwa,egedf,egedb,egwdf,egwdb,efle;
     double eflw,etube,eal,eme1,eme2,emw1,emw2;
     double phw,phen,phe,phwn,eholder,eean,eec1;
-    double eec2,ewan,ewc1,ewc2,ecol;
+    double eec2,ewan,ewc1,ewc2,ecol,eapd,eapdh;
   }edep_;
 }
 
@@ -88,6 +88,7 @@ extern "C" {
     double emx,emy,wmx,wmy;
     double eposx,eposy,wposx,wposy;
     double exsci,eysci,wxsci,wysci;
+    double tapd;
   }multi_;
 }
 
@@ -112,12 +113,12 @@ extern "C" int openrootfile_(char *hbookfile,int ll)
 			       "Egedf:Egedb:Egwdf:Egwdb:Efle:Eflw:"
 			       "Etube:Eal:Eme1:Eme2:Emw1:Emw2:Phw:Phen:"
 			       "Phe:Phwn:Eholder:Eean:Eec1:Eec2:Ewan:"
-			       "Ewc1:Ewc2:Ecol");
+			       "Ewc1:Ewc2:Ecol:Eapd:Eapdh");
     tree->Branch("trgt"  ,&trgt_,"trgeast[10]/D:trgwest[10]");
     tree->Branch("proton",&proton_,"Ep/D:Xp:Yp:Zp:Up:Vp:Wp:PTOF");
     tree->Branch("cos"   ,&cos_,"W1[12]/D");
     tree->Branch("multi" ,&multi_,"Emx/D:Emy:Wmx:Wmy:Eposx:Eposy:Wposx:Wposy:"
-				  "Exsci:Eysci:Wxsci:Wysci");
+				  "Exsci:Eysci:Wxsci:Wysci:Tapd");
     tree->Branch("abort" ,&abort_,"Time/D:Abor:Ae:Ax:Ay:Az:Au:Av:Aw");
     
     return(1);
