@@ -6,11 +6,12 @@ c---------------------------------------------------------------------c
 c---------------------------------------------------------------------c
 c     Generating radiation mode; 
 c     (1) Electron capture will either emit a k or l shell beta or a
-c         391.691keV gamma. Half life of 115.09 days.  Assume the source 
-c         used was a 1uCurie source of this gamma.
+c         391.698keV gamma. Half life of 115.09 days.  Assume the source 
+c         used was a 1uCurie source of this gamma. Ref: NNDC
 c     
 c     (2) Internal conversion x-rays in the tin create auger electrons 
-c         with energies ranging from ~3keV to 25keV.
+c         with energies ranging from ~3keV to 25keV. Ref: Table of 
+c         Isotopes by R. B. Firestone (c1996). 
 c---------------------------------------------------------------------c
 c     Generating X-rays and Auger Electrons from K-Shell vacancies    c
 c---------------------------------------------------------------------c
@@ -37,11 +38,14 @@ c---------------------------------------------------------------------c
       xkb2=29.111d3
       xkb3=28.444d3
       xLa1=3.444d3
+      xLa2=3.435d3
       xLb1=3.663d3
+      xLb2=3.905d3
+      xLb3=3.750d3
 c----------------------------------------------------------------------c
       xe = 0.0d0
       E  = 0.0d0
-      aprob=98.9d0*rand(1.0d0)
+      aprob=99.76d0*rand(1.0d0)
 c
       if(aprob.le.1.05)then
          Xe=bL1
@@ -49,27 +53,35 @@ c
          Xe=bL1
       elseif(aprob.gt.2.29.and.aprob.le.3.90)then
          Xe=bL1
-      elseif(aprob.gt.3.90.and.aprob.le.7.70)then
+      elseif(aprob.gt.3.90.and.aprob.le.4.067)then
          Xe=bL2
-      elseif(aprob.gt.7.70.and.aprob.le.9.52)then
+      elseif(aprob.gt.4.067.and.aprob.le.7.667)then
+         Xe=bL2
+      elseif(aprob.gt.7.667.and.aprob.le.9.487)then
          Xe=bL3
-      elseif(aprob.gt.9.52.and.aprob.le.55.22)then  
+      elseif(aprob.gt.9.487.and.aprob.le.55.187)then  
          E=xka1
-      elseif(aprob.gt.55.22.and.aprob.le.79.92)then
+      elseif(aprob.gt.55.187.and.aprob.le.79.887)then
          E=xka2
-      elseif(aprob.gt.79.92.and.aprob.le.87.91)then
+      elseif(aprob.gt.79.887.and.aprob.le.87.877)then
          E=xkb1
-      elseif(aprob.gt.87.91.and.aprob.le.90.10)then
+      elseif(aprob.gt.87.877.and.aprob.le.90.067)then
          E=xkb2
-      elseif(aprob.gt.90.10.and.aprob.le.94.25)then
+      elseif(aprob.gt.90.067.and.aprob.le.94.217)then
          E=xkb3
-      elseif(aprob.gt.94.25.and.aprob.le.97.15)then
+      elseif(aprob.gt.94.217.and.aprob.le.97.117)then
          E=xLa1
-      elseif(aprob.gt.97.15.and.aprob.le.98.90)then
+      elseif(aprob.gt.97.117.and.aprob.le.97.437)then
+         E=xLa2
+      elseif(aprob.gt.97.437.and.aprob.le.99.187)then
          E=xLb1
+      elseif(aprob.gt.99.187.and.aprob.le.99.647)then
+         E=xLb2
+      elseif(aprob.gt.99.647.and.aprob.le.99.76)then
+         E=xLb3
       endif
 c
-      if(aprob.gt.9.52)then
+      if(aprob.gt.9.487)then
           kpar=2
       else
           kpar=1
@@ -77,33 +89,33 @@ c
       endif
       goto 100
 c---------------------------------------------------------------------c
-c     Generating Auger Electrons from the 391.916keV gamma from electron
+c     Generating Auger Electrons from the 391.698keV gamma from electron
 c     capture.
 c---------------------------------------------------------------------c
 90    continue
       econv= rand(1.d0)
       gprob= rand(1.d0)
 
-      if(gprob.le.0.97087)then
-            egamma=391.916d3
+      if(gprob.le.0.968545)then
+            egamma=391.698d3
          else
-            E   = 255.126d3
+            E   = 255.134d3
             kpar= 2
             goto 100
       endif
 
-      if(econv.le.0.65)then
+      if(econv.le.0.65239)then
          E=Egamma
          kpar=2
       else
          eprob=rand(1.0d0)
-         if(eprob.le.0.80401)then!0.82857)then
+         if(eprob.le.0.80577)then
             Ebeta=363758.!egamma-bk
-         else if(eprob.gt.0.80401.and.eprob.le.0.961698)then
+         else if(eprob.gt.0.80577.and.eprob.le.0.96245)then
             Ebeta=387461.!egamma-bL1
-         else if(eprob.gt.0.961698.and.eprob.le.0.993065)then
+         else if(eprob.gt.0.96245.and.eprob.le.0.99426)then
             Ebeta=390872.!egamma-bL1
-         else if(eprob.gt.0.993065)then
+         else if(eprob.gt.0.99426)then
             Ebeta=391576.!
          endif
          E=Ebeta
