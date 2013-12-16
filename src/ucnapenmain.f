@@ -948,7 +948,7 @@ C-----------------------------------------------------------------------C
       RUNFRAC = RAND(1.d0) !REAL(NPAR)/REAL(NPARMAX)
       DNCNT = 1
       NINCREASE = 1000
-c      write(6,*)"simtype " , ntype
+      !write(6,*)"simtype " , ntype
       IF(NTYPE.EQ.1.OR.NTYPE.EQ.10)THEN
          CALL PROTONS(DECAYPAR)
          KPAR=1
@@ -1005,6 +1005,8 @@ c         write(6,*)'in generate event',kpar,e,ptype
          PTYPE=4
       ELSEIF(NTYPE.EQ.13)THEN
          CALL IN_DECAY()
+      ELSEIF(NTYPE.EQ.14)THEN
+         CALL CD_113M_DECAY
       ENDIF
 
       WGHT = 1.0 ! Set Weight 
