@@ -21,17 +21,6 @@ c---------------------------------------------------------------------c
       bL3 = 3.9288d3
       bM3 = 0.7144d3
       bM3p= 0.7656d3
-c---------------------------------------------------------------------c
-      goto 90
-
-      if(mod(npar,2).eq.0)then
-        goto 90
-      elseif(mod(npar,2)-1.eq.0)then
-        goto 80
-      endif
-
-80    continue
-c---------------------------------------------------------------------c
       xka1=25.271d3  ! X-ray energies
       xka2=25.044d3
       xkb1=28.486d3
@@ -42,9 +31,17 @@ c---------------------------------------------------------------------c
       xLb1=3.663d3
       xLb2=3.905d3
       xLb3=3.750d3
+c---------------------------------------------------------------------c
+      goto 90  
+
+      if(mod(npar,2).eq.0)then
+        goto 90
+      elseif(mod(npar,2)-1.eq.0)then
+        goto 80
+      endif
+
+80    continue
 c----------------------------------------------------------------------c
-      xe = 0.0d0
-      E  = 0.0d0
       aprob=99.76d0*rand(1.0d0)
 c
       if(aprob.le.1.05)then
@@ -60,29 +57,30 @@ c
       elseif(aprob.gt.7.667.and.aprob.le.9.487)then
          Xe=bL3
       elseif(aprob.gt.9.487.and.aprob.le.55.187)then  
-         E=xka1
+         Ex=xka1
       elseif(aprob.gt.55.187.and.aprob.le.79.887)then
-         E=xka2
+         Ex=xka2
       elseif(aprob.gt.79.887.and.aprob.le.87.877)then
-         E=xkb1
+         Ex=xkb1
       elseif(aprob.gt.87.877.and.aprob.le.90.067)then
-         E=xkb2
+         Ex=xkb2
       elseif(aprob.gt.90.067.and.aprob.le.94.217)then
-         E=xkb3
+         Ex=xkb3
       elseif(aprob.gt.94.217.and.aprob.le.97.117)then
-         E=xLa1
+         Ex=xLa1
       elseif(aprob.gt.97.117.and.aprob.le.97.437)then
-         E=xLa2
+         Ex=xLa2
       elseif(aprob.gt.97.437.and.aprob.le.99.187)then
-         E=xLb1
+         Ex=xLb1
       elseif(aprob.gt.99.187.and.aprob.le.99.647)then
-         E=xLb2
+         Ex=xLb2
       elseif(aprob.gt.99.647.and.aprob.le.99.76)then
-         E=xLb3
+         Ex=xLb3
       endif
 c
       if(aprob.gt.9.487)then
           kpar=2
+	  E=Ex
       else
           kpar=1
           E=bK-Xe-bM3-0.75*(bM3p-bM3)
@@ -93,11 +91,11 @@ c     Generating Auger Electrons from the 391.698keV gamma from electron
 c     capture.
 c---------------------------------------------------------------------c
 90    continue
-      econv= rand(1.d0)
+      econv= 1.34761d0*rand(1.d0)
       gprob= rand(1.d0)
 
       if(gprob.le.0.968545)then
-            egamma=391.698d3
+            Egamma=391.698d3
          else
             E   = 255.134d3
             kpar= 2
@@ -108,18 +106,60 @@ c---------------------------------------------------------------------c
          E=Egamma
          kpar=2
       else
-         eprob=rand(1.0d0)
-         if(eprob.le.0.80577)then
+         eprob=2.0d0*rand(1.0d0)
+	 atot=99.76d0
+         if(eprob.le.(1.05/atot))then
+            Xe=bL1
+         elseif(eprob.gt.(1.05/atot).and.eprob.le.(2.29/atot))then
+            Xe=bL1
+         elseif(eprob.gt.(2.29/atot).and.eprob.le.(3.90/atot))then
+            Xe=bL1
+         elseif(eprob.gt.(3.90/atot).and.eprob.le.(4.067/atot))then
+            Xe=bL2
+         elseif(eprob.gt.(4.067/atot).and.eprob.le.(7.667/atot))then
+            Xe=bL2
+         elseif(eprob.gt.(7.667/atot).and.eprob.le.(9.487/atot))then
+            Xe=bL3
+         elseif(eprob.gt.(9.487/atot).and.eprob.le.(55.187/atot))then
+            Ex=xka1
+         elseif(eprob.gt.(55.187/atot).and.eprob.le.(79.887/atot))then
+            Ex=xka2
+         elseif(eprob.gt.(79.887/atot).and.eprob.le.(87.877/atot))then
+            Ex=xkb1
+         elseif(eprob.gt.(87.877/atot).and.eprob.le.(90.067/atot))then
+            Ex=xkb2
+         elseif(eprob.gt.(90.067/atot).and.eprob.le.(94.217/atot))then
+            Ex=xkb3
+         elseif(eprob.gt.(94.217/atot).and.eprob.le.(97.117/atot))then
+            Ex=xLa1
+         elseif(eprob.gt.(97.117/atot).and.eprob.le.(97.437/atot))then
+            Ex=xLa2
+         elseif(eprob.gt.(97.437/atot).and.eprob.le.(99.187/atot))then
+            Ex=xLb1
+         elseif(eprob.gt.(99.187/atot).and.eprob.le.(99.647/atot))then
+            Ex=xLb2
+         elseif(eprob.gt.(99.647/atot).and.eprob.le.(99.76/atot))then
+            Ex=xLb3
+	 elseif(eprob.gt.1.0.and.eprob.le.1.80577)then
             Ebeta=363758.!egamma-bk
-         else if(eprob.gt.0.80577.and.eprob.le.0.96245)then
+         elseif(eprob.gt.1.80577.and.eprob.le.1.96245)then
             Ebeta=387461.!egamma-bL1
-         else if(eprob.gt.0.96245.and.eprob.le.0.99426)then
+         elseif(eprob.gt.1.96245.and.eprob.le.1.99426)then
             Ebeta=390872.!egamma-bL1
-         else if(eprob.gt.0.99426)then
+         elseif(eprob.gt.1.99426.and.eprob.le.2.0)then
             Ebeta=391576.!
          endif
-         E=Ebeta
-         kpar=1
+
+         if(eprob.le.(9.487/atot))then
+            kpar=1
+            E=bK-Xe-bM3-0.75*(bM3p-bM3)
+         elseif(eprob.gt.(9.487/atot).and.eprob.lt.1.0)then   
+	    kpar=2
+            E=Ex
+      	 elseif(eprob.gt.1.0.and.eprob.lt.2.0)then
+            kpar=1
+            E=Ebeta
+      	 endif
       endif
       
 c---------------------------------------------------------------------c
@@ -130,21 +170,18 @@ c---------------------------------------------------------------------c
       
 1000  continue
       y = (0.15 - 0.3*rand(1.d0))  ! for background runs, tin source is
-      x = (0.15 - 0.3*rand(1.d0))  ! approximately at (-5.5,0,155).
-      !x = (4.68 - 0.3*rand(1.d0)) ! edge of decay trap test
-      if(sqrt(x**2 + y**2) .gt. 0.15) goto 1000  
-      !if(sqrt((x-4.53)**2 + y**2) .gt. 0.15) goto 1000
-      z=1.0!1.55d2
-      !z=1.87309d2!1.55d2 
+      !x = (0.15 - 0.3*rand(1.d0))  ! approximately at (-5.5,0,155).
+      x = (4.68 - 0.3*rand(1.d0)) ! edge of decay trap test
+      !if(sqrt(x**2 + y**2) .gt. 0.15) goto 1000  
+      if(sqrt((x-4.53)**2 + y**2) .gt. 0.15) goto 1000
+      !z=1.0!1.55d2
+      z=1.87309d2!1.55d2 
       costh = 1.-2.*rand(1.d0)   ! sample from cos(theta)
       theta = dabs(dacos(costh)) !    pi*rand(1.0d0)
       phi   =  2.*pi*rand(1.0d0)
       w=dcos(theta)
       u=dsin(theta)*dcos(phi)
       v=dsin(theta)*dsin(phi)
-      !w=1.
-      !u=0.
-      !v=0.
       win=w
       uin=u
       vin=v
