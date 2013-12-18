@@ -15,77 +15,25 @@ c         Isotopes by R. B. Firestone (c1996).
 c---------------------------------------------------------------------c
 c     Generating X-rays and Auger Electrons from K-Shell vacancies    c
 c---------------------------------------------------------------------c
-      bk  = 29.2001d3   ! Binding Energies for Atomic levels
-      bL1 = 4.4647d3
-      bL2 = 4.1561d3
-      bL3 = 3.9288d3
-      bM3 = 0.7144d3
-      bM3p= 0.7656d3
-      xka1=25.271d3  ! X-ray energies
-      xka2=25.044d3
-      xkb1=28.486d3
-      xkb2=29.111d3
-      xkb3=28.444d3
-      xLa1=3.444d3
-      xLa2=3.435d3
-      xLb1=3.663d3
-      xLb2=3.905d3
-      xLb3=3.750d3
+      bk  = 27.9399d3   ! Binding Energies for Atomic levels
+      bL1 = 4.2375d3
+      bL2 = 3.9380d3
+      bL3 = 3.7301d3
+      bM3 = 0.6643d3
+      bM3p= 0.7144d3
+      xka1=24.210d3  ! X-ray energies
+      xka2=24.002d3
+      xkb1=27.276d3
+      xkb2=27.863d3
+      xkb3=27.238d3
+      xLa1=3.287d3
+      xLa2=3.279d3
+      xLb1=3.487d3
+      xLb2=3.714d3
+      xLb3=3.573d3
+      xLb4=3.535d3
 c---------------------------------------------------------------------c
       goto 90  
-
-      if(mod(npar,2).eq.0)then
-        goto 90
-      elseif(mod(npar,2)-1.eq.0)then
-        goto 80
-      endif
-
-80    continue
-c----------------------------------------------------------------------c
-      aprob=99.76d0*rand(1.0d0)
-c
-      if(aprob.le.1.05)then
-         Xe=bL1
-      elseif(aprob.gt.1.05.and.aprob.le.2.29)then
-         Xe=bL1
-      elseif(aprob.gt.2.29.and.aprob.le.3.90)then
-         Xe=bL1
-      elseif(aprob.gt.3.90.and.aprob.le.4.067)then
-         Xe=bL2
-      elseif(aprob.gt.4.067.and.aprob.le.7.667)then
-         Xe=bL2
-      elseif(aprob.gt.7.667.and.aprob.le.9.487)then
-         Xe=bL3
-      elseif(aprob.gt.9.487.and.aprob.le.55.187)then  
-         Ex=xka1
-      elseif(aprob.gt.55.187.and.aprob.le.79.887)then
-         Ex=xka2
-      elseif(aprob.gt.79.887.and.aprob.le.87.877)then
-         Ex=xkb1
-      elseif(aprob.gt.87.877.and.aprob.le.90.067)then
-         Ex=xkb2
-      elseif(aprob.gt.90.067.and.aprob.le.94.217)then
-         Ex=xkb3
-      elseif(aprob.gt.94.217.and.aprob.le.97.117)then
-         Ex=xLa1
-      elseif(aprob.gt.97.117.and.aprob.le.97.437)then
-         Ex=xLa2
-      elseif(aprob.gt.97.437.and.aprob.le.99.187)then
-         Ex=xLb1
-      elseif(aprob.gt.99.187.and.aprob.le.99.647)then
-         Ex=xLb2
-      elseif(aprob.gt.99.647.and.aprob.le.99.76)then
-         Ex=xLb3
-      endif
-c
-      if(aprob.gt.9.487)then
-          kpar=2
-	  E=Ex
-      else
-          kpar=1
-          E=bK-Xe-bM3-0.75*(bM3p-bM3)
-      endif
-      goto 100
 c---------------------------------------------------------------------c
 c     Generating Auger Electrons from the 391.698keV gamma from electron
 c     capture.
@@ -107,39 +55,41 @@ c---------------------------------------------------------------------c
          kpar=2
       else
          eprob=2.0d0*rand(1.0d0)
-	 atot=99.76d0
-         if(eprob.le.(1.05/atot))then
+	 atot=99.185d0
+         if(eprob.le.(1.11/atot))then
             Xe=bL1
-         elseif(eprob.gt.(1.05/atot).and.eprob.le.(2.29/atot))then
+         elseif(eprob.gt.(1.11/atot).and.eprob.le.(2.41/atot))then
             Xe=bL1
-         elseif(eprob.gt.(2.29/atot).and.eprob.le.(3.90/atot))then
+         elseif(eprob.gt.(2.41/atot).and.eprob.le.(4.14/atot))then
             Xe=bL1
-         elseif(eprob.gt.(3.90/atot).and.eprob.le.(4.067/atot))then
+         elseif(eprob.gt.(4.14/atot).and.eprob.le.(4.319/atot))then
             Xe=bL2
-         elseif(eprob.gt.(4.067/atot).and.eprob.le.(7.667/atot))then
+         elseif(eprob.gt.(4.319/atot).and.eprob.le.(8.119/atot))then
             Xe=bL2
-         elseif(eprob.gt.(7.667/atot).and.eprob.le.(9.487/atot))then
+         elseif(eprob.gt.(8.119/atot).and.eprob.le.(10.089/atot))then
             Xe=bL3
-         elseif(eprob.gt.(9.487/atot).and.eprob.le.(55.187/atot))then
+         elseif(eprob.gt.(10.089/atot).and.eprob.le.(55.389/atot))then
             Ex=xka1
-         elseif(eprob.gt.(55.187/atot).and.eprob.le.(79.887/atot))then
+         elseif(eprob.gt.(55.389/atot).and.eprob.le.(79.889/atot))then
             Ex=xka2
-         elseif(eprob.gt.(79.887/atot).and.eprob.le.(87.877/atot))then
+         elseif(eprob.gt.(79.889/atot).and.eprob.le.(87.739/atot))then
             Ex=xkb1
-         elseif(eprob.gt.(87.877/atot).and.eprob.le.(90.067/atot))then
+         elseif(eprob.gt.(87.739/atot).and.eprob.le.(89.829/atot))then
             Ex=xkb2
-         elseif(eprob.gt.(90.067/atot).and.eprob.le.(94.217/atot))then
+         elseif(eprob.gt.(89.829/atot).and.eprob.le.(93.899/atot))then
             Ex=xkb3
-         elseif(eprob.gt.(94.217/atot).and.eprob.le.(97.117/atot))then
+         elseif(eprob.gt.(93.899/atot).and.eprob.le.(96.699/atot))then
             Ex=xLa1
-         elseif(eprob.gt.(97.117/atot).and.eprob.le.(97.437/atot))then
+         elseif(eprob.gt.(96.699/atot).and.eprob.le.(97.009/atot))then
             Ex=xLa2
-         elseif(eprob.gt.(97.437/atot).and.eprob.le.(99.187/atot))then
+         elseif(eprob.gt.(97.009/atot).and.eprob.le.(98.639/atot))then
             Ex=xLb1
-         elseif(eprob.gt.(99.187/atot).and.eprob.le.(99.647/atot))then
+         elseif(eprob.gt.(98.639/atot).and.eprob.le.(99.079/atot))then
             Ex=xLb2
-         elseif(eprob.gt.(99.647/atot).and.eprob.le.(99.76/atot))then
+         elseif(eprob.gt.(99.079/atot).and.eprob.le.(99.144/atot))then
             Ex=xLb3
+         elseif(eprob.gt.(99.144/atot).and.eprob.le.(99.185/atot))then
+            Ex=xLb4
 	 elseif(eprob.gt.1.0.and.eprob.le.1.80577)then
             Ebeta=363758.!egamma-bk
          elseif(eprob.gt.1.80577.and.eprob.le.1.96245)then
@@ -150,10 +100,10 @@ c---------------------------------------------------------------------c
             Ebeta=391576.!
          endif
 
-         if(eprob.le.(9.487/atot))then
+         if(eprob.le.(10.089/atot))then
             kpar=1
             E=bK-Xe-bM3-0.75*(bM3p-bM3)
-         elseif(eprob.gt.(9.487/atot).and.eprob.lt.1.0)then   
+         elseif(eprob.gt.(10.089/atot).and.eprob.lt.1.0)then   
 	    kpar=2
             E=Ex
       	 elseif(eprob.gt.1.0.and.eprob.lt.2.0)then
