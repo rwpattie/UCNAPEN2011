@@ -14,8 +14,8 @@ extern "C" {
 
 extern "C" {
   extern struct{
-    double trgeast[10];
-    double trgwest[10];
+    double trge[10];
+    double trgw[10];
   } trgt_;
 }
 
@@ -114,11 +114,11 @@ extern "C" int openrootfile_(char *hbookfile,int ll)
 			       "Etube:Eal:Eme1:Eme2:Emw1:Emw2:Phw:Phen:"
 			       "Phe:Phwn:Eholder:Eean:Eec1:Eec2:Ewan:"
 			       "Ewc1:Ewc2:Ecol:Eapd:Eapdh");
-    tree->Branch("trgt"  ,&trgt_,"trgeast[10]/D:trgwest[10]");
+    tree->Branch("trgt"  ,&trgt_,"trge[10]/D:trgw[10]");
     tree->Branch("proton",&proton_,"Ep/D:Xp:Yp:Zp:Up:Vp:Wp:PTOF");
     tree->Branch("cos"   ,&cos_,"W1[12]/D");
-    tree->Branch("multi" ,&multi_,"Emx/D:Emy:Wmx:Wmy:Eposx:Eposy:Wposx:Wposy:"
-				  "Exsci:Eysci:Wxsci:Wysci:Tapd");
+    tree->Branch("multi" ,&multi_,"emx/D:emy:wmx:wmy:eposx:eposy:wposx:wposy:"
+				  "exsci:eysci:wxsci:wysci:Tapd");
     tree->Branch("abort" ,&abort_,"Time/D:Abor:Ae:Ax:Ay:Az:Au:Av:Aw");
     
     return(1);

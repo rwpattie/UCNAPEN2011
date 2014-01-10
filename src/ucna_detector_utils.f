@@ -137,11 +137,11 @@ c
 c        check to see if the detectors are triggerred.
 c
 c      if(dtype .ne. 2) then
-          CALL TRIGGERCHECK(PHTW,PHTE,DEBO(440),DEBO(441),TIME,TRGEAST,
-     1 TRGWEST)
+          CALL TRIGGERCHECK(PHTW,PHTE,DEBO(440),DEBO(441),TIME,TRGE,
+     1 TRGW)
 c      else if(dtype .eq. 2) then
-c           if(DEBO(4).gt.0.and.trgeast(1).eq.0.0) trgeast(1)=time*1.0d9
-c           if(DEBO(19).gt.0.and.trgwest(1).eq.0.0)trgwest(1)=time*1.0d9
+c           if(DEBO(4).gt.0.and.trge(1).eq.0.0) trge(1)=time*1.0d9
+c           if(DEBO(19).gt.0.and.trgw(1).eq.0.0)trgw(1)=time*1.0d9
 c      endif
 c
       RETURN 
@@ -234,9 +234,9 @@ c----------------------------------------------------------------------
       RETURN
       END
 C-----------------------------------------------------------------------------C------------------------------------------------------------------------C
-      SUBROUTINE TRIGGERCHECK(PEW,PEE,PEA,PEH,TIME,TRGEAST,TRGWEST)
+      SUBROUTINE TRIGGERCHECK(PEW,PEE,PEA,PEH,TIME,TRGE,TRGW)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4(I-N)
-      DIMENSION TRGEAST(10),TRGWEST(10)
+      DIMENSION TRGE(10),TRGW(10)
       COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/MULTI/EMX,EMY,WMX,WMY,EPOSX,EPOSY,WPOSX,WPOSY,
      1 EXSCI,EYSCI,WXSCI,WYSCI,TAPD    
@@ -246,17 +246,17 @@ C     CHECK IF THE DETECT HAS BEEN TRIGGERED AT THIS THRESHOLD
 C     IF NOT TRIGGERED YET, CHECK THE ENERGY IN MWPC AND SCINTILLATOR
 C     ONCE TRIGGERED RECORD THE TIME TO WRITE TO A FILE AT THE END OF
 C     THE TRACK.
-       IF(TRGEAST(I).EQ.0.0)THEN
+       IF(TRGE(I).EQ.0.0)THEN
          IF(PEE.GE.2.)THEN
-           TRGEAST(I)=TIME
+           TRGE(I)=TIME
 	   EXSCI=X
            EYSCI=Y
          ENDIF
        ENDIF
 C
-       IF(TRGWEST(I).EQ.0.0)THEN
+       IF(TRGW(I).EQ.0.0)THEN
          IF(PEW.GE.2.)THEN
-           TRGWEST(I)=TIME
+           TRGW(I)=TIME
            WXSCI=X
 	   WYSCI=Y
          ENDIF

@@ -76,8 +76,8 @@ C----------------------------------------------------------------------C
            EPOSY = POSIT(ECY)
            WPOSX = POSIT(WCX)
            WPOSY = POSIT(WCY)
-           TE    = TRGEAST(1)
-           TW    = TRGWEST(1)
+           TE    = TRGE(1)
+           TW    = TRGW(1)
            EPWR  = DETREP(DEBO(398))
            EPER  = DETREP(DEBO(416))
            ECOL  = DEBO(436)
@@ -103,8 +103,8 @@ C----------------------------------------------------------------------C
            DECS(26) = REAL(POSIT(ECY))
            DECS(27) = REAL(POSIT(WCX))
            DECS(28) = REAL(POSIT(WCY))
-           DECS(29) = REAL(TRGWEST(1))
-           DECS(30) = REAL(TRGEAST(1))
+           DECS(29) = REAL(TRGW(1))
+           DECS(30) = REAL(TRGE(1))
            DECS(31) = REAL(DETREP(DEBO(416)))
            DECS(32) = REAL(DETREP(DEBO(398)))
            DECS(77) = REAL(DEBO(436))
@@ -275,8 +275,8 @@ c
 c
       DO I=1,12
            IF(I.LE.10)THEN
-             TRGEAST(I)  = 0.00D0  ! Set trigger times to 0
-             TRGWEST(I)  = 0.00D0
+             TRGE(I)  = 0.00D0  ! Set trigger times to 0
+             TRGW(I)  = 0.00D0
            ENDIF
            COSTHETA(I) = 0.0D0
       ENDDO
