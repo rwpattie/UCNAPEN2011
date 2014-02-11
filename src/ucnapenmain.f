@@ -628,7 +628,7 @@ C
 !       IF(MOD(INT(SHN),250000).EQ.0)THEN ! close and reopen the paw ntuple
 !         NFILE = NFILE + 1               ! file to avoid crashes after 250k events
         !CALL BUILDHBOOK(NFILE)
-  !    ENDIF
+!      ENDIF
       IF(JOBEND.NE.0) GO TO 102  ! The simulation is completed.
 C
 C  ****  End the simulation after the allotted time or after completing
@@ -694,7 +694,7 @@ C
       CALL CLEANS          ! Cleans the secondary stack.
       CALL SHOWER_START  ! Generate event using the method specified in the input file
       CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS    
-c      goto 203 ! stupid goto command meant to skip transport to check the event 
+c      goto 104  ! stupid goto command meant to skip transport to check the event 
                 ! generator.
 C     
 C  ****  Check if the trajectory intersects the material system.
@@ -1007,6 +1007,16 @@ c         write(6,*)'in generate event',kpar,e,ptype
          CALL IN_DECAY()
       ELSEIF(NTYPE.EQ.14)THEN
          CALL CD_113M_DECAY
+      ELSEIF(NTYPE.EQ.15)THEN
+         CALL XENON_131
+      ELSEIF(NTYPE.EQ.16)THEN
+         CALL XENON_133
+      ELSEIF(NTYPE.EQ.17)THEN
+         CALL XENON_129
+      ELSEIF(NTYPE.EQ.18)THEN
+         CALL XENON_125
+      ELSEIF(NTYPE.EQ.19)THEN
+         CALL XENON_137
       ENDIF
 
       WGHT = 1.0 ! Set Weight 

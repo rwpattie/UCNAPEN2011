@@ -1,0 +1,91 @@
+TITLE  Simulation of the UCNA Experiment
+       .
+       Current version of the UCNA experiment. Remember all units are in
+       cm and eV.
+       .
+       >>>>>>>> Source definition.
+SKPAR  0        [Primary particles: 1=electron, 2=photon, 3=positron]
+SIMTYP 16       [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
+SENERG 1e6              [Initial energy (monoenergetic sources only)]
+SPOSIT 0.0 0.0 -20.0                      [Coordinates of the source]
+SCONE  0 0 0                            [Conical beam; angles in deg]
+       .
+       >>>>>>>> Material data and simulation parameters.
+MFNAME mats/N_pentane.mat             [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/PVT.mat                   [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.1 0.1 1e3 1e3          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/Mylar.mat                 [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/Cu.mat                    [Material file, up to 20 chars]
+MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/Al.mat                    [Material file, up to 20 chars]
+MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/N2_100torr.mat            [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/vacuum.mat                [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.2 0.2 1e4 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/Be.mat                    [Material file, up to 20 chars]
+MSIMPA 1e2 1e2 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/g10.mat                   [Material file, up to 20 chars]
+MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/Si.mat                    [Material file, up to 20 chars]
+MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/6f6f.mat                  [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+       .
+       >>>>>>>> Geometry definition file.
+GEOMFN geos/detectorC            [Geometry file, up to 20 chars]
+DSMAX  1 2e-2                    [KB, maximum step length in body KB]
+DSMAX  396 1e-5                  [EAST MYLAR PLANE FRONT            ]
+DSMAX  397 1e-5                  [EAST MYLAR PLANE BACK             ]
+DSMAX  398 1e-2                  [EAST SCINTILLATOR                 ]
+DSMAX  405 1E-2                  [EAST MWPC GAS                     ]
+DSMAX  406 1E-2                  [EAST MWPC GAS                     ] 
+DSMAX  411 1E-5                  [EAST SCINTILLATOR DEAD LAYER      ]
+DSMAX  410 0.1                   [EAST N2 VOLUME                    ]
+DSMAX  412 1.0                   [EAST DETECTOR NEAR VACUUM VOLUME  ]
+DSMAX  414 1E-5                  [WEST MYLAR PLANE FRONT            ]
+DSMAX  415 1E-5                  [WEST MYLAR PLANE BACK             ]
+DSMAX  416 1E-2                  [WEST SCINTILLATOR                 ]
+DSMAX  423 1E-2                  [WEST MWPC GAS                     ]
+DSMAX  424 1E-2                  [WEST MWPC GAS                     ]
+DSMAX  428 0.1                   [WEST N2 VOLUME                    ]
+DSMAX  429 1E-5                  [WEST DEAD LAYER                   ]
+DSMAX  430 1.0                   [WEST DETECTOR NEAR VACUUM VOLUME  ]
+DSMAX  432 5E-7                  [DECAY TRAP FOILS                  ]
+DSMAX  433 5E-7                  [DECAY TRAP BE EAST                ]
+DSMAX  434 5E-7                  [DECAY TRAP BE WEST                ]
+DSMAX  435 5E-7                  [DECAY TRAP FOILS WEST             ]
+DSMAX  436 1.0                   [DECAY NEAR VACUUM VOLUME          ]
+DSMAX  437 1.0                   [SOURCE RING HOLDER                ]
+DSMAX  438 1.0                   [DECAY INTERNAL VACUUM             ]
+       .
+       >>>>>>>> Interaction forcing.
+IFORCE 1 1 4  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
+IFORCE 1 1 5  15.0  0.1 5.0           [KB,KPAR,ICOL,FORCER,WLOW,WHIG]
+       .
+       >>>>>>>> Emerging particles. Energy and angular distributions.
+NBE    1e4 1e6 100                    [Energy window and no. of bins]
+NBANGL 45 24               [No. of bins for the angles THETA and PHI]
+       .
+       >>>>>>>> Impact detectors (up to 25 different detectors).
+IMPDET 1e3 1e6 1000 1 0          [E-window, no. of bins, IPSF, IDCUT]
+IDBODY 398               [Active body; one line for each active body]
+IDBODY 416               [Active body; one line for each active body]
+       .
+       >>>>>>>> Job properties
+RSEED  6543  3456
+NSIMSH 1.00e5                      [Desired number of simulated showers]
+TIME   4.32e4                         [Allotted simulation time, in sec]
+HBOOKF data/Xenon133                         [Path+prefix to hbook file]
+       .
+       >>>>>>>>> Volume Limits of the Experimental Geometry.
+ZMAX   240                          [Z limit of the simulation in cm]
+RADMAX 25                           [R limit of the simulation in cm]
+       .
+END                                  [Ends the reading of input data]
+       
+RESUME dump1.dmp               [Resume from this dump file, 20 chars]
+DUMPTO dump1.dmp                  [Generate this dump file, 20 chars]
+DUMPP  60                                    [Dumping period, in sec]

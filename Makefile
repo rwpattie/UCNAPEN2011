@@ -21,8 +21,9 @@ root_util_io.o: src/root_util_io.C
 	 
 OBJ = penelope.o ucnapenmain.o rita.o pengeom.o timer.o penvared.o penfield.o b_field.o\
       pen_math_utils.o pen_io_utils.o ucna_detector_utils.o  ucna_paw_io.o \
-      full_neutron.o al_decay.o tin_decay.o bismuth.o cd_decay.o\
+      full_neutron.o al_decay.o tin_decay.o bismuth.o cd_decay.o xenon_131.o\
       gamma_source.o cu_capture.o in_decay.o cd113m.o mcgama.o root_util_io.o\
+      xenon_133.o xenon_129.o xenon_125.o xenon_137.o\
 
 MOBJ = material.o \
 

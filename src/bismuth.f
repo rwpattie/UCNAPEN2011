@@ -461,21 +461,17 @@ c------------------------------------------------------------------------
 
       return
       end
+
 c-----------------------------------------------------------------------------C
       subroutine xe_135_decay
-c----------------------------------------------------------------------
+c-----------------------------------------------------------------------------C
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
 c      parameter(pi=3.141592654d0,ME=510.9870d3)
-      EXTERNAL rand,energy3,energy5
+      EXTERNAL rand,energy3
       include 'pmcomms.f'
       DIMENSION ILBH(5)
 
-      betaprob = rand(1.d0)
-      if(betaprob.gt.0.25.and.betaprob.le.0.50)goto 1100
-      if(betaprob.gt.0.50.and.betaprob.le.0.75)goto 1300
-      if(betaprob.gt.0.75)goto 1500
-      
-      betaprob = rand(1.d0)
+      betaprob = 1.0111*rand(1.d0)
       nbetatype = 0
       qend = 0.d0
 
@@ -485,55 +481,39 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
       ILBH(4) = 0
       ILBH(5) = 1
 
- 
-c     select the beta decay end point
-c      betaprob = 0.50     
- 
       if(betaprob.le.0.96)then
-         qend = 915.0d3
-         rej = 2.45d1
-         rn = 4.7932d0
-         nbetatype = 0
-      else if(betaprob.gt.0.96.and.betaprob.le.0.9911)then
-         qend = 557.0d3
-         rej = 8.20d0
-         rn = 4.7932d0
-         nbetatype = 1
-      else if(betaprob.gt.0.9911.and.betaprob.le.0.997)then
-         qend = 757.0d3
-         rej = 1.58d1
-         rn = 4.7932d0
-         nbetatype = 2
-      else if(betaprob.gt.0.997.and.betaprob.le.0.99823)then
-         qend = 103.0d3
-         rej = 0.29d0
-         rn = 4.7932d0
-         nbetatype = 3
-      else if(betaprob.gt.0.99823)then
-         qend = 184.0e3
-         rej = 0.90d0
-         rn = 4.7932d0
-         nbetatype = 4
+        qend = 915.0d3
+        rej = 2.45d1
+        rn = 4.7932d0
+	Kpar  = 1
+        e     = energy3(qend,rej,rn)
+        nbetatype = 0
+      else if(betaprob.gt.0.96.and.betaprob.lt.0.9911)then
+        qend = 557.0d3
+        rej = 8.20d0
+        rn = 4.7932d0
+        Kpar  = 1
+        e     = energy3(qend,rej,rn)
+	nbetatype = 1
+      else if(betaprob.gt.0.9911.and.betaprob.lt.1.0079)then
+        Kpar  = 2
+        E = 526.561e3
+      else if(betaprob.gt.1.0079)then
+        Kpar  = 1
+        E = 492.000e3
       endif
 
-      !rad   = 6.5*rand(1.d0)
-      !psi   = 2*pi*rand(1.d0)
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
 1000  continue 
-      x     = 6.5*(1.0 - 2.0*rand(1.d0))
-      y     = 6.5*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1000
-      !x     = rad*dcos(psi)
-      !y     = rad*dsin(psi)
+      x     = 6.23189*(1.0 - 2.0*rand(1.d0))
+      y     = 6.23189*(1.0 - 2.0*rand(1.d0))
+      if(sqrt(x**2 + y**2) .gt. 6.23189) goto 1000 ! IR for 2011/2012
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
       v     = dsin(dacos(theta))*dsin(psi)
       w     = theta
       
-      Kpar  = 1
-      e     = energy3(qend,rej,rn)
-   
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       us     = dsin(dacos(theta))*dcos(psi)
@@ -583,112 +563,6 @@ C
          CALL STORES(E10,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         endif
       endif 
-      ptype = 1
-      return
-
-1100  continue
-      ptype = 2
-      betaprob = 97.137*rand(1.d0)
- 
-      if(betaprob.lt.61.6)then
-        E = 129.369d3
-      else if(betaprob.ge.61.6.and.betaprob.lt.90.4)then
-        E = 158.477d3
-      else if(betaprob.ge.90.4.and.betaprob.lt.96.99)then
-        E = 162.788d3
-      else if(betaprob.ge.96.99.and.betaprob.lt.97.137)then
-        E = 163.914d3
-      endif
-   
-      !rad   = 6.5*rand(1.d0)
-      !psi   = 2*pi*rand(1.d0)
-      z     = 220.0*(1.0 - 2.0*rand(1.d0))
-1200  continue
-      x     = 6.5*(1.0 - 2.0*rand(1.d0))
-      y     = 6.5*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1200
-      !x     = rad*dcos(psi)
-      !y     = rad*dsin(psi)
-      theta = 1.0- 2.0*rand(1.d0)
-      psi   = 2*pi*rand(1.d0)
-      u     = dsin(dacos(theta))*dcos(psi)
-      v     = dsin(dacos(theta))*dsin(psi)
-      w     = theta
-      Kpar  = 1
-    
-      return
-  
-1300  continue
-      ptype = 3
-      betaprob = rand(1.d0)
- 
-      if(betaprob.le.0.985)then
-        qend = 346.4e3
-        rej = 3.2d0
-        rn = 4.7831d0
-        e = energy5(qend,rej,rn)
-      else if(betaprob.gt.0.985)then
-        qend = 266.8e3
-        rej = 1.9d0
-        rn = 4.7831d0
-        e = energy5(qend,rej,rn)
-      !else if(betaprob.gt.0.999)then ! A lot of spectrum near rejection energy
-        !qend = 43.6e3
-        !rej = 0.058d0
-        !rn = 4.7831d0
-        !e = energy5(qend,rej,rn)
-      endif 
-      
-      !rad   = 6.5*rand(1.d0)
-      !psi   = 2*pi*rand(1.d0)
-      z     = 220.0*(1.0 - 2.0*rand(1.d0))
-1400  continue
-      x     = 6.5*(1.0 - 2.0*rand(1.d0))
-      y     = 6.5*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1400
-      !x     = rad*dcos(psi)
-      !y     = rad*dsin(psi)
-      theta = 1.0- 2.0*rand(1.d0)
-      psi   = 2*pi*rand(1.d0)
-      u     = dsin(dacos(theta))*dcos(psi)
-      v     = dsin(dacos(theta))*dsin(psi)
-      w     = theta
-      Kpar  = 1
-
-      return
- 
-1500  continue
-      ptype = 4
-      betaprob = rand(1.d0)
- 
-      betaprob = 90.955*rand(1.d0)
-
-      if(betaprob.lt.63.5)then
-        E = 198.660d3
-      else if(betaprob.ge.63.5.and.betaprob.lt.84.18)then
-        E = 227.768e3
-      else if(betaprob.ge.84.18.and.betaprob.lt.89.73)then
-        E = 232.079e3
-      else if(betaprob.ge.89.73)then
-        E = 233.013e3
-      endif
-
-      !rad   = 6.5*rand(1.d0)
-      !psi   = 2*pi*rand(1.d0)
-      z     = 220.0*(1.0 - 2.0*rand(1.d0))
-1600  continue
-      x     = 6.5*(1.0 - 2.0*rand(1.d0))
-      y     = 6.5*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.5) goto 1600
-      !x     = rad*dcos(psi)
-      !y     = rad*dsin(psi)
-      theta = 1.0- 2.0*rand(1.d0)
-      psi   = 2*pi*rand(1.d0)
-      u     = dsin(dacos(theta))*dcos(psi)
-      v     = dsin(dacos(theta))*dsin(psi)
-      w     = theta
-      Kpar  = 1
-
            
       return
       end      
@@ -736,45 +610,3 @@ c
       return
       end
 
-c----------------------------------------------------------------------------C
-      double precision function energy5(qend,rej,rn)
-      implicit double precision(A-H,J-M,O-Z), integer*4(i,n)
-      parameter(emass=510.998928d3)
-      parameter(pi   =3.141592654d0)
-      parameter(alphainv=1.37036d2)
-      parameter(zed  =5.40d1)
-      parameter(lambda=3.86159268d2)
-      parameter(B    =1.0170d0)
-      parameter(ga=1.73169d0)
-      common/rseed/iseed1,iseed2
-      external rand
-c----------------------------------------------------------------------------c
-c  Fermi factor from D.H. Wilkinson, Nucl. Phys. A 377, 474 (1982).
-c  Nucl. radii from I. Angeli, K. P. Marinova, Atomic Data and Nuclear 
-c  Tables 99, 69 (2013).  Linear extrapolation for Xe135 & appx. Xe133
-c  F0L0 and L0 tables from Behrens and Janecke, Numerical Tables for 
-c                          Beta Decay and Electron Capture (1969).
-c----------------------------------------------------------------------------c
-
-      EO = qend/emass + 1
-60    E=(EO-1.0)*RAND(1.D0)
-      if(E.lt.0.03) goto 60
-      Y=rej*RAND(1.D0)
-      R=rn/lambda
-      C=zed/alphainv
-      A=B-1.0052d0
-      S=A/EO
-      P=DSQRT((E+1)**2-1)
-      CALL ZGMFN(DSQRT(1.0d0-C**2),(C*(E+1))/P,1,Q,U)
-      FERMI=2*(1.0d0+DSQRT(1.0d0-C**2))*(1/((2*P*R)**(2*
-     1     (1-DSQRT(1.0d0-C**2)))))*DEXP((PI*C*(E+1))/P)*
-     1     (DSQRT(Q**2+U**2)/ga)**2*(B-S*E) ! D.H. Wilkinson (also Behrens/Janecke)
-      if (Q.lt.0.0) goto 60
-      W=FERMI*P*(EO-(E+1))**2*(E+1)
-      if (W.lt.Y) goto 60
-      !print*,'FERMI2 = ', FERMI
-      E = E*emass
-      energy5 = E
-c 
-      return
-      end
