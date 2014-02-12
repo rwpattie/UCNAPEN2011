@@ -12,19 +12,19 @@ C  Xe137 has a 3.818m half-life and undergoes beta-decay to Cs137.            C
 C  This code generates beta-decay spectra of Cs137.                           C
 c-----------------------------------------------------------------------------C
 
-      bprob = rand(1.d0)
+c      bprob = rand(1.d0)
 
-      if(bprob.lt.0.947)then
-        qend = 513.97e3
-        rej = 7.4d0
-        rn = 4.8128d0
-        e = energy7(qend,rej,rn)
-      else if(bprob.gt.0.947)then
-        qend = 1175.63e3
-        rej = 3.9d1
-        rn = 4.8128d0
-        e = energy7(qend,rej,rn)
-      endif
+c      if(bprob.lt.0.947)then
+      qend = 513.97e3
+      rej = 7.4d0
+      rn = 4.8128d0
+      e = energy7(qend,rej,rn)
+c      else if(bprob.gt.0.947)then
+c        qend = 1175.63e3
+c        rej = 3.9d1
+c        rn = 4.8128d0
+c        e = energy7(qend,rej,rn)
+c      endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
 1200  continue
