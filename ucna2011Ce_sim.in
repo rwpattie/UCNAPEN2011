@@ -5,7 +5,7 @@ TITLE  Simulation of the UCNA Experiment
        .
        >>>>>>>> Source definition.
 SKPAR  0        [Primary particles: 1=electron, 2=photon, 3=positron]
-SIMTYP 12       [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
+SIMTYP 11       [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
 SENERG 2e6              [Initial energy (monoenergetic sources only)]
 SPOSIT 0.0 0.0 -20.0                      [Coordinates of the source]
 SCONE  0 0 0                            [Conical beam; angles in deg]
@@ -76,8 +76,8 @@ IDBODY 416               [Active body; one line for each active body]
        .
        >>>>>>>> Job properties
 RSEED  4321  1234
-NSIMSH 2.49e5                   [Desired number of simulated showers]
-TIME   1.5e2                       [Allotted simulation time, in sec]
+NSIMSH 1.00e5                   [Desired number of simulated showers]
+TIME   4.95e4                      [Allotted simulation time, in sec]
 HBOOKF data/eventCe                     [Path + prefix to hbook file]
        .
        >>>>>>>>> Volume Limits of the Experimental Geometry.
