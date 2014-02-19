@@ -5,7 +5,7 @@ TITLE  Simulation of the UCNA Experiment
        .
        >>>>>>>> Source definition.
 SKPAR  0        [Primary particles: 1=electron, 2=photon, 3=positron]
-SIMTYP 15       [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
+SIMTYP 17       [1=N-decay,2=Sn113,3=Al-decay,4=gamma,5=Bi207,6=3Src]
 SENERG 1e6              [Initial energy (monoenergetic sources only)]
 SPOSIT 0.0 0.0 -20.0                      [Coordinates of the source]
 SCONE  0 0 0                            [Conical beam; angles in deg]
