@@ -1,28 +1,24 @@
 c-----------------------------------------------------------------------------C
-      subroutine xenon_137
+      subroutine xenon_133_3half
 c-----------------------------------------------------------------------------C
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
       parameter(pi=3.141592654d0)
-      EXTERNAL rand,energy8
+      EXTERNAL rand,energy5
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-c-----------------------------------------------------------------------------C
-C  Note: Xe137 has a 3.818m half-life and undergoes beta-decay to Cs137.      C
-c-----------------------------------------------------------------------------C
+      btxeprob = rand(1.d0)
 
-      bprob = 0.98*rand(1.d0)
-
-      if(bprob.lt.0.67)then
-        qend = 4173.0e3
-        rej = 2.3205d3
-        rn = 4.8094d0
-        e = energy8(qend,rej,rn)
-      else if(bprob.ge.0.67)then
-        qend = 3718.0e3
-        rej = 1.5674d3
-        rn = 4.8094d0
-        e = energy8(qend,rej,rn)
+      if(btxeprob.lt.0.986)then
+        qend = 346.4e3
+        rej = 3.2d0
+        rn = 4.7831d0
+        e = energy5(qend,rej,rn)
+      else if(btxeprob.ge.0.986)then
+        qend = 266.8e3
+        rej = 1.9d0
+        rn = 4.7831d0
+        e = energy5(qend,rej,rn)
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
@@ -41,7 +37,7 @@ c-----------------------------------------------------------------------------C
       end
 
 c----------------------------------------------------------------------------C
-      double precision function energy8(qend,rej,rn)
+      double precision function energy5(qend,rej,rn)
       implicit double precision(A-H,J-M,O-Z), integer*4(i,n)
       parameter(emass=510.998928d3)
       parameter(pi   =3.141592654d0)
@@ -55,7 +51,7 @@ c----------------------------------------------------------------------------C
 c----------------------------------------------------------------------------c
 c  Fermi factor from D.H. Wilkinson, Nucl. Phys. A 377, 474 (1982).
 c  Nucl. radii from I. Angeli, K. P. Marinova, Atomic Data and Nuclear 
-c  Tables 99, 69 (2013).  Linear extrapolation for Xenon isotopes
+c  Tables 99, 69 (2013).  Linear extrapolation for Xe135 & appx. Xe133
 c  F0L0 and L0 tables from Behrens and Janecke, Numerical Tables for 
 c                          Beta Decay and Electron Capture (1969).
 c----------------------------------------------------------------------------c
@@ -66,7 +62,7 @@ c----------------------------------------------------------------------------c
       Y=rej*RAND(1.D0)
       R=rn/lambda
       C=zed/alphainv
-      A=B-0.9568d0
+      A=B-1.0052d0
       S=A/EO
       P=DSQRT((E+1)**2-1)
       CALL ZGMFN(DSQRT(1.0d0-C**2),(C*(E+1))/P,1,Q,U)
@@ -78,7 +74,7 @@ c----------------------------------------------------------------------------c
       if (W.lt.Y) goto 50
       !print*,'FERMI = ', FERMI
       E = E*emass
-      energy8 = E
+      energy5 = E
 c 
       return
       end

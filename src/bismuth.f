@@ -463,7 +463,7 @@ c------------------------------------------------------------------------
       end
 
 c-----------------------------------------------------------------------------C
-      subroutine xe_135_decay
+      subroutine xe_135_3half
 c-----------------------------------------------------------------------------C
       implicit DOUBLE PRECISION(A-H,O-Z), integer*4(i-n)
 c      parameter(pi=3.141592654d0,ME=510.9870d3)
@@ -471,7 +471,7 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
       include 'pmcomms.f'
       DIMENSION ILBH(5)
 
-      betaprob = 1.0111*rand(1.d0)
+      betaprob = 0.9911*rand(1.d0)
       nbetatype = 0
       qend = 0.d0
 
@@ -481,26 +481,20 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
       ILBH(4) = 0
       ILBH(5) = 1
 
-      if(betaprob.le.0.96)then
+      if(betaprob.le.0.9600)then
         qend = 915.0d3
         rej = 2.45d1
         rn = 4.7932d0
-	Kpar  = 1
+        Kpar  = 1
         e     = energy3(qend,rej,rn)
         nbetatype = 0
-      else if(betaprob.gt.0.96.and.betaprob.lt.0.9911)then
+      else if(betaprob.gt.0.9600)then
         qend = 557.0d3
         rej = 8.20d0
         rn = 4.7932d0
         Kpar  = 1
         e     = energy3(qend,rej,rn)
-	nbetatype = 1
-      else if(betaprob.gt.0.9911.and.betaprob.lt.1.0079)then
-        Kpar  = 2
-        E = 526.561e3
-      else if(betaprob.gt.1.0079)then
-        Kpar  = 1
-        E = 492.000e3
+        nbetatype = 1
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
