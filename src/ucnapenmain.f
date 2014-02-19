@@ -998,7 +998,7 @@ c           call xe_135_decay(PTYPE)
       ELSEIF(NTYPE.EQ.9)THEN
          CALL CD_DECAY()
       ELSEIF(NTYPE.EQ.11)THEN
-         CALL XE_135_DECAY
+         CALL XE_135_3HALF
 c         write(6,*)'in generate event',kpar,e,ptype
       ELSEIF(NTYPE.EQ.12)THEN
          CALL CE_DECAY
@@ -1010,13 +1010,19 @@ c         write(6,*)'in generate event',kpar,e,ptype
       ELSEIF(NTYPE.EQ.15)THEN
          CALL XENON_131
       ELSEIF(NTYPE.EQ.16)THEN
-         CALL XENON_133
+         CALL XENON_133_3HALF
       ELSEIF(NTYPE.EQ.17)THEN
          CALL XENON_129
       ELSEIF(NTYPE.EQ.18)THEN
          CALL XENON_125
       ELSEIF(NTYPE.EQ.19)THEN
          CALL XENON_137
+      ELSEIF(NTYPE.EQ.21)THEN
+         CALL XENON_133_11HALF
+      ELSEIF(NTYPE.EQ.22)THEN
+         CALL XENON_135_11HALF
+      ELSEIF(NTYPE.EQ.23)THEN
+         CALL CS_137_DECAY
       ENDIF
 
       WGHT = 1.0 ! Set Weight 
