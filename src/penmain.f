@@ -4349,7 +4349,7 @@ C
       IF(IDEF.EQ.0) THEN  ! Example: 60-Co source, two gamma rays.
         E1=1.17E6
         E2=1.33E6
-        EPMAX=E1+E2+1.0D0  ! Note: for positrons add 5.12D5.
+C        EPMAX=E1+E2+1.0D0  ! Note: for positrons add 5.12D5.
         IDEF=1
         RETURN
       ENDIF
