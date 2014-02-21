@@ -7,16 +7,23 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-      cnvprob = 97.137*rand(1.d0)
+      cnvprob = 99.087*rand(1.d0)
 
       if(cnvprob.lt.61.6)then
+        Kpar  = 1
         E = 129.369e3
       else if(cnvprob.ge.61.6.and.cnvprob.lt.90.4)then
+        Kpar  = 1
         E = 158.477e3
       else if(cnvprob.ge.90.4.and.cnvprob.lt.96.99)then
+        Kpar  = 1
         E = 162.788e3
-      else if(cnvprob.ge.96.99)then
+      else if(cnvprob.ge.96.99.and.cnvprob.lt.97.137)then
+        Kpar  = 1
         E = 163.914e3
+      else if(cnvprob.ge.97.137)then
+        Kpar  = 2
+        E = 163.930e3
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
@@ -29,7 +36,6 @@ c-----------------------------------------------------------------------------C
       u     = dsin(dacos(theta))*dcos(psi)
       v     = dsin(dacos(theta))*dsin(psi)
       w     = theta
-      Kpar  = 1
 
       return
       end
