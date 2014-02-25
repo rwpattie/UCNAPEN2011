@@ -8,7 +8,7 @@ c-----------------------------------------------------------------------------C
       COMMON/RSEED/ISEED1,ISEED2
 
       gweight = 117.2643
-      eweight = 29.658
+      eweight = 30.1775
 
       crudprob = (gweight+eweight)*rand(1.d0)
 
@@ -49,28 +49,36 @@ c-----------------------------------------------------------------------------C
      1       +gweight)then
         Kpar  = 1
         E = 138.963e3
-      else if(crudprob.ge.21.46+gweight.and.crudprob.lt.28.09
+      else if(crudprob.ge.21.46+gweight.and.crudprob.lt.21.935
+     1       +gweight)then
+        Kpar  = 1
+        E = 166.974e3
+      else if(crudprob.ge.21.935+gweight.and.crudprob.lt.28.565
      1       +gweight)then
         Kpar  = 1
         E = 169.691e3
-      else if(crudprob.ge.28.09+gweight.and.crudprob.lt.29.07
+      else if(crudprob.ge.28.565+gweight.and.crudprob.lt.29.545
      1       +gweight)then
         Kpar  = 1
         E = 197.672e3
-      else if(crudprob.ge.29.07+gweight.and.crudprob.lt.29.369
+      else if(crudprob.ge.29.545+gweight.and.crudprob.lt.29.844
      1       +gweight)then
         Kpar  = 1
         E = 201.788e3
-      else if(crudprob.ge.29.369+gweight)then
+      else if(crudprob.ge.29.844+gweight.and.crudprob.lt.30.133
+     1       +gweight)then
         Kpar  = 1
         E = 341.822e3
+      else if(crudprob.ge.30.133+gweight)then
+        Kpar  = 1
+        E = 369.803e3
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
 1200  continue
       x     = 6.23189*(1.0 - 2.0*rand(1.d0))
       y     = 6.23189*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.23189) goto 1200 ! IR for 2011/2012
+      if(sqrt(x**2 + y**2) .ge. 6.23189) goto 1200 ! IR for 2011/2012
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
