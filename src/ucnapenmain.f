@@ -694,6 +694,7 @@ C
       CALL CLEANS          ! Cleans the secondary stack.
       CALL SHOWER_START  ! Generate event using the method specified in the input file
       CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS    
+      NSTEP = 0
 c      goto 104  ! stupid goto command meant to skip transport to check the event 
                 ! generator.
 C     
@@ -817,6 +818,23 @@ C
       ENDIF
 C  ----   INCREMENT TIME OF FLIGHT   
       TIME = TIME + DELTAT(DSEF,E)      
+      NSTEP = NSTEP + 1
+      IF(MOD(NSTEP,5000).EQ.0)THEN
+         CALL TIMER(CURRENTTIME)
+         TIMEDIFF = CURRENTTIME - EVENTSTART
+         IF(TIMEDIFF.GT.30)THEN
+            print*,'HUNG EVENT!  EVENT TIME IS ', TIMEDIFF
+            IEXIT = 4
+            AE = E
+            AX = X
+            AY = Y
+            AZ = Z
+            AU = U
+            AV = V
+            AW = W
+            GO TO 104
+         ENDIF
+      ENDIF
 C  ----  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 C     More penelope functions to fill detector arrays....
 C
