@@ -8,7 +8,7 @@ c-----------------------------------------------------------------------------C
       COMMON/RSEED/ISEED1,ISEED2
 
       gweight = 117.2643
-      eweight = 17.298
+      eweight = 29.658
 
       crudprob = (gweight+eweight)*rand(1.d0)
 
@@ -30,28 +30,38 @@ c-----------------------------------------------------------------------------C
       else if(crudprob.ge.117.25.and.crudprob.lt.117.2643)then
         Kpar  = 2
         E = 618.400e3
-      else if(crudprob.ge.gweight.and.crudprob.lt.3.91+gweight)then
+      else if(crudprob.ge.gweight.and.crudprob.lt.11.80+gweight)then
+        Kpar  = 1
+        E = 23.600e3
+      else if(crudprob.ge.11.80+gweight.and.crudprob.lt.15.71
+     1       +gweight)then
         Kpar  = 1
         E = 24.441e3
-      else if(crudprob.ge.3.91+gweight.and.crudprob.lt.5.45+gweight)then
+      else if(crudprob.ge.15.71+gweight.and.crudprob.lt.16.27
+     1       +gweight)then
+        Kpar  = 1
+        E = 52.422e3
+      else if(crudprob.ge.16.27+gweight.and.crudprob.lt.17.81
+     1       +gweight)then
         Kpar  = 1
         E = 112.083e3
-      else if(crudprob.ge.5.45+gweight.and.crudprob.lt.9.10+gweight)then
+      else if(crudprob.ge.17.81+gweight.and.crudprob.lt.21.46
+     1       +gweight)then
         Kpar  = 1
         E = 138.963e3
-      else if(crudprob.ge.9.10+gweight.and.crudprob.lt.15.73
+      else if(crudprob.ge.21.46+gweight.and.crudprob.lt.28.09
      1       +gweight)then
         Kpar  = 1
         E = 169.691e3
-      else if(crudprob.ge.15.73+gweight.and.crudprob.lt.16.71
+      else if(crudprob.ge.28.09+gweight.and.crudprob.lt.29.07
      1       +gweight)then
         Kpar  = 1
         E = 197.672e3
-      else if(crudprob.ge.16.71+gweight.and.crudprob.lt.17.009
+      else if(crudprob.ge.29.07+gweight.and.crudprob.lt.29.369
      1       +gweight)then
         Kpar  = 1
         E = 201.788e3
-      else if(crudprob.ge.17.009+gweight)then
+      else if(crudprob.ge.29.369+gweight)then
         Kpar  = 1
         E = 341.822e3
       endif
