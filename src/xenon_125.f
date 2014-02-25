@@ -8,7 +8,7 @@ c-----------------------------------------------------------------------------C
       COMMON/RSEED/ISEED1,ISEED2
 
       gweight = 96.36
-      eweight = 10.324
+      eweight = 36.674
 
       xprob = (gweight+eweight)*rand(1.d0)
 
@@ -27,22 +27,28 @@ c-----------------------------------------------------------------------------C
       else if(xprob.ge.95.25.and.xprob.lt.96.36)then
         Kpar  = 2
         E = 846.511e3
-      else if(xprob.ge.gweight.and.xprob.lt.3.25+gweight)then
+      else if(xprob.ge.gweight.and.xprob.lt.24.4+gweight)then
+        Kpar  = 1
+        E = 21.799e3
+      else if(xprob.ge.24.4+gweight.and.xprob.lt.27.65+gweight)then
         Kpar  = 1
         E = 49.780e3
-      else if(xprob.ge.3.25+gweight.and.xprob.lt.9.45+gweight)then
+      else if(xprob.ge.27.65+gweight.and.xprob.lt.33.85+gweight)then
         Kpar  = 1
         E = 155.249e3
-      else if(xprob.ge.9.45+gweight)then
+      else if(xprob.ge.33.85+gweight.and.xprob.lt.34.724+gweight)then
         Kpar  = 1
         E = 183.230e3
+      else if(xprob.ge.34.724+gweight)then
+        Kpar  = 1
+        E = 210.209e3
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
 1200  continue
       x     = 6.23189*(1.0 - 2.0*rand(1.d0))
       y     = 6.23189*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.23189) goto 1200 ! IR for 2011/2012
+      if(sqrt(x**2 + y**2) .ge. 6.23189) goto 1200 ! IR for 2011/2012
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
