@@ -8,7 +8,7 @@ c-----------------------------------------------------------------------------C
       COMMON/RSEED/ISEED1,ISEED2
 
       gweight = 117.2643
-      eweight = 30.1775
+      eweight = 30.6815
 
       crudprob = (gweight+eweight)*rand(1.d0)
 
@@ -41,35 +41,43 @@ c-----------------------------------------------------------------------------C
      1       +gweight)then
         Kpar  = 1
         E = 52.422e3
-      else if(crudprob.ge.16.27+gweight.and.crudprob.lt.17.81
+      else if(crudprob.ge.16.27+gweight.and.crudprob.lt.16.383
+     1       +gweight)then
+        Kpar  = 1
+        E = 56.538e3
+      else if(crudprob.ge.16.383+gweight.and.crudprob.lt.17.923
      1       +gweight)then
         Kpar  = 1
         E = 112.083e3
-      else if(crudprob.ge.17.81+gweight.and.crudprob.lt.21.46
+      else if(crudprob.ge.17.923+gweight.and.crudprob.lt.21.573
      1       +gweight)then
         Kpar  = 1
         E = 138.963e3
-      else if(crudprob.ge.21.46+gweight.and.crudprob.lt.21.935
+      else if(crudprob.ge.21.573+gweight.and.crudprob.lt.21.964
+     1       +gweight)then
+        Kpar  = 1
+        E = 140.064e3
+      else if(crudprob.ge.21.964+gweight.and.crudprob.lt.22.439
      1       +gweight)then
         Kpar  = 1
         E = 166.974e3
-      else if(crudprob.ge.21.935+gweight.and.crudprob.lt.28.565
+      else if(crudprob.ge.22.439+gweight.and.crudprob.lt.29.069
      1       +gweight)then
         Kpar  = 1
         E = 169.691e3
-      else if(crudprob.ge.28.565+gweight.and.crudprob.lt.29.545
+      else if(crudprob.ge.29.069+gweight.and.crudprob.lt.30.049
      1       +gweight)then
         Kpar  = 1
         E = 197.672e3
-      else if(crudprob.ge.29.545+gweight.and.crudprob.lt.29.844
+      else if(crudprob.ge.30.049+gweight.and.crudprob.lt.30.348
      1       +gweight)then
         Kpar  = 1
         E = 201.788e3
-      else if(crudprob.ge.29.844+gweight.and.crudprob.lt.30.133
+      else if(crudprob.ge.30.348+gweight.and.crudprob.lt.30.637
      1       +gweight)then
         Kpar  = 1
         E = 341.822e3
-      else if(crudprob.ge.30.133+gweight)then
+      else if(crudprob.ge.30.637+gweight)then
         Kpar  = 1
         E = 369.803e3
       endif
