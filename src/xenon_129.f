@@ -8,7 +8,7 @@ c-----------------------------------------------------------------------------C
       COMMON/RSEED/ISEED1,ISEED2
 
       eweight = 201.745
-      gweight = 4.59
+      gweight = 12.09
       zprob = (eweight+gweight)*rand(1.d0)
 
       if(zprob.lt.78.85)then
@@ -32,7 +32,10 @@ c-----------------------------------------------------------------------------C
       else if(zprob.ge.196.245.and.zprob.lt.201.745)then
         Kpar  = 1
         E = 195.42e3
-      else if(zprob.ge.eweight)then
+      else if(zprob.ge.eweight.and.zprob.lt.7.50+eweight)then
+        Kpar  = 2
+        E = 39.578e3
+      else if(zprob.ge.7.50+eweight)then
         Kpar  = 2
         E = 196.56e3
       endif
