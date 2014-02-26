@@ -823,7 +823,6 @@ C  ----   INCREMENT TIME OF FLIGHT
          CALL TIMER(CURRENTTIME)
          TIMEDIFF = CURRENTTIME - EVENTSTART
          IF(TIMEDIFF.GT.30)THEN
-            print*,'HUNG EVENT!  EVENT TIME IS ', TIMEDIFF
             IEXIT = 4
             AE = E
             AX = X
