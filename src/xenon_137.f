@@ -7,22 +7,38 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-c-----------------------------------------------------------------------------C
-C  Note: Xe137 has a 3.818m half-life and undergoes beta-decay to Cs137.      C
-c-----------------------------------------------------------------------------C
+      eweight = 98.0
+      gweight = 32.288      
 
-      bprob = 0.98*rand(1.d0)
+      bprob = (eweight+gweight)*rand(1.d0)
 
-      if(bprob.lt.0.67)then
+      if(bprob.lt.67.0)then
+        Kpar  = 1
         qend = 4173.0e3
         rej = 2.3205d3
         rn = 4.8094d0
         e = energy8(qend,rej,rn)
-      else if(bprob.ge.0.67)then
+      else if(bprob.ge.67.0.and.bprob.lt.98.0)then
+        Kpar  = 1
         qend = 3718.0e3
         rej = 1.5674d3
         rn = 4.8094d0
         e = energy8(qend,rej,rn)
+      else if(bprob.ge.eweight.and.bprob.lt.0.118+eweight)then
+        Kpar  = 2
+        E = 298.00e3
+      else if(bprob.ge.0.118+eweight.and.bprob.lt.0.258+eweight)then
+        Kpar  = 2
+        E = 393.35e3
+      else if(bprob.ge.0.258+eweight.and.bprob.lt.31.258+eweight)then
+        Kpar  = 2
+        E = 455.490e3
+      else if(bprob.ge.31.258+eweight.and.bprob.lt.31.878+eweight)then
+        Kpar  = 2
+        E = 848.950e3
+      else if(bprob.ge.31.878+eweight)then
+        Kpar  = 2
+        E = 1783.430e3
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
@@ -62,7 +78,7 @@ c----------------------------------------------------------------------------c
 
       EO = qend/emass + 1
 50    E=(EO-1.0)*RAND(1.D0)
-      if(E.lt.0.03) goto 50
+      if(E.lt.0.01) goto 50
       Y=rej*RAND(1.D0)
       R=rn/lambda
       C=zed/alphainv

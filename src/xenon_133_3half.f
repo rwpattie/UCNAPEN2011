@@ -7,18 +7,54 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-      btxeprob = rand(1.d0)
+      eweight = 169.136
+      gweight = 37.4466
 
-      if(btxeprob.lt.0.986)then
+      btxeprob = (eweight+gweight)*rand(1.d0)
+
+      if(btxeprob.lt.98.6)then
+        Kpar  = 1
         qend = 346.4e3
         rej = 3.2d0
         rn = 4.7831d0
         e = energy5(qend,rej,rn)
-      else if(btxeprob.ge.0.986)then
+      else if(btxeprob.ge.98.6.and.btxeprob.lt.99.9)then
+        Kpar  = 1
         qend = 266.8e3
         rej = 1.9d0
         rn = 4.7831d0
         e = energy5(qend,rej,rn)
+      else if(btxeprob.ge.99.9.and.btxeprob.lt.105.57)then
+        Kpar  = 1
+        E = 25.500e3
+      else if(btxeprob.ge.105.57.and.btxeprob.lt.106.27)then
+        Kpar  = 1
+        E = 43.6296e3
+      else if(btxeprob.ge.106.27.and.btxeprob.lt.159.07)then
+        Kpar  = 1
+        E = 45.0133e3
+      else if(btxeprob.ge.159.07.and.btxeprob.lt.159.17)then
+        Kpar  = 1
+        E = 73.8999e3
+      else if(btxeprob.ge.159.17.and.btxeprob.lt.167.14)then
+        Kpar  = 1
+        E = 75.2836e3
+      else if(btxeprob.ge.167.14.and.btxeprob.lt.168.79)then
+        Kpar  = 1
+        E = 79.7808e3
+      else if(btxeprob.ge.168.79.and.btxeprob.lt.169.136)then
+        Kpar  = 1
+        E = 80.7671e3
+      else if(btxeprob.ge.eweight.and.btxeprob.lt.0.44+eweight)then
+        Kpar  = 2
+        E = 79.6142e3
+      else if(btxeprob.ge.0.44+eweight.and.btxeprob.lt.37.34
+     1       +eweight)then
+        Kpar  = 2
+        E = 80.9979e3
+      else if(btxeprob.ge.37.34+eweight)then
+        Kpar  = 2
+        E = 160.6120e3
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
@@ -31,7 +67,6 @@ c-----------------------------------------------------------------------------C
       u     = dsin(dacos(theta))*dcos(psi)
       v     = dsin(dacos(theta))*dsin(psi)
       w     = theta
-      Kpar  = 1
 
       return
       end
@@ -58,7 +93,7 @@ c----------------------------------------------------------------------------c
 
       EO = qend/emass + 1
 50    E=(EO-1.0)*RAND(1.D0)
-      if(E.lt.0.03) goto 50
+      if(E.lt.0.01) goto 50
       Y=rej*RAND(1.D0)
       R=rn/lambda
       C=zed/alphainv
