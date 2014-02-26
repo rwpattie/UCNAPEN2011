@@ -7,8 +7,8 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-      gweight = 96.36
-      eweight = 36.674
+      gweight = 97.920
+      eweight = 50.674
 
       xprob = (gweight+eweight)*rand(1.d0)
 
@@ -27,19 +27,31 @@ c-----------------------------------------------------------------------------C
       else if(xprob.ge.95.25.and.xprob.lt.96.36)then
         Kpar  = 2
         E = 846.511e3
+      else if(xprob.ge.96.36.and.xprob.lt.96.538)then
+        Kpar  = 2
+        E = 901.510e3
+      else if(xprob.ge.96.538.and.xprob.lt.97.237)then
+        Kpar  = 2
+        E = 1138.23e3
+      else if(xprob.ge.97.237.and.xprob.lt.97.920)then
+        Kpar  = 2
+        E = 1180.838e3
       else if(xprob.ge.gweight.and.xprob.lt.24.4+gweight)then
         Kpar  = 1
         E = 21.799e3
-      else if(xprob.ge.24.4+gweight.and.xprob.lt.27.65+gweight)then
+      else if(xprob.ge.24.4+gweight.and.xprob.lt.38.4+gweight)then
+        Kpar  = 1
+        E = 23.600e3
+      else if(xprob.ge.38.4+gweight.and.xprob.lt.41.65+gweight)then
         Kpar  = 1
         E = 49.780e3
-      else if(xprob.ge.27.65+gweight.and.xprob.lt.33.85+gweight)then
+      else if(xprob.ge.41.65+gweight.and.xprob.lt.47.85+gweight)then
         Kpar  = 1
         E = 155.249e3
-      else if(xprob.ge.33.85+gweight.and.xprob.lt.34.724+gweight)then
+      else if(xprob.ge.47.85+gweight.and.xprob.lt.48.724+gweight)then
         Kpar  = 1
         E = 183.230e3
-      else if(xprob.ge.34.724+gweight)then
+      else if(xprob.ge.48.724+gweight)then
         Kpar  = 1
         E = 210.209e3
       endif
