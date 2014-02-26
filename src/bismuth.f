@@ -501,7 +501,7 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
 1000  continue 
       x     = 6.23189*(1.0 - 2.0*rand(1.d0))
       y     = 6.23189*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.23189) goto 1000 ! IR for 2011/2012
+      if(sqrt(x**2 + y**2) .ge. 6.23189) goto 1000 ! IR for 2011/2012
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
