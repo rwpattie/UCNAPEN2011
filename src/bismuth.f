@@ -623,7 +623,7 @@ c----------------------------------------------------------------------------c
 
       EO = qend/emass + 1
 50    E=(EO-1.0)*RAND(1.D0)
-      if(E.lt.0.01) goto 50
+      if(E.lt.0.002) goto 50
       Y=rej*RAND(1.D0)
       R=rn/lambda
       C=zed/alphainv
