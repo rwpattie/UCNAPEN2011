@@ -7,7 +7,7 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-      eweight = 98.0
+      eweight = 98.37
       gweight = 32.288      
 
       bprob = (eweight+gweight)*rand(1.d0)
@@ -24,6 +24,9 @@ c-----------------------------------------------------------------------------C
         rej = 1.5674d3
         rn = 4.8094d0
         e = energy8(qend,rej,rn)
+      else if(bprob.ge.98.0.and.bprob.lt.98.37)then
+        Kpar  = 1
+        E = 419.505e3
       else if(bprob.ge.eweight.and.bprob.lt.0.118+eweight)then
         Kpar  = 2
         E = 298.00e3
@@ -78,7 +81,7 @@ c----------------------------------------------------------------------------c
 
       EO = qend/emass + 1
 50    E=(EO-1.0)*RAND(1.D0)
-      if(E.lt.0.01) goto 50
+      if(E.lt.0.002) goto 50
       Y=rej*RAND(1.D0)
       R=rn/lambda
       C=zed/alphainv

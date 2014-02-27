@@ -471,30 +471,64 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
       include 'pmcomms.f'
       DIMENSION ILBH(5)
 
-      betaprob = 0.9911*rand(1.d0)
-      nbetatype = 0
+      gweight = 93.768
+      eweight = 106.306
+
+      betaprob = (gweight+eweight)*rand(1.d0)
+C      nbetatype = 0
       qend = 0.d0
 
-      ILBH(1) = -1
-      ILBH(2) = 1
-      ILBH(3) = 1
-      ILBH(4) = 0
-      ILBH(5) = 1
+C      ILBH(1) = -1
+C      ILBH(2) = 1
+C      ILBH(3) = 1
+C      ILBH(4) = 0
+C      ILBH(5) = 1
 
-      if(betaprob.le.0.9600)then
+      if(betaprob.le.0.289)then
+        Kpar  = 2
+        E = 158.197e3
+      else if(betaprob.gt.0.289.and.betaprob.le.90.289)then
+        Kpar  = 2
+        E = 249.794e3
+      else if(betaprob.gt.90.289.and.betaprob.le.90.510)then
+        Kpar  = 2
+        E = 358.390e3
+      else if(betaprob.gt.90.510.and.betaprob.le.90.868)then
+        Kpar  = 2
+        E = 407.990e3
+      else if(betaprob.gt.90.868.and.betaprob.le.93.768)then
+        Kpar  = 2
+        E = 608.185e3
+      else if(betaprob.gt.gweight.and.betaprob.le.96.0+gweight)then
         qend = 915.0d3
         rej = 2.45d1
         rn = 4.7932d0
         Kpar  = 1
         e     = energy3(qend,rej,rn)
-        nbetatype = 0
-      else if(betaprob.gt.0.9600)then
+C        nbetatype = 0
+      else if(betaprob.gt.96.0+gweight.and.betaprob.le.99.11
+     1       +gweight)then
         qend = 557.0d3
         rej = 8.20d0
         rn = 4.7932d0
         Kpar  = 1
         e     = energy3(qend,rej,rn)
-        nbetatype = 1
+C        nbetatype = 1
+      else if(betaprob.gt.99.11+gweight.and.betaprob.lt.99.707
+     1       +gweight)then
+        Kpar  = 1
+        E = 25.500e3
+      else if(betaprob.gt.99.707+gweight.and.betaprob.lt.105.317
+     1       +gweight)then
+        Kpar  = 1
+        E = 213.809e3
+      else if(betaprob.gt.105.317+gweight.and.betaprob.lt.106.137
+     1       +gweight)then
+        Kpar  = 1
+        E = 244.080e3
+      else if(betaprob.gt.106.137+gweight)then
+        Kpar  = 1
+        E = 248.577e3
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
@@ -513,6 +547,10 @@ c      parameter(pi=3.141592654d0,ME=510.9870d3)
       us     = dsin(dacos(theta))*dcos(psi)
       vs     = dsin(dacos(theta))*dsin(psi)
       ws     = theta
+
+C      Skip for quick demo purposes
+
+      goto 1800
 C     
 C      AUGER ENERGIES
 C 
@@ -557,6 +595,8 @@ C
          CALL STORES(E10,X,Y,Z,US,VS,WS,1.d0,1,ILBH,0)
         endif
       endif 
+
+1800  continue
            
       return
       end      
@@ -583,7 +623,7 @@ c----------------------------------------------------------------------------c
 
       EO = qend/emass + 1
 50    E=(EO-1.0)*RAND(1.D0)
-      if(E.lt.0.03) goto 50
+      if(E.lt.0.01) goto 50
       Y=rej*RAND(1.D0)
       R=rn/lambda
       C=zed/alphainv
