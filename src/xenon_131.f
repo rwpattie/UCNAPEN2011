@@ -7,21 +7,33 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-      cnvprob = 99.087*rand(1.d0)
+      cnvprob = 107.327*rand(1.d0)
 
-      if(cnvprob.lt.61.6)then
+      if (cnvprob.lt.6.9)then
+        Kpar  = 1
+        E = 24.600e3
+      else if(cnvprob.ge.6.9.and.cnvprob.lt.68.5)then
         Kpar  = 1
         E = 129.369e3
-      else if(cnvprob.ge.61.6.and.cnvprob.lt.90.4)then
+      else if(cnvprob.ge.68.5.and.cnvprob.lt.82.4104)then
         Kpar  = 1
-        E = 158.477e3
-      else if(cnvprob.ge.90.4.and.cnvprob.lt.96.99)then
+        E = 158.480e3
+      else if(cnvprob.ge.82.4104.and.cnvprob.lt.85.6072)then
+        Kpar  = 1
+        E = 158.830e3
+      else if(cnvprob.ge.85.6072.and.cnvprob.lt.97.3)then
+        Kpar  = 1
+        E = 159.150e3
+      else if(cnvprob.ge.97.3.and.cnvprob.lt.103.89)then
         Kpar  = 1
         E = 162.788e3
-      else if(cnvprob.ge.96.99.and.cnvprob.lt.97.137)then
+      else if(cnvprob.ge.103.89.and.cnvprob.lt.105.23)then
+        Kpar  = 1
+        E = 162.720e3
+      else if(cnvprob.ge.105.23.and.cnvprob.lt.105.377)then
         Kpar  = 1
         E = 163.914e3
-      else if(cnvprob.ge.97.137)then
+      else if(cnvprob.ge.105.377)then
         Kpar  = 2
         E = 163.930e3
       endif
@@ -30,7 +42,7 @@ c-----------------------------------------------------------------------------C
 1200  continue
       x     = 6.23189*(1.0 - 2.0*rand(1.d0))
       y     = 6.23189*(1.0 - 2.0*rand(1.d0))
-      if(sqrt(x**2 + y**2) .gt. 6.23189) goto 1200 ! IR for 2011/2012
+      if(sqrt(x**2 + y**2) .ge. 6.23189) goto 1200 ! IR for 2011/2012
       theta = 1.0- 2.0*rand(1.d0)
       psi   = 2*pi*rand(1.d0)
       u     = dsin(dacos(theta))*dcos(psi)
