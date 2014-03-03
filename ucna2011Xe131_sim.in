@@ -33,6 +33,10 @@ MFNAME mats/Si.mat                    [Material file, up to 20 chars]
 MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
 MFNAME mats/6f6f.mat                  [Material file, up to 20 chars]
 MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/tungsten.mat              [Material file, up to 20 chars]
+MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/delrin.mat                [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
        .
        >>>>>>>> Geometry definition file.
 GEOMFN geos/detectorC            [Geometry file, up to 20 chars]

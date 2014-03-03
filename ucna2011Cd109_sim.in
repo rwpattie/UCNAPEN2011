@@ -33,6 +33,10 @@ MFNAME mats/Si.mat                    [Material file, up to 20 chars]
 MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
 MFNAME mats/6f6f.mat                  [Material file, up to 20 chars]
 MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/tungsten.mat              [Material file, up to 20 chars]
+MSIMPA 1e4 1e4 1e4 0.2 0.2 5e3 1e4          [EABS(1:3),C1,C2,WCC,WCR]
+MFNAME mats/delrin.mat                [Material file, up to 20 chars]
+MSIMPA 1e2 1e3 1e2 0.0 0.0 1e2 1e2          [EABS(1:3),C1,C2,WCC,WCR]
        .
        >>>>>>>> Geometry definition file.
 GEOMFN geos/detectorCs                [Geometry file, up to 20 chars]
@@ -76,8 +80,8 @@ IDBODY 416               [Active body; one line for each active body]
        .
        >>>>>>>> Job properties
 RSEED  4321  1234
-NSIMSH 2.49e5                   [Desired number of simulated showers]
-TIME   3e2                         [Allotted simulation time, in sec]
+NSIMSH 5.00e6                   [Desired number of simulated showers]
+TIME   3.06e4                      [Allotted simulation time, in sec]
 HBOOKF data/eventCd                     [Path + prefix to hbook file]
        .
        >>>>>>>>> Volume Limits of the Experimental Geometry.
