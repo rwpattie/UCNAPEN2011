@@ -7,8 +7,8 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-      gweight = 99.7715
-      eweight = 52.9707
+      gweight = 99.84
+      eweight = 52.9851
 
       xprob = (gweight+eweight)*rand(1.d0)
 
@@ -30,66 +30,87 @@ c-----------------------------------------------------------------------------C
       else if(xprob.ge.61.252.and.xprob.lt.91.252)then
         Kpar  = 2
         E = 243.378e3
-      else if(xprob.ge.91.252.and.xprob.lt.91.2719)then
+      else if(xprob.ge.91.252.and.xprob.lt.91.2655)then
+        Kpar  = 2
+        E = 258.360e3
+      else if(xprob.ge.91.2655.and.xprob.lt.91.2854)then
         Kpar  = 2
         E = 340.220e3
-      else if(xprob.ge.91.2719.and.xprob.lt.91.4429)then
+      else if(xprob.ge.91.2854.and.xprob.lt.91.4564)then
         Kpar  = 2
         E = 372.081e3
-      else if(xprob.ge.91.4429.and.xprob.lt.96.1129)then
+      else if(xprob.ge.91.4564.and.xprob.lt.96.1264)then
         Kpar  = 2
         E = 453.796e3
-      else if(xprob.ge.96.1129.and.xprob.lt.96.1436)then
+      else if(xprob.ge.96.1264.and.xprob.lt.96.1571)then
         Kpar  = 2
         E = 553.690e3
-      else if(xprob.ge.96.1436.and.xprob.lt.96.2616)then
+      else if(xprob.ge.96.1571.and.xprob.lt.96.2751)then
         Kpar  = 2
         E = 635.382e3
-      else if(xprob.ge.96.2616.and.xprob.lt.96.3746)then
+      else if(xprob.ge.96.2751.and.xprob.lt.96.3881)then
         Kpar  = 2
         E = 636.110e3
-      else if(xprob.ge.96.3746.and.xprob.lt.96.4295)then
+      else if(xprob.ge.96.3881.and.xprob.lt.96.4016)then
+        Kpar  = 2
+        E = 717.900e3
+      else if(xprob.ge.96.4016.and.xprob.lt.96.4565)then
         Kpar  = 2
         E = 727.096e3
-      else if(xprob.ge.96.4295.and.xprob.lt.96.4537)then
+      else if(xprob.ge.96.4565.and.xprob.lt.96.464)then
+        Kpar  = 2
+        E = 764.170e3
+      else if(xprob.ge.96.464.and.xprob.lt.96.471)then
+        Kpar  = 2
+        E = 809.180e3
+      else if(xprob.ge.96.471.and.xprob.lt.96.4952)then
         Kpar  = 2
         E = 819.020e3
-      else if(xprob.ge.96.4537.and.xprob.lt.97.5637)then
+      else if(xprob.ge.96.4952.and.xprob.lt.97.6052)then
         Kpar  = 2
         E = 846.511e3
-      else if(xprob.ge.97.5637.and.xprob.lt.98.1417)then
+      else if(xprob.ge.97.6052.and.xprob.lt.97.6212)then
+        Kpar  = 2
+        E = 894.420e3
+      else if(xprob.ge.97.6212.and.xprob.lt.98.1992)then
         Kpar  = 2
         E = 901.510e3
-      else if(xprob.ge.98.1417.and.xprob.lt.98.2927)then
+      else if(xprob.ge.98.1992.and.xprob.lt.98.3502)then
         Kpar  = 2
         E = 937.494e3
-      else if(xprob.ge.98.2927.and.xprob.lt.98.3944)then
+      else if(xprob.ge.98.3502.and.xprob.lt.98.4519)then
         Kpar  = 2
         E = 992.430e3
-      else if(xprob.ge.98.3944.and.xprob.lt.98.5554)then
+      else if(xprob.ge.98.4519.and.xprob.lt.98.6129)then
         Kpar  = 2
         E = 1007.431e3   
-      else if(xprob.ge.98.5554.and.xprob.lt.98.5791)then
+      else if(xprob.ge.98.6129.and.xprob.lt.98.6366)then
         Kpar  = 2
         E = 1020.550e3
-      else if(xprob.ge.98.5791.and.xprob.lt.98.5969)then
+      else if(xprob.ge.98.6366.and.xprob.lt.98.6544)then
         Kpar  = 2
         E = 1070.850e3
-      else if(xprob.ge.98.5969.and.xprob.lt.98.6582)then
+      else if(xprob.ge.98.6544.and.xprob.lt.98.7157)then
         Kpar  = 2
         E = 1075.540e3
-      else if(xprob.ge.98.6582.and.xprob.lt.98.7233)then
+      else if(xprob.ge.98.7157.and.xprob.lt.98.7808)then
         Kpar  = 2
         E = 1089.860e3
-      else if(xprob.ge.98.7233.and.xprob.lt.99.0223)then
+      else if(xprob.ge.98.7808.and.xprob.lt.99.0798)then
         Kpar  = 2
-        E = 1138.23e3
-      else if(xprob.ge.99.0223.and.xprob.lt.99.7053)then
+        E = 1138.230e3
+      else if(xprob.ge.99.0798.and.xprob.lt.99.7628)then
         Kpar  = 2
         E = 1180.838e3
-      else if(xprob.ge.99.7053.and.xprob.lt.99.7715)then
+      else if(xprob.ge.99.7628.and.xprob.lt.99.829)then
         Kpar  = 2
         E = 1193.230e3
+      else if(xprob.ge.99.829.and.xprob.lt.99.833)then
+        Kpar  = 2
+        E = 1199.670e3
+      else if(xprob.ge.99.833.and.xprob.lt.99.84)then
+        Kpar  = 2
+        E = 1442.700e3
       else if(xprob.ge.gweight.and.xprob.lt.24.4+gweight)then
         Kpar  = 1
         E = 21.799e3
@@ -141,7 +162,10 @@ c-----------------------------------------------------------------------------C
       else if(xprob.ge.52.845+gweight.and.xprob.lt.52.9181+gweight)then
         Kpar  = 1
         E = 242.306e3
-      else if(xprob.ge.52.9181+gweight)then
+      else if(xprob.ge.52.9181+gweight.and.xprob.lt.52.9325+gweight)then
+        Kpar  = 1
+        E = 243.192e3
+      else if(xprob.ge.52.9325+gweight)then
         Kpar  = 1
         E = 420.627e3
       endif
