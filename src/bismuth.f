@@ -499,6 +499,15 @@ C      ILBH(5) = 1
       else if(betaprob.gt.90.868.and.betaprob.le.93.768)then
         Kpar  = 2
         E = 608.185e3
+      else if(betaprob.gt.93.768.and.betaprob.le.93.813)then
+        Kpar  = 2
+        E = 654.432e3
+      else if(betaprob.gt.93.813.and.betaprob.le.93.868)then
+        Kpar  = 2
+        E = 731.520e3
+      else if(betaprob.gt.93.868.and.betaprob.le.93.938)then
+        Kpar  = 2
+        E = 812.630e3
       else if(betaprob.gt.gweight.and.betaprob.le.96.0+gweight)then
         qend = 915.0d3
         rej = 2.45d1
@@ -623,7 +632,7 @@ c----------------------------------------------------------------------------c
 
       EO = qend/emass + 1
 50    E=(EO-1.0)*RAND(1.D0)
-      if(E.lt.0.002) goto 50
+      if(E.lt.0.001) goto 50
       Y=rej*RAND(1.D0)
       R=rn/lambda
       C=zed/alphainv
