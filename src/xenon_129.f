@@ -23,15 +23,21 @@ c-----------------------------------------------------------------------------C
       else if(zprob.ge.105.58.and.zprob.lt.107.745)then
         Kpar  = 1
         E = 38.436e3
-      else if(zprob.ge.107.745.and.zprob.lt.171.745)then
+      else if(zprob.ge.107.745.and.zprob.lt.108.474)then
+        Kpar  = 1
+        E = 39.360e3
+      else if(zprob.ge.108.474.and.zprob.lt.172.474)then
         Kpar  = 1
         E = 162.00e3
-      else if(zprob.ge.171.745.and.zprob.lt.196.245)then
+      else if(zprob.ge.172.474.and.zprob.lt.196.974)then
         Kpar  = 1
         E = 191.11e3
-      else if(zprob.ge.196.245.and.zprob.lt.201.745)then
+      else if(zprob.ge.196.974.and.zprob.lt.202.474)then
         Kpar  = 1
         E = 195.42e3
+      else if(zprob.ge.202.474.and.zprob.lt.203.984)then
+        Kpar  = 1
+        E = 196.35e3
       else if(zprob.ge.eweight.and.zprob.lt.7.50+eweight)then
         Kpar  = 2
         E = 39.578e3
