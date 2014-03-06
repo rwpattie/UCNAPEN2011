@@ -7,8 +7,8 @@ c-----------------------------------------------------------------------------C
       COMMON/track/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/RSEED/ISEED1,ISEED2
 
-      gweight = 99.84
-      eweight = 52.9851
+      gweight = 99.84789
+      eweight = 53.0504096
 
       xprob = (gweight+eweight)*rand(1.d0)
 
@@ -96,21 +96,36 @@ c-----------------------------------------------------------------------------C
       else if(xprob.ge.98.7157.and.xprob.lt.98.7808)then
         Kpar  = 2
         E = 1089.860e3
-      else if(xprob.ge.98.7808.and.xprob.lt.99.0798)then
+      else if(xprob.ge.98.7808.and.xprob.lt.98.7834)then
+        Kpar  = 2
+        E = 1108.710e3
+      else if(xprob.ge.98.7834.and.xprob.lt.99.0824)then
         Kpar  = 2
         E = 1138.230e3
-      else if(xprob.ge.99.0798.and.xprob.lt.99.7628)then
+      else if(xprob.ge.99.0824.and.xprob.lt.99.7654)then
         Kpar  = 2
         E = 1180.838e3
-      else if(xprob.ge.99.7628.and.xprob.lt.99.829)then
+      else if(xprob.ge.99.7654.and.xprob.lt.99.8316)then
         Kpar  = 2
         E = 1193.230e3
-      else if(xprob.ge.99.829.and.xprob.lt.99.833)then
+      else if(xprob.ge.99.8316.and.xprob.lt.99.8356)then
         Kpar  = 2
         E = 1199.670e3
-      else if(xprob.ge.99.833.and.xprob.lt.99.84)then
+      else if(xprob.ge.99.8356.and.xprob.lt.99.8372)then
+        Kpar  = 2
+        E = 1254.350e3
+      else if(xprob.ge.99.8372.and.xprob.lt.99.8383)then
+        Kpar  = 2
+        E = 1318.910e3
+      else if(xprob.ge.99.8383.and.xprob.lt.99.83981)then
+        Kpar  = 2
+        E = 1381.000e3
+      else if(xprob.ge.99.83981.and.xprob.lt.99.84681)then
         Kpar  = 2
         E = 1442.700e3
+      else if(xprob.ge.99.84681.and.xprob.lt.99.84789)then
+        Kpar  = 2
+        E = 1562.400e3
       else if(xprob.ge.gweight.and.xprob.lt.24.4+gweight)then
         Kpar  = 1
         E = 21.799e3
@@ -129,45 +144,241 @@ c-----------------------------------------------------------------------------C
       else if(xprob.ge.42.644+gweight.and.xprob.lt.42.776+gweight)then
         Kpar  = 1
         E = 54.782e3
-      else if(xprob.ge.42.776+gweight.and.xprob.lt.42.966+gweight)then
+      else if(xprob.ge.42.776+gweight.and.xprob.lt.42.7914+gweight)then
+        Kpar  = 1
+        E = 54.961e3
+      else if(xprob.ge.42.7914+gweight.and.xprob.lt.42.9814+gweight)then
         Kpar  = 1
         E = 69.687e3
-      else if(xprob.ge.42.966+gweight.and.xprob.lt.43.007+gweight)then
+      else if(xprob.ge.42.9814+gweight.and.xprob.lt.43.0224+gweight)then
         Kpar  = 1
         E = 73.803e3
-      else if(xprob.ge.43.007+gweight.and.xprob.lt.43.224+gweight)then
+      else if(xprob.ge.43.0224+gweight.and.xprob.lt.43.0303+gweight)then
+        Kpar  = 1
+        E = 74.689e3
+      else if(xprob.ge.43.0303+gweight.and.xprob.lt.43.03101
+     1       +gweight)then
+        Kpar  = 1
+        E = 74.868e3
+      else if(xprob.ge.43.03101+gweight.and.xprob.lt.43.24801
+     1       +gweight)then
         Kpar  = 1
         E = 80.382e3
-      else if(xprob.ge.43.224+gweight.and.xprob.lt.43.2534+gweight)then
+      else if(xprob.ge.43.24801+gweight.and.xprob.lt.43.27741
+     1       +gweight)then
         Kpar  = 1
         E = 108.363e3
-      else if(xprob.ge.43.2534+gweight.and.xprob.lt.49.4534+gweight)then
+      else if(xprob.ge.43.27741+gweight.and.xprob.lt.43.28335
+     1       +gweight)then
+        Kpar  = 1
+        E = 112.479e3
+      else if(xprob.ge.43.28335+gweight.and.xprob.lt.43.28455
+     1       +gweight)then
+        Kpar  = 1
+        E = 113.365e3
+      else if(xprob.ge.43.28455+gweight.and.xprob.lt.43.284689
+     1       +gweight)then
+        Kpar  = 1
+        E = 113.544e3
+      else if(xprob.ge.43.284689+gweight.and.xprob.lt.49.484689
+     1       +gweight)then
         Kpar  = 1
         E = 155.249e3
-      else if(xprob.ge.49.4534+gweight.and.xprob.lt.50.3274+gweight)then
+      else if(xprob.ge.49.484689+gweight.and.xprob.lt.49.491689
+     1       +gweight)then
+        Kpar  = 1
+        E = 177.249e3
+      else if(xprob.ge.49.491689+gweight.and.xprob.lt.50.365689
+     1       +gweight)then
         Kpar  = 1
         E = 183.230e3
-      else if(xprob.ge.50.3274+gweight.and.xprob.lt.50.5044+gweight)then
+      else if(xprob.ge.50.365689+gweight.and.xprob.lt.50.542689
+     1       +gweight)then
         Kpar  = 1
         E = 187.346e3
-      else if(xprob.ge.50.5044+gweight.and.xprob.lt.50.54+gweight)then
+      else if(xprob.ge.50.542689+gweight.and.xprob.lt.50.578289
+     1       +gweight)then
         Kpar  = 1
         E = 188.232e3
-      else if(xprob.ge.50.54+gweight.and.xprob.lt.52.49+gweight)then
+      else if(xprob.ge.50.578289+gweight.and.xprob.lt.50.582339
+     1       +gweight)then
+        Kpar  = 1
+        E = 188.411e3
+      else if(xprob.ge.50.582339+gweight.and.xprob.lt.50.583539
+     1       +gweight)then
+        Kpar  = 1
+        E = 205.230e3
+      else if(xprob.ge.50.583539+gweight.and.xprob.lt.50.583779
+     1       +gweight)then
+        Kpar  = 1
+        E = 209.346e3
+      else if(xprob.ge.50.583779+gweight.and.xprob.lt.52.533779
+     1       +gweight)then
         Kpar  = 1
         E = 210.209e3
-      else if(xprob.ge.52.49+gweight.and.xprob.lt.52.845+gweight)then
+      else if(xprob.ge.52.533779+gweight.and.xprob.lt.52.533826
+     1       +gweight)then
+        Kpar  = 1
+        E = 210.232e3
+      else if(xprob.ge.52.533826+gweight.and.xprob.lt.52.888826
+     1       +gweight)then
         Kpar  = 1
         E = 238.190e3
-      else if(xprob.ge.52.845+gweight.and.xprob.lt.52.9181+gweight)then
+      else if(xprob.ge.52.888826+gweight.and.xprob.lt.52.961926
+     1       +gweight)then
         Kpar  = 1
         E = 242.306e3
-      else if(xprob.ge.52.9181+gweight.and.xprob.lt.52.9325+gweight)then
+      else if(xprob.ge.52.961926+gweight.and.xprob.lt.52.976326
+     1       +gweight)then
         Kpar  = 1
         E = 243.192e3
-      else if(xprob.ge.52.9325+gweight)then
+      else if(xprob.ge.52.976326+gweight.and.xprob.lt.52.977836
+     1       +gweight)then
+        Kpar  = 1
+        E = 243.371e3
+      else if(xprob.ge.52.977836+gweight.and.xprob.lt.52.978286
+     1       +gweight)then
+        Kpar  = 1
+        E = 307.050e3
+      else if(xprob.ge.52.978286+gweight.and.xprob.lt.52.978357
+     1       +gweight)then
+        Kpar  = 1
+        E = 335.030e3
+      else if(xprob.ge.52.978357+gweight.and.xprob.lt.52.981397
+     1       +gweight)then
+        Kpar  = 1
+        E = 338.912e3
+      else if(xprob.ge.52.981397+gweight.and.xprob.lt.52.9814115
+     1       +gweight)then
+        Kpar  = 1
+        E = 339.150e3
+      else if(xprob.ge.52.9814115+gweight.and.xprob.lt.52.9818315
+     1       +gweight)then
+        Kpar  = 1
+        E = 366.893e3
+      else if(xprob.ge.52.9818315+gweight.and.xprob.lt.52.9819165
+     1       +gweight)then
+        Kpar  = 1
+        E = 371.009e3
+      else if(xprob.ge.52.9819165+gweight.and.xprob.lt.52.9819337
+     1       +gweight)then
+        Kpar  = 1
+        E = 371.895e3
+      else if(xprob.ge.52.9819337+gweight.and.xprob.lt.53.0345337
+     1       +gweight)then
         Kpar  = 1
         E = 420.627e3
+      else if(xprob.ge.53.0345337+gweight.and.xprob.lt.53.0411337
+     1       +gweight)then
+        Kpar  = 1
+        E = 448.608e3
+      else if(xprob.ge.53.0411337+gweight.and.xprob.lt.53.0424637
+     1       +gweight)then
+        Kpar  = 1
+        E = 452.724e3
+      else if(xprob.ge.53.0424637+gweight.and.xprob.lt.53.0427327
+     1       +gweight)then
+        Kpar  = 1
+        E = 453.610e3
+      else if(xprob.ge.53.0427327+gweight.and.xprob.lt.53.0427644
+     1       +gweight)then
+        Kpar  = 1 
+        E = 453.789e3
+      else if(xprob.ge.53.0427644+gweight.and.xprob.lt.53.0432844
+     1       +gweight)then
+        Kpar  = 1
+        E = 602.213e3
+      else if(xprob.ge.53.0432844+gweight.and.xprob.lt.53.0437844
+     1       +gweight)then
+        Kpar  = 1
+        E = 602.941e3
+      else if(xprob.ge.53.0437844+gweight.and.xprob.lt.53.0438514
+     1       +gweight)then
+        Kpar  = 1
+        E = 630.194e3
+      else if(xprob.ge.53.0438514+gweight.and.xprob.lt.53.0439154
+     1       +gweight)then
+        Kpar  = 1
+        E = 630.922e3
+      else if(xprob.ge.53.0439154+gweight.and.xprob.lt.53.0439289
+     1       +gweight)then
+        Kpar  = 1
+        E = 634.310e3
+      else if(xprob.ge.53.0439289+gweight.and.xprob.lt.53.0439418
+     1       +gweight)then
+        Kpar  = 1
+        E = 635.038e3
+      else if(xprob.ge.53.0439418+gweight.and.xprob.lt.53.0441218
+     1       +gweight)then
+        Kpar  = 1
+        E = 693.927e3
+      else if(xprob.ge.53.0441218+gweight.and.xprob.lt.53.0441438
+     1       +gweight)then
+        Kpar  = 1
+        E = 721.908e3
+      else if(xprob.ge.53.0441438+gweight.and.xprob.lt.53.0469338
+     1       +gweight)then
+        Kpar  = 1
+        E = 813.342e3
+      else if(xprob.ge.53.0469338+gweight.and.xprob.lt.53.0472778
+     1       +gweight)then
+        Kpar  = 1
+        E = 841.323e3
+      else if(xprob.ge.53.0472778+gweight.and.xprob.lt.53.0473468
+     1       +gweight)then
+        Kpar  = 1
+        E = 845.439e3
+      else if(xprob.ge.53.0473468+gweight.and.xprob.lt.53.0473608
+     1       +gweight)then
+        Kpar  = 1
+        E = 846.325e3
+      else if(xprob.ge.53.0473608+gweight.and.xprob.lt.53.0484608
+     1       +gweight)then
+        Kpar  = 1
+        E = 868.340e3
+      else if(xprob.ge.53.0484608+gweight.and.xprob.lt.53.0485998
+     1       +gweight)then
+        Kpar  = 1
+        E = 892.320e3
+      else if(xprob.ge.53.0485998+gweight.and.xprob.lt.53.0486278
+     1       +gweight)then
+        Kpar  = 1
+        E = 900.440e3
+      else if(xprob.ge.53.0486278+gweight.and.xprob.lt.53.0488978
+     1       +gweight)then
+        Kpar  = 1
+        E = 904.325e3
+      else if(xprob.ge.53.0486278+gweight.and.xprob.lt.53.0489308
+     1       +gweight)then
+        Kpar  = 1
+        E = 932.306e3
+      else if(xprob.ge.53.0489308+gweight.and.xprob.lt.53.0491708
+     1       +gweight)then
+        Kpar  = 1
+        E = 974.260e3
+      else if(xprob.ge.53.0491708+gweight.and.xprob.lt.53.0492008
+     1       +gweight)then
+        Kpar  = 1
+        E = 1002.240e3
+      else if(xprob.ge.53.0492008+gweight.and.xprob.lt.53.0495408
+     1       +gweight)then
+        Kpar  = 1
+        E = 1105.060e3
+      else if(xprob.ge.53.0495408+gweight.and.xprob.lt.53.0495828
+     1       +gweight)then
+        Kpar  = 1
+        E = 1133.040e3
+      else if(xprob.ge.53.0495828+gweight.and.xprob.lt.53.0503028
+     1       +gweight)then
+        Kpar  = 1
+        E = 1147.670e3
+      else if(xprob.ge.53.0503028+gweight.and.xprob.lt.53.0503918
+     1       +gweight)then
+        Kpar  = 1
+        E = 1175.650e3
+      else if(xprob.ge.53.0503918+gweight)then
+        Kpar  = 1
+        E = 1179.770e3
       endif
 
       z     = 220.0*(1.0 - 2.0*rand(1.d0))
