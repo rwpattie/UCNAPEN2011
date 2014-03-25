@@ -150,7 +150,7 @@ C-----------------------------------------------------------------------------C
 c----------------------------------------------------------------------c
       SUBROUTINE WIRECHECK(DE)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
-      PARAMETER(NENTRIES=89)
+      PARAMETER(NENTRIES=96)
       COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       COMMON/MWPC/ECX(170),ECY(170),WCX(170),WCY(170)
       COMMON/EDEP/EPE,EPW,EPER,EPED,EPWD,EPWR,EGEA,EGWA,
@@ -158,7 +158,7 @@ c----------------------------------------------------------------------c
      1 EMW1,EMW2,PHW,PHEN,PHE,PHWN,EHOLDER,EEAN,EEC1,EEC2,EWAN,
      1 EWC1,EWC2,ECOL
       REAL DECS(NENTRIES)
-      REAL COSTHETA(12)
+      REAL COSTHETA(16)
       COMMON/HBOOKU/DECS,COSTHETA
       PARAMETER ( MAXRAD = 8.386)! , CENTERSPACE = 0.1016)
       PARAMETER ( ZCATH1 = 221.5 , ZCATH2 = 223.5 ) 
@@ -275,10 +275,10 @@ C-------------------------------------------------------------------------C
 c======================================================================c
       SUBROUTINE SETCOSTHETAS(IMAT,WO)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z), INTEGER*4 (I-N)
-      PARAMETER(NENTRIES=89)
+      PARAMETER(NENTRIES=96)
       COMMON/TRACK/E,X,Y,Z,U,V,W,WGHT,KPAR,IBODY,MAT,ILB(5)
       REAL DECS(NENTRIES)
-      REAL COSTHETA(12)
+      REAL COSTHETA(16)
       COMMON/HBOOKU/DECS,COSTHETA
 C----------------------------------------------------------------------C
       !ensure a boundary was crossed
@@ -299,27 +299,37 @@ C----------------------------------------------------------------------C
           IF(COSTHETA(4).EQ.0)COSTHETA(4) = ABS(WO)
         ELSE IF(ABS(Z).GT.222.00.and.MAT.EQ.3)THEN
           IF(COSTHETA(5).EQ.0)COSTHETA(5) = ABS(WO)
-        ELSE IF(ABS(Z).GT.224.00.AND.MAT.EQ.2)THEN
+        ELSE IF(ABS(Z).GT.222.00.and.MAT.EQ.6)THEN
           IF(COSTHETA(6).EQ.0)COSTHETA(6) = ABS(WO)
+        ELSE IF(ABS(Z).GT.224.00.AND.MAT.EQ.2)THEN
+          IF(COSTHETA(7).EQ.0)COSTHETA(7) = ABS(WO)
+        ELSE IF(ABS(Z).GT.224.00.AND.
+     1    (MAT.EQ.0.OR.MAT.EQ.7))THEN
+          IF(COSTHETA(8).EQ.0)COSTHETA(8) = ABS(WO)
         ENDIF
 
       ELSE IF(W*Z.LT.0)THEN
          IF(ABS(Z).GT.148.00.AND.ABS(Z).LT.150.01.AND.
      1        (IMAT.EQ.3.OR.IMAT.EQ.8))THEN
-           IF(COSTHETA(7).EQ.0)COSTHETA(7) = ABS(WO)
+           IF(COSTHETA(9).EQ.0)COSTHETA(9) = ABS(WO)
         ELSE IF(ABS(Z).GT.150.00.AND.ABS(Z).LT.152.0.AND.
      1    (IMAT.EQ.0.OR.IMAT.EQ.7))THEN
-          IF(COSTHETA(8).EQ.0)COSTHETA(8) = ABS(WO)
+          IF(COSTHETA(10).EQ.0)COSTHETA(10) = ABS(WO)
         ELSE IF(ABS(Z).GT.216.00.AND.ABS(Z).LT.220.0.AND.
      1      (IMAT.EQ.3))THEN
-          IF(COSTHETA(9).EQ.0)COSTHETA(9) = ABS(WO)
+          IF(COSTHETA(11).EQ.0)COSTHETA(11) = ABS(WO)
         ELSE IF(ABS(Z).GT.219.00.AND.ABS(Z).LT.222.0.AND.
      1       IMAT.EQ.1)THEN
-          IF(COSTHETA(10).EQ.0)COSTHETA(10) = ABS(WO)
-        ELSE IF(ABS(Z).GT.222.00.AND.IMAT.EQ.3)THEN
-          IF(COSTHETA(11).EQ.0)COSTHETA(11) = ABS(WO)
-        ELSE IF(ABS(Z).GT.224.00.AND.IMAT.EQ.2)THEN
           IF(COSTHETA(12).EQ.0)COSTHETA(12) = ABS(WO)
+        ELSE IF(ABS(Z).GT.222.00.AND.IMAT.EQ.3)THEN
+          IF(COSTHETA(13).EQ.0)COSTHETA(13) = ABS(WO)
+        ELSE IF(ABS(Z).GT.222.00.and.MAT.EQ.6)THEN
+          IF(COSTHETA(14).EQ.0)COSTHETA(14) = ABS(WO)
+        ELSE IF(ABS(Z).GT.224.00.AND.IMAT.EQ.2)THEN
+          IF(COSTHETA(15).EQ.0)COSTHETA(15) = ABS(WO)
+        ELSE IF(ABS(Z).GT.224.00.AND.
+     1    (MAT.EQ.0.OR.MAT.EQ.7))THEN
+          IF(COSTHETA(16).EQ.0)COSTHETA(16) = ABS(WO)
         ENDIF
       ENDIF
 

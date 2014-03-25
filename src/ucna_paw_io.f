@@ -193,10 +193,18 @@ C----------------------------------------------------------------------C
         W10 = COSTHETA(10)
         W11 = COSTHETA(11)
         W12 = COSTHETA(12)
-	
-	DECS(90) = REAL(DEBO(440))
-	DECS(91) = REAL(DEBO(441))
+        W13 = COSTHETA(13)
+        W14 = COSTHETA(14)
+        W15 = COSTHETA(15)
+        W16 = COSTHETA(16) 
+        
+        DECS(90) = REAL(DEBO(440))
+        DECS(91) = REAL(DEBO(441))
         DECS(92) = REAL(TAPD)
+ 
+        DO I = 13,16
+             DECS(80+I) = REAL(COSTHETA(I))
+        ENDDO
 
         call filltree();
 !         CALL HFN(34,DECS) ! FILL EVENT RECORD
@@ -273,7 +281,7 @@ c
       wi  = w ! INITIAL PITCH ANGLE
       wim = w
 c
-      DO I=1,12
+      DO I=1,16
            IF(I.LE.10)THEN
              TRGE(I)  = 0.00D0  ! Set trigger times to 0
              TRGW(I)  = 0.00D0

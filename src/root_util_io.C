@@ -8,8 +8,8 @@
 
 extern "C" {
   extern struct{
-    float decs[92];
-    float costheta[12];
+    float decs[96];
+    float costheta[16];
   } hbooku_;
 }
 
@@ -95,7 +95,7 @@ extern "C" {
 
 extern "C"{
   extern struct{
-    double w[12]; 
+    double w[16]; 
   }cos_;
 }
 
@@ -176,7 +176,7 @@ extern "C" int openrootfile_(char *hbookfile,int ll)
     tree->Branch("Vp",&proton_.vpr,"Vp/D");
     tree->Branch("Wp",&proton_.wpr,"Wp/D");
     tree->Branch("PTOF",&proton_.ptof,"PTOF/D");
-    for (int i=1;i<13;i++){
+    for (int i=1;i<17;i++){
         sprintf(stuff,"W%d",i);
         sprintf(junk,"W%d/D",i);
         tree->Branch(stuff, &cos_.w[i], junk);
