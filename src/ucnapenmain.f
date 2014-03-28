@@ -695,6 +695,9 @@ C
       CALL SHOWER_START  ! Generate event using the method specified in the input file
       CALL INITIALIZE_EVENT(INT(SHN)) ! Set initial state parameters and fill DECS    
       NSTEP = 0
+c      u = 0
+c      v = 0
+c      w = 1.
 c      goto 104  ! stupid goto command meant to skip transport to check the event 
                 ! generator.
 C     
@@ -782,7 +785,6 @@ C
       IBODYL=IBODY
 c !       IF(PTYPE.EQ.1)THEN
 c      IF(ABS(Z).LT.10)THEN
-c      write(6,'(3i3,1x,5e11.3,1x,i3)')N,KPAR,ILB(1),X,Y,Z,W,E,IBODY
 c      ENDIF  
 !    
       IF(W.NE.W)THEN
@@ -792,6 +794,7 @@ c      ENDIF
 C
 C ---- DETERMINE THE FIELD USING THE PENELOPE EMFIELDS FUNCTION TPEMF0
 C     
+      WO = W
       CALL TPEMF0(ULDV,ULDE,ULEM,DSMAX)
 C      
       IF(LFORCE(IBODY,KPAR).AND.((WGHT.GE.WLOW(IBODY,KPAR)).AND.
@@ -843,7 +846,7 @@ C
 C  ----  If the particle has crossed an interface, restart the track in
 C        the new material.
       IF(NCROSS.GT.0)THEN
-         CALL SETCOSTHETAS(IMAT,WO)
+         CALL SETCOSTHETAS(IMAT,W)
          GO TO 102    ! The particle crossed an interface.
       ENDIF
 c      

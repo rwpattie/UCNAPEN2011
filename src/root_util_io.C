@@ -1,6 +1,6 @@
 // #ifndef __ROOT_UTILS_IO_CC__
 // #define __ROOT_UTILS_IO_CC__
-#include <Math/Random.h>
+// #include <Math/Random.h>
 #include <TFile.h>
 #include <TTree.h>
 #include <stdio.h>
@@ -95,7 +95,7 @@ extern "C" {
 
 extern "C"{
   extern struct{
-    double w[16]; 
+    double w1[16]; 
   }cos_;
 }
 
@@ -163,10 +163,10 @@ extern "C" int openrootfile_(char *hbookfile,int ll)
     for (int i=1;i<11;i++){
         sprintf(edood,"trge%d",i);
         sprintf(edude,"trge%d/D",i);
-        tree->Branch(edood, &trgt_.trge[i], edude);
+        tree->Branch(edood, &trgt_.trge[i-1], edude);
         sprintf(wdood,"trgw%d",i);
         sprintf(wdude,"trgw%d/D",i);
-        tree->Branch(wdood, &trgt_.trgw[i], wdude);
+        tree->Branch(wdood, &trgt_.trgw[i-1], wdude);
     }
     tree->Branch("Ep",&proton_.epr,"Ep/D");
     tree->Branch("Xp",&proton_.xpr,"Xp/D");
@@ -179,7 +179,7 @@ extern "C" int openrootfile_(char *hbookfile,int ll)
     for (int i=1;i<17;i++){
         sprintf(stuff,"W%d",i);
         sprintf(junk,"W%d/D",i);
-        tree->Branch(stuff, &cos_.w[i], junk);
+        tree->Branch(stuff, &cos_.w1[i-1], junk);
     }
     tree->Branch("emx",&multi_.emx,"emx/D");
     tree->Branch("emy",&multi_.emy,"emy/D");

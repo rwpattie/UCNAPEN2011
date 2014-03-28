@@ -307,9 +307,8 @@ C----------------------------------------------------------------------C
      1    (MAT.EQ.0.OR.MAT.EQ.7))THEN
           IF(COSTHETA(8).EQ.0)COSTHETA(8) = ABS(WO)
         ENDIF
-
       ELSE IF(W*Z.LT.0)THEN
-         IF(ABS(Z).GT.148.00.AND.ABS(Z).LT.150.01.AND.
+         IF(ABS(Z).GT.148.00.AND.ABS(Z).LT.150.0.AND.
      1        (IMAT.EQ.3.OR.IMAT.EQ.8))THEN
            IF(COSTHETA(9).EQ.0)COSTHETA(9) = ABS(WO)
         ELSE IF(ABS(Z).GT.150.00.AND.ABS(Z).LT.152.0.AND.
