@@ -1,6 +1,6 @@
-// #ifndef __ROOT_UTILS_IO_CC__
-// #define __ROOT_UTILS_IO_CC__
-// #include <Math/Random.h>
+#ifndef __ROOT_UTILS_IO_CC__
+#define __ROOT_UTILS_IO_CC__
+//#include <Math/Random.h>
 #include <TFile.h>
 #include <TTree.h>
 #include <stdio.h>
@@ -218,4 +218,4 @@ extern "C" void closerootfile_()
   fout->Close();
 }
 
-// #endif
+#endif
