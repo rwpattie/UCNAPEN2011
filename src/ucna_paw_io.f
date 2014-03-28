@@ -81,8 +81,8 @@ C----------------------------------------------------------------------C
            EPWR  = DETREP(DEBO(398))
            EPER  = DETREP(DEBO(416))
            ECOL  = DEBO(436)
-	   EAPD  = DEBO(440)
-           EAPDH = DEBO(441)	
+           EAPD  = DEBO(440)
+           EAPDH = DEBO(441)
            
           ! SCINTILLATOR      
            DECS(14) = REAL(DEBO(398))
@@ -180,31 +180,17 @@ C----------------------------------------------------------------------C
         DO I = 1,12
              DECS(77+I) = REAL(COSTHETA(I))
         ENDDO
-	do I = 1,16
-	  W1(I)  = DBLE(COSTHETA(I))
-        enddo 
-!         W2  = COSTHETA(2)
-!         W3  = COSTHETA(3)
-!         W4  = COSTHETA(4)
-!         W5  = COSTHETA(5)
-!         W6  = COSTHETA(6)
-!         W7  = COSTHETA(7)
-!         W8  = COSTHETA(8)
-!         W9  = COSTHETA(9)
-!         W10 = COSTHETA(10)
-!         W11 = COSTHETA(11)
-!         W12 = COSTHETA(12)
-!         W13 = COSTHETA(13)
-!         W14 = COSTHETA(14)
-!         W15 = COSTHETA(15)
-!         W16 = COSTHETA(16) 
-        
+
         DECS(90) = REAL(DEBO(440))
         DECS(91) = REAL(DEBO(441))
         DECS(92) = REAL(TAPD)
  
         DO I = 13,16
              DECS(80+I) = REAL(COSTHETA(I))
+        ENDDO
+
+        DO I = 1,16
+             W1(I) = COSTHETA(I)
         ENDDO
 
         call filltree();
