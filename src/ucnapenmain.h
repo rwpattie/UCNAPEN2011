@@ -20,9 +20,9 @@ c      PARAMETER(DLAYER=6D-4)               ! DEAD LAYER THICKNESS
      1 'av','aw','Egedb','Egwdb','Eme2','Emw2','Eped','Epwd','Phe',
      1 'Phw','nPhe','nPhw','EP','XP','YP','ZP','UP','VP','WP','PTOF',
      1 'Ptype','Eholder','Exsci','Eysci','Wxsci','Wysci','BckV','Eean',
-     1 'Eec1','Eec2','Ewan','Ewc1','Ewc2','Ecol','W1','W2','W3','W4',
-     1 'W5','W6','W7','W8','W9','W10','W11','W12','W13','W14','W15',
-     1 'W16','Eapd','Epadh','tapd'/
+     1 'Eec1','Eec2','Ewan','Ewc1','Ewc2','Ecol','Eapd','Epadh','tapd',
+     1 'W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12',
+     1 'W13','W14','W15','W16'/
 
       DATA CDTAGS/'NPAR','KPAR','E','X','Y','Z','U','V','W',
      1 'ESI','EDEAD','EBACKING','ERING','EFOIL','AX','AY','AZ','AMAT'/
@@ -43,10 +43,10 @@ c      PARAMETER(DLAYER=6D-4)               ! DEAD LAYER THICKNESS
      1 EGEDF,EGEDB,EGWDF,EGWDB,EFLE,EFLW,ETUBE,EAL,EME1,EME2,
      1 EMW1,EMW2,PHW,PHEN,PHE,PHWN,EHOLDER,EEAN,EEC1,EEC2,EWAN,
      1 EWC1,EWC2,ECOL,EAPD,EAPDH
-      COMMON/COS/W1(16)
       COMMON/MULTI/EMX,EMY,WMX,WMY,EPOSX,EPOSY,WPOSX,WPOSY,
      1 EXSCI,EYSCI,WXSCI,WYSCI,TAPD
       COMMON/HBOOKU/DECS,COSTHETA
+      COMMON/COS/W1(16)
       COMMON/INTACT/IBEE,IBEW,IDCE,IDCW,IMYFE,IMYFW,IMYBE,IMYBW,IDDE,
      1 IDDW
       COMMON/MWPC/ECX(170),ECY(170),WCX(170),WCY(170)
