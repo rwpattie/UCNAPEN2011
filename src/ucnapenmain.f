@@ -625,10 +625,10 @@ C
       CALL SHOWER
       IF(MOD(INT(SHN),1000).EQ.0)
      1 PRINT*,'AT EVENT = ',INT(SHN),INT(DSHN),TSEC,TSECA
-!       IF(MOD(INT(SHN),250000).EQ.0)THEN ! close and reopen the paw ntuple
-!         NFILE = NFILE + 1               ! file to avoid crashes after 250k events
-        !CALL BUILDHBOOK(NFILE)
-!      ENDIF
+       IF(MOD(INT(SHN),250000).EQ.0)THEN ! close and reopen the paw ntuple
+         NFILE = NFILE + 1               ! file to avoid crashes after 250k events
+         CALL BUILDHBOOK(NFILE)
+       ENDIF
       IF(JOBEND.NE.0) GO TO 102  ! The simulation is completed.
 C
 C  ****  End the simulation after the allotted time or after completing

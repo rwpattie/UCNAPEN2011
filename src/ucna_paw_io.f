@@ -19,7 +19,10 @@ c----------------------------------------------------------------------c
       HBOOKFILE = TRIM(HBKFN)//'_'//TRIM(FILENUMBER)//'.hbook'
       ROOTFILE = TRIM(HBKFN)//'_'//TRIM(FILENUMBER)//'.root'
      
-      print*, "HBOOKFILE is ", HBOOKFILE 
+      print*, "HBOOKFILE is ", HBOOKFILE
+      IF(NFILE.GT.0)THEN
+        CALL closerootfile() 
+      ENDIF
       CALL openrootfile(rootfile)
 !       CALL HROPEN(1,'EVENT',HBOOKFILE,'NQE',1024,IERR)
 !       CALL HBOOKN(34,'DECAYS',NENTRIES,'//EVENT',1024,DTAGS) 
@@ -64,10 +67,10 @@ C----------------------------------------------------------------------C
            EPW = DEBO(398) ! WEST SCINTILLATOR
            EPED = DEBO(429) ! EAST THEN WEST DEAD LAYER
            EPWD = DEBO(411) 
-           EME1 = DEBO(396)
-           EME2 = DEBO(397)
-           EMW1 = DEBO(414)
-           EMW2 = DEBO(415)
+           EMW1 = DEBO(396)
+           EMW2 = DEBO(397)
+           EME1 = DEBO(414)
+           EME2 = DEBO(415)
            EFLE = DEBO(434)+DEBO(432)
            EFLW = DEBO(433)+DEBO(435)
            ETUBE = DEBO(431)

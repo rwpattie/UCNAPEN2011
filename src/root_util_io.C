@@ -214,8 +214,10 @@ extern "C" void filltree_()
 
 extern "C" void closerootfile_()
 {
-  fout->Write();
-  fout->Close();
+  if (fout->IsOpen()){
+  	fout->Write();
+  	fout->Close();
+  }
 }
 
 #endif
